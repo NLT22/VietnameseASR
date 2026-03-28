@@ -30,6 +30,12 @@ manifests_fixed/
 # Audio raw data (nếu không muốn public)
 audio/
 
+#linh tinh
+data/
+lang/
+transcripts/
+README_PREPARED.txt
+
 # OS / editor
 .DS_Store
 .vscode/
