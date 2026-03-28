@@ -35,6 +35,7 @@ data/
 lang/
 transcripts/
 README_PREPARED.txt
+asr_script.txt
 
 # OS / editor
 .DS_Store
