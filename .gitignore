@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+.venv/
+venv/
+env/
+
+# Logs
+*.log
+
+# Torch checkpoints
+*.pt
+*.bin
+*.safetensors
+
+# TensorBoard / experiment outputs
+runs/
+tensorboard/
+ASR/zipformer/exp/
+exp/
+
+# Lhotse / feature artifacts (rất lớn, thường không nên đẩy)
+fbank/
+manifests/
+manifests_fixed/
+
+# Audio raw data (nếu không muốn public)
+audio/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,67 @@
+%WER = 83.87
+Errors: 0 insertions, 26 deletions, 0 substitutions, over 31 reference words (5 correct)
+Search below for sections starting with PER-UTT DETAILS:, SUBSTITUTIONS:, DELETIONS:, INSERTIONS:, PER-WORD STATS:
+
+PER-UTT DETAILS: corr or (ref->hyp)  
+trung_000088-2:	tôi (thích xem phim vào buổi tối->*)
+trung_000087-1:	tôi (đang học lập trình python->*)
+trung_000086-0:	(cuối tuần->*) tôi (thường nghỉ ngơi->*)
+trung_000089-3:	tôi (đang luyện tập thể dục->*)
+trung_000090-4:	tôi (muốn học thêm ngoại ngữ->*)
+
+SUBSTITUTIONS: count ref -> hyp
+
+DELETIONS: count ref
+2   đang
+2   học
+1   xem
+1   vào
+1   tối
+1   tập
+1   tuần
+1   trình
+1   thể
+1   thường
+1   thích
+1   thêm
+1   python
+1   phim
+1   ngữ
+1   ngơi
+1   ngoại
+1   nghỉ
+1   muốn
+1   lập
+1   luyện
+1   dục
+1   cuối
+1   buổi
+
+INSERTIONS: count hyp
+
+PER-WORD STATS: word  corr tot_errs count_in_ref count_in_hyp
+đang   0 2 2 0
+học   0 2 2 0
+xem   0 1 1 0
+vào   0 1 1 0
+tối   0 1 1 0
+tập   0 1 1 0
+tuần   0 1 1 0
+trình   0 1 1 0
+thể   0 1 1 0
+thường   0 1 1 0
+thích   0 1 1 0
+thêm   0 1 1 0
+python   0 1 1 0
+phim   0 1 1 0
+ngữ   0 1 1 0
+ngơi   0 1 1 0
+ngoại   0 1 1 0
+nghỉ   0 1 1 0
+muốn   0 1 1 0
+lập   0 1 1 0
+luyện   0 1 1 0
+dục   0 1 1 0
+cuối   0 1 1 0
+buổi   0 1 1 0
+tôi   5 0 5 5

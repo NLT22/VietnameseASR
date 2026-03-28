@@ -1,0 +1,82 @@
+utt_id	speaker	audio_path	text
+trung_000001	trung	audio/train/trung/trung_000001.wav	hôm nay trời rất đẹp và nắng nhẹ
+trung_000002	trung	audio/train/trung/trung_000002.wav	thời tiết buổi sáng khá dễ chịu
+trung_000003	trung	audio/train/trung/trung_000003.wav	trời hôm nay có gió nhẹ và không quá nóng
+trung_000004	trung	audio/train/trung/trung_000004.wav	buổi chiều nay trời có thể mát hơn
+trung_000005	trung	audio/train/trung/trung_000005.wav	tôi thích thời tiết như thế này
+trung_000006	trung	audio/train/trung/trung_000006.wav	hôm nay có nhiều mây nhưng không mưa
+trung_000007	trung	audio/train/trung/trung_000007.wav	dự báo ngày mai có mưa vừa
+trung_000008	trung	audio/train/trung/trung_000008.wav	thời tiết tuần này khá ổn định
+trung_000009	trung	audio/train/trung/trung_000009.wav	trời đang nắng nhưng không quá gắt
+trung_000010	trung	audio/train/trung/trung_000010.wav	sáng nay trời hơi se lạnh
+trung_000011	trung	audio/train/trung/trung_000011.wav	tôi đang học nhận dạng tiếng nói
+trung_000012	trung	audio/train/trung/trung_000012.wav	tôi đang nghiên cứu về trí tuệ nhân tạo
+trung_000013	trung	audio/train/trung/trung_000013.wav	hệ thống nhận dạng giọng nói ngày càng phát triển
+trung_000014	trung	audio/train/trung/trung_000014.wav	tôi muốn xây dựng một mô hình ASR tiếng Việt
+trung_000015	trung	audio/train/trung/trung_000015.wav	dữ liệu huấn luyện ảnh hưởng rất lớn đến mô hình
+trung_000016	trung	audio/train/trung/trung_000016.wav	tôi đang thử nghiệm một mô hình deep learning
+trung_000017	trung	audio/train/trung/trung_000017.wav	mô hình này sử dụng mạng neural sâu
+trung_000018	trung	audio/train/trung/trung_000018.wav	tôi cần thu thập thêm dữ liệu âm thanh
+trung_000019	trung	audio/train/trung/trung_000019.wav	tôi đang xử lý dữ liệu speech
+trung_000020	trung	audio/train/trung/trung_000020.wav	hệ thống này có thể chạy realtime
+trung_000021	trung	audio/train/trung/trung_000021.wav	bạn có thể giúp tôi mở cửa sổ được không
+trung_000022	trung	audio/train/trung/trung_000022.wav	làm ơn bật quạt giúp tôi
+trung_000023	trung	audio/train/trung/trung_000023.wav	bạn có thể đóng cửa lại được không
+trung_000024	trung	audio/train/trung/trung_000024.wav	xin hãy giảm âm lượng xuống một chút
+trung_000025	trung	audio/train/trung/trung_000025.wav	hãy mở đèn trong phòng lên
+trung_000026	trung	audio/train/trung/trung_000026.wav	bạn có thể giúp tôi lấy nước không
+trung_000027	trung	audio/train/trung/trung_000027.wav	làm ơn tắt máy tính giúp tôi
+trung_000028	trung	audio/train/trung/trung_000028.wav	hãy gọi cho tôi vào buổi chiều
+trung_000029	trung	audio/train/trung/trung_000029.wav	bạn có thể gửi email cho tôi không
+trung_000030	trung	audio/train/trung/trung_000030.wav	hãy nhắc tôi vào ngày mai
+trung_000031	trung	audio/train/trung/trung_000031.wav	việt nam là một quốc gia ở đông nam á
+trung_000032	trung	audio/train/trung/trung_000032.wav	hà nội là thủ đô của việt nam
+trung_000033	trung	audio/train/trung/trung_000033.wav	thành phố hồ chí minh là trung tâm kinh tế lớn
+trung_000034	trung	audio/train/trung/trung_000034.wav	đà nẵng là một thành phố du lịch nổi tiếng
+trung_000035	trung	audio/train/trung/trung_000035.wav	việt nam có nhiều danh lam thắng cảnh
+trung_000036	trung	audio/train/trung/trung_000036.wav	ẩm thực việt nam rất phong phú
+trung_000037	trung	audio/train/trung/trung_000037.wav	người việt nam rất thân thiện
+trung_000038	trung	audio/train/trung/trung_000038.wav	nền kinh tế đang phát triển nhanh
+trung_000039	trung	audio/train/trung/trung_000039.wav	du lịch đóng vai trò quan trọng
+trung_000040	trung	audio/train/trung/trung_000040.wav	giáo dục ngày càng được cải thiện
+trung_000041	trung	audio/train/trung/trung_000041.wav	chiều nay tôi sẽ đến trường vào lúc ba giờ
+trung_000042	trung	audio/train/trung/trung_000042.wav	tôi có cuộc họp lúc tám giờ sáng
+trung_000043	trung	audio/train/trung/trung_000043.wav	chuyến bay sẽ khởi hành lúc mười giờ
+trung_000044	trung	audio/train/trung/trung_000044.wav	hãy đặt báo thức lúc sáu giờ sáng
+trung_000045	trung	audio/train/trung/trung_000045.wav	tôi sẽ đi ngủ lúc mười một giờ
+trung_000046	trung	audio/train/trung/trung_000046.wav	cuộc hẹn diễn ra vào hai giờ chiều
+trung_000047	trung	audio/train/trung/trung_000047.wav	lịch học bắt đầu từ thứ hai
+trung_000048	trung	audio/train/trung/trung_000048.wav	tôi sẽ về nhà lúc năm giờ
+trung_000049	trung	audio/train/trung/trung_000049.wav	buổi học kết thúc lúc chín giờ tối
+trung_000050	trung	audio/train/trung/trung_000050.wav	hãy nhắc tôi lúc bảy giờ
+trung_000051	trung	audio/train/trung/trung_000051.wav	giá của sản phẩm này là hai trăm nghìn đồng
+trung_000052	trung	audio/train/trung/trung_000052.wav	chiếc điện thoại này giá mười triệu đồng
+trung_000053	trung	audio/train/trung/trung_000053.wav	tôi mua quyển sách với giá năm mươi nghìn
+trung_000054	trung	audio/train/trung/trung_000054.wav	giá vé là một trăm hai mươi nghìn đồng
+trung_000055	trung	audio/train/trung/trung_000055.wav	sản phẩm này đang được giảm giá
+trung_000056	trung	audio/train/trung/trung_000056.wav	tổng hóa đơn là ba trăm nghìn đồng
+trung_000057	trung	audio/train/trung/trung_000057.wav	tôi cần thanh toán hai triệu đồng
+trung_000058	trung	audio/train/trung/trung_000058.wav	giá tiền đã bao gồm thuế
+trung_000059	trung	audio/train/trung/trung_000059.wav	chi phí vận chuyển là ba mươi nghìn
+trung_000060	trung	audio/train/trung/trung_000060.wav	giá cả có thể thay đổi theo thời gian
+trung_000061	trung	audio/train/trung/trung_000061.wav	số điện thoại của tôi là không chín tám bảy sáu năm bốn ba hai một
+trung_000062	trung	audio/train/trung/trung_000062.wav	hãy gọi cho tôi theo số không một hai ba bốn năm sáu bảy tám chín
+trung_000063	trung	audio/train/trung/trung_000063.wav	mã xác nhận là một hai ba bốn
+trung_000064	trung	audio/train/trung/trung_000064.wav	số tài khoản là một không không hai ba bốn năm sáu
+trung_000065	trung	audio/train/trung/trung_000065.wav	mã pin của tôi là không không một hai
+trung_000066	trung	audio/train/trung/trung_000066.wav	số thứ tự là hai mươi ba
+trung_000067	trung	audio/train/trung/trung_000067.wav	tôi có ba mươi hai người bạn
+trung_000068	trung	audio/train/trung/trung_000068.wav	có tổng cộng một trăm học sinh
+trung_000069	trung	audio/train/trung/trung_000069.wav	tôi đã đọc năm mươi trang sách
+trung_000070	trung	audio/train/trung/trung_000070.wav	nhiệt độ hôm nay là ba mươi độ
+trung_000071	trung	audio/train/trung/trung_000071.wav	trí tuệ nhân tạo đang thay đổi nhiều lĩnh vực
+trung_000072	trung	audio/train/trung/trung_000072.wav	công nghệ đang phát triển rất nhanh
+trung_000073	trung	audio/train/trung/trung_000073.wav	máy học giúp giải quyết nhiều bài toán
+trung_000074	trung	audio/train/trung/trung_000074.wav	deep learning được ứng dụng rộng rãi
+trung_000075	trung	audio/train/trung/trung_000075.wav	dữ liệu lớn đóng vai trò quan trọng
+trung_000076	trung	audio/train/trung/trung_000076.wav	robot đang thay thế con người trong một số công việc
+trung_000077	trung	audio/train/trung/trung_000077.wav	công nghệ nhận dạng hình ảnh ngày càng chính xác
+trung_000078	trung	audio/train/trung/trung_000078.wav	xử lý ngôn ngữ tự nhiên rất thú vị
+trung_000079	trung	audio/train/trung/trung_000079.wav	các mô hình AI ngày càng mạnh hơn
+trung_000080	trung	audio/train/trung/trung_000080.wav	tương lai của AI rất tiềm năng
+trung_000081	trung	audio/train/trung/trung_000081.wav	tôi đang uống một cốc cà phê

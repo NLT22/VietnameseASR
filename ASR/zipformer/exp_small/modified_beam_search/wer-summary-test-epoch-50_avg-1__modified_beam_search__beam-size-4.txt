@@ -1,0 +1,2 @@
+settings	WER
+modified_beam_search_beam-size-4	83.87

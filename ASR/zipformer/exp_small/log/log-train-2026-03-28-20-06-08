@@ -1,0 +1,437 @@
+2026-03-28 20:06:08,898 INFO [train.py:1268] Training started
+2026-03-28 20:06:08,899 INFO [train.py:1278] Device: cuda:0
+2026-03-28 20:06:08,900 INFO [train.py:1309] Using dtype=torch.float16
+2026-03-28 20:06:08,900 INFO [train.py:1310] Use AMP=True
+2026-03-28 20:06:08,900 INFO [train.py:1312] {
+  "am_scale": 0.0,
+  "attention_decoder_attention_dim": 512,
+  "attention_decoder_dim": 512,
+  "attention_decoder_feedforward_dim": 2048,
+  "attention_decoder_loss_scale": 0.8,
+  "attention_decoder_num_heads": 8,
+  "attention_decoder_num_layers": 6,
+  "average_period": 200,
+  "base_lr": 0.01,
+  "batch_idx_train": 0,
+  "best_train_epoch": -1,
+  "best_train_loss": Infinity,
+  "best_valid_epoch": -1,
+  "best_valid_loss": Infinity,
+  "blank_id": 0,
+  "bpe_model": "./data/lang_bpe_500/bpe.model",
+  "bucketing_sampler": false,
+  "causal": false,
+  "chunk_size": "16,32,64,-1",
+  "cnn_module_kernel": "15,15,15",
+  "concatenate_cuts": false,
+  "context_size": 2,
+  "cr_loss_scale": 0.2,
+  "ctc_loss_scale": 0.2,
+  "decoder_dim": 256,
+  "downsampling_factor": "1,2,4",
+  "drop_last": true,
+  "dtype": "torch.float16",
+  "duration_factor": 1.0,
+  "enable_musan": false,
+  "enable_spec_aug": false,
+  "encoder_dim": "128,192,256",
+  "encoder_unmasked_dim": "128,160,192",
+  "env_info": {
+    "IP address": "127.0.1.1",
+    "hostname": "trungLap",
+    "icefall-git-branch": "master",
+    "icefall-git-date": "Tue Mar 3 19:40:34 2026",
+    "icefall-git-sha1": "2d2470b3-dirty",
+    "icefall-path": "/home/trung/icefall",
+    "k2-build-type": "Release",
+    "k2-git-date": "Fri Mar 6 06:05:26 2026",
+    "k2-git-sha1": "bd61709fb9defe371bfdbc7c5a9dd88d902fc374",
+    "k2-path": "/home/trung/test-icefall/lib/python3.12/site-packages/k2/__init__.py",
+    "k2-version": "1.24.4",
+    "k2-with-cuda": true,
+    "lhotse-path": "/home/trung/test-icefall/lib/python3.12/site-packages/lhotse/__init__.py",
+    "lhotse-version": "1.32.1.dev+git.b6173fc.clean",
+    "python-version": "3.12",
+    "torch-cuda-available": true,
+    "torch-cuda-version": "12.8",
+    "torch-version": "2.10.0+cu128"
+  },
+  "eos_id": 0,
+  "exp_dir": "ASR/zipformer/exp_small",
+  "feature_dim": 80,
+  "feedforward_dim": "256,384,512",
+  "gap": 1.0,
+  "ignore_id": -1,
+  "inf_check": false,
+  "input_strategy": "PrecomputedFeatures",
+  "joiner_dim": 256,
+  "keep_last_k": 30,
+  "label_smoothing": 0.1,
+  "left_context_frames": "64,128,256,-1",
+  "lm_scale": 0.25,
+  "log_interval": 50,
+  "lr_batches": 7500,
+  "lr_epochs": 3.5,
+  "manifest_dir": "fbank",
+  "master_port": 12354,
+  "max_duration": 50.0,
+  "num_buckets": 30,
+  "num_encoder_layers": "2,2,2",
+  "num_epochs": 50,
+  "num_heads": "4,4,4",
+  "num_workers": 2,
+  "on_the_fly_feats": false,
+  "pos_dim": 32,
+  "pos_head_dim": "4",
+  "print_diagnostics": false,
+  "prune_range": 5,
+  "query_head_dim": "16",
+  "ref_duration": 600,
+  "reset_interval": 200,
+  "return_cuts": true,
+  "save_every_n": 4000,
+  "seed": 42,
+  "shuffle": true,
+  "simple_loss_scale": 0.5,
+  "sos_id": 0,
+  "spec_aug_time_warp_factor": 80,
+  "start_batch": 0,
+  "start_epoch": 1,
+  "subsampling_factor": 4,
+  "tensorboard": true,
+  "time_mask_ratio": 2.5,
+  "use_attention_decoder": false,
+  "use_autocast": true,
+  "use_bf16": false,
+  "use_cr_ctc": false,
+  "use_ctc": false,
+  "use_fp16": true,
+  "use_transducer": true,
+  "valid_interval": 3000,
+  "value_head_dim": "8",
+  "vocab_size": 500,
+  "warm_step": 2000,
+  "world_size": 1
+}
+2026-03-28 20:06:08,900 INFO [train.py:1314] About to create model
+2026-03-28 20:06:08,951 INFO [train.py:1318] Number of model parameters: 6475163
+2026-03-28 20:06:09,872 INFO [asr_datamodule.py:378] Loading train cuts from fbank/train_cuts.jsonl.gz
+2026-03-28 20:06:09,873 INFO [asr_datamodule.py:202] Disable MUSAN
+2026-03-28 20:06:09,873 INFO [asr_datamodule.py:239] Disable SpecAugment
+2026-03-28 20:06:09,873 INFO [asr_datamodule.py:241] Creating train dataset
+2026-03-28 20:06:09,873 INFO [asr_datamodule.py:269] Using SimpleCutSampler.
+2026-03-28 20:06:09,874 INFO [asr_datamodule.py:384] Loading dev cuts from fbank/dev_cuts.jsonl.gz
+2026-03-28 20:06:09,874 INFO [asr_datamodule.py:303] Creating validation dataset
+2026-03-28 20:06:09,874 INFO [asr_datamodule.py:323] Using SimpleCutSampler for validation.
+2026-03-28 20:06:09,874 INFO [train.py:1535] Sanity check -- see if any of the batches in epoch 1 would cause OOM.
+2026-03-28 20:06:11,482 INFO [scaling.py:1028] Whitening: name=None, num_groups=1, num_channels=96, metric=64.64 vs. limit=5.0
+2026-03-28 20:06:11,534 INFO [train.py:1564] Maximum memory allocated so far is 371MB
+2026-03-28 20:06:11,612 INFO [train.py:1564] Maximum memory allocated so far is 378MB
+2026-03-28 20:06:12,618 INFO [train.py:1564] Maximum memory allocated so far is 378MB
+2026-03-28 20:06:12,691 INFO [train.py:1564] Maximum memory allocated so far is 381MB
+2026-03-28 20:06:12,781 INFO [train.py:1564] Maximum memory allocated so far is 381MB
+2026-03-28 20:06:12,860 INFO [train.py:1564] Maximum memory allocated so far is 386MB
+2026-03-28 20:06:13,854 INFO [train.py:1200] Epoch 1, batch 0, loss[loss=6.894, simple_loss=6.242, pruned_loss=6.506, over 1020.00 frames. ], tot_loss[loss=6.894, simple_loss=6.242, pruned_loss=6.506, over 1020.00 frames. ], batch size: 11, lr: 1.02e-03, grad_scale: 2.0
+2026-03-28 20:06:13,855 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:06:13,986 INFO [train.py:1232] Epoch 1, validation: loss=6.908, simple_loss=6.256, pruned_loss=6.508, over 362.00 frames. 
+2026-03-28 20:06:13,986 INFO [train.py:1233] Maximum memory allocated so far is 403MB
+2026-03-28 20:06:20,669 INFO [scaling.py:1028] Whitening: name=encoder.encoders.1.encoder.layers.1.self_attn2.whiten, num_groups=1, num_channels=192, metric=61.60 vs. limit=7.5
+2026-03-28 20:06:21,173 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-1.pt
+2026-03-28 20:06:21,506 WARNING [optim.py:588] Clipping_scale=2.0, grad-norm quartiles 1.230e+02 1.845e+02 2.423e+02 2.707e+02 2.898e+02, threshold=9.691e+02, percent-clipped=0.0
+2026-03-28 20:06:21,513 INFO [train.py:1200] Epoch 2, batch 0, loss[loss=6.662, simple_loss=6.017, pruned_loss=6.305, over 988.00 frames. ], tot_loss[loss=6.662, simple_loss=6.017, pruned_loss=6.305, over 988.00 frames. ], batch size: 11, lr: 1.17e-03, grad_scale: 4.0
+2026-03-28 20:06:21,513 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:06:21,657 INFO [train.py:1232] Epoch 2, validation: loss=6.57, simple_loss=5.919, pruned_loss=6.355, over 362.00 frames. 
+2026-03-28 20:06:21,658 INFO [train.py:1233] Maximum memory allocated so far is 645MB
+2026-03-28 20:06:23,380 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.2.encoder.layers.0.feed_forward1.out_whiten.whitening_limit, batch_count=0.8333333333333334, ans=7.5003125
+2026-03-28 20:06:26,418 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-2.pt
+2026-03-28 20:06:26,985 WARNING [optim.py:588] Clipping_scale=2.0, grad-norm quartiles 1.230e+02 1.924e+02 2.423e+02 2.758e+02 3.278e+02, threshold=9.691e+02, percent-clipped=0.0
+2026-03-28 20:06:26,992 INFO [train.py:1200] Epoch 3, batch 0, loss[loss=6.169, simple_loss=5.537, pruned_loss=6.044, over 948.00 frames. ], tot_loss[loss=6.169, simple_loss=5.537, pruned_loss=6.044, over 948.00 frames. ], batch size: 10, lr: 1.28e-03, grad_scale: 8.0
+2026-03-28 20:06:26,992 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:06:27,139 INFO [train.py:1232] Epoch 3, validation: loss=5.958, simple_loss=5.324, pruned_loss=6.049, over 362.00 frames. 
+2026-03-28 20:06:27,139 INFO [train.py:1233] Maximum memory allocated so far is 681MB
+2026-03-28 20:06:30,494 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-3.pt
+2026-03-28 20:06:31,815 INFO [train.py:1200] Epoch 4, batch 0, loss[loss=5.681, simple_loss=5.061, pruned_loss=5.785, over 638.00 frames. ], tot_loss[loss=5.681, simple_loss=5.061, pruned_loss=5.785, over 638.00 frames. ], batch size: 6, lr: 1.36e-03, grad_scale: 16.0
+2026-03-28 20:06:31,816 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:06:31,969 INFO [train.py:1232] Epoch 4, validation: loss=5.288, simple_loss=4.681, pruned_loss=5.649, over 362.00 frames. 
+2026-03-28 20:06:31,969 INFO [train.py:1233] Maximum memory allocated so far is 683MB
+2026-03-28 20:06:34,896 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.1.feed_forward1.out_whiten, num_groups=1, num_channels=256, metric=20.05 vs. limit=7.5009375
+2026-03-28 20:06:36,203 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-4.pt
+2026-03-28 20:06:36,771 INFO [train.py:1200] Epoch 5, batch 0, loss[loss=5.067, simple_loss=4.477, pruned_loss=5.364, over 609.00 frames. ], tot_loss[loss=5.067, simple_loss=4.477, pruned_loss=5.364, over 609.00 frames. ], batch size: 5, lr: 1.41e-03, grad_scale: 16.0
+2026-03-28 20:06:36,771 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:06:36,923 INFO [train.py:1232] Epoch 5, validation: loss=4.789, simple_loss=4.208, pruned_loss=5.271, over 362.00 frames. 
+2026-03-28 20:06:36,924 INFO [train.py:1233] Maximum memory allocated so far is 683MB
+2026-03-28 20:06:38,066 WARNING [optim.py:588] Clipping_scale=2.0, grad-norm quartiles 1.230e+02 1.838e+02 2.272e+02 2.648e+02 3.278e+02, threshold=9.087e+02, percent-clipped=0.0
+2026-03-28 20:06:41,895 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-5.pt
+2026-03-28 20:06:42,460 INFO [train.py:1200] Epoch 6, batch 0, loss[loss=4.857, simple_loss=4.29, pruned_loss=5.048, over 566.00 frames. ], tot_loss[loss=4.857, simple_loss=4.29, pruned_loss=5.048, over 566.00 frames. ], batch size: 5, lr: 1.47e-03, grad_scale: 16.0
+2026-03-28 20:06:42,460 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:06:42,630 INFO [train.py:1232] Epoch 6, validation: loss=4.365, simple_loss=3.819, pruned_loss=4.828, over 362.00 frames. 
+2026-03-28 20:06:42,630 INFO [train.py:1233] Maximum memory allocated so far is 683MB
+2026-03-28 20:06:43,707 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.nonlin_attention.whiten2, num_groups=1, num_channels=128, metric=13.62 vs. limit=5.002125
+2026-03-28 20:06:47,541 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-6.pt
+2026-03-28 20:06:48,116 INFO [train.py:1200] Epoch 7, batch 0, loss[loss=4.654, simple_loss=4.12, pruned_loss=4.678, over 948.00 frames. ], tot_loss[loss=4.654, simple_loss=4.12, pruned_loss=4.678, over 948.00 frames. ], batch size: 10, lr: 1.50e-03, grad_scale: 16.0
+2026-03-28 20:06:48,117 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:06:48,273 INFO [train.py:1232] Epoch 7, validation: loss=4.052, simple_loss=3.551, pruned_loss=4.352, over 362.00 frames. 
+2026-03-28 20:06:48,274 INFO [train.py:1233] Maximum memory allocated so far is 686MB
+2026-03-28 20:06:48,735 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.0.whiten, num_groups=1, num_channels=128, metric=14.23 vs. limit=4.002033333333333
+2026-03-28 20:06:51,458 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-7.pt
+2026-03-28 20:06:52,089 INFO [train.py:1200] Epoch 8, batch 0, loss[loss=4.368, simple_loss=3.885, pruned_loss=4.177, over 657.00 frames. ], tot_loss[loss=4.368, simple_loss=3.885, pruned_loss=4.177, over 657.00 frames. ], batch size: 5, lr: 1.54e-03, grad_scale: 16.0
+2026-03-28 20:06:52,089 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:06:52,246 INFO [train.py:1232] Epoch 8, validation: loss=3.783, simple_loss=3.341, pruned_loss=3.791, over 362.00 frames. 
+2026-03-28 20:06:52,246 INFO [train.py:1233] Maximum memory allocated so far is 686MB
+2026-03-28 20:06:56,760 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-8.pt
+2026-03-28 20:06:57,340 INFO [train.py:1200] Epoch 9, batch 0, loss[loss=4.196, simple_loss=3.766, pruned_loss=3.705, over 948.00 frames. ], tot_loss[loss=4.196, simple_loss=3.766, pruned_loss=3.705, over 948.00 frames. ], batch size: 10, lr: 1.57e-03, grad_scale: 16.0
+2026-03-28 20:06:57,341 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:06:57,505 INFO [train.py:1232] Epoch 9, validation: loss=3.536, simple_loss=3.166, pruned_loss=3.177, over 362.00 frames. 
+2026-03-28 20:06:57,505 INFO [train.py:1233] Maximum memory allocated so far is 686MB
+2026-03-28 20:07:01,469 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-9.pt
+2026-03-28 20:07:02,025 INFO [train.py:1200] Epoch 10, batch 0, loss[loss=3.983, simple_loss=3.619, pruned_loss=3.157, over 645.00 frames. ], tot_loss[loss=3.983, simple_loss=3.619, pruned_loss=3.157, over 645.00 frames. ], batch size: 6, lr: 1.61e-03, grad_scale: 32.0
+2026-03-28 20:07:02,026 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:02,203 INFO [train.py:1232] Epoch 10, validation: loss=3.229, simple_loss=2.958, pruned_loss=2.396, over 362.00 frames. 
+2026-03-28 20:07:02,203 INFO [train.py:1233] Maximum memory allocated so far is 686MB
+2026-03-28 20:07:06,151 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-10.pt
+2026-03-28 20:07:06,736 INFO [train.py:1200] Epoch 11, batch 0, loss[loss=3.725, simple_loss=3.449, pruned_loss=2.487, over 930.00 frames. ], tot_loss[loss=3.725, simple_loss=3.449, pruned_loss=2.487, over 930.00 frames. ], batch size: 10, lr: 1.64e-03, grad_scale: 32.0
+2026-03-28 20:07:06,737 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:06,911 INFO [train.py:1232] Epoch 11, validation: loss=2.969, simple_loss=2.781, pruned_loss=1.774, over 362.00 frames. 
+2026-03-28 20:07:06,911 INFO [train.py:1233] Maximum memory allocated so far is 686MB
+2026-03-28 20:07:07,794 WARNING [optim.py:588] Clipping_scale=2.0, grad-norm quartiles 2.667e+01 1.618e+02 2.057e+02 2.278e+02 3.278e+02, threshold=4.114e+02, percent-clipped=0.0
+2026-03-28 20:07:10,557 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-11.pt
+2026-03-28 20:07:11,175 INFO [train.py:1200] Epoch 12, batch 0, loss[loss=3.301, simple_loss=3.12, pruned_loss=1.779, over 943.00 frames. ], tot_loss[loss=3.301, simple_loss=3.12, pruned_loss=1.779, over 943.00 frames. ], batch size: 9, lr: 1.67e-03, grad_scale: 32.0
+2026-03-28 20:07:11,175 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:11,363 INFO [train.py:1232] Epoch 12, validation: loss=2.709, simple_loss=2.595, pruned_loss=1.239, over 362.00 frames. 
+2026-03-28 20:07:11,363 INFO [train.py:1233] Maximum memory allocated so far is 686MB
+2026-03-28 20:07:14,252 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.0.self_attn1.whiten, num_groups=1, num_channels=128, metric=20.30 vs. limit=7.507
+2026-03-28 20:07:15,312 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-12.pt
+2026-03-28 20:07:15,983 INFO [train.py:1200] Epoch 13, batch 0, loss[loss=3.163, simple_loss=3.039, pruned_loss=1.398, over 705.00 frames. ], tot_loss[loss=3.163, simple_loss=3.039, pruned_loss=1.398, over 705.00 frames. ], batch size: 6, lr: 1.70e-03, grad_scale: 32.0
+2026-03-28 20:07:15,984 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:16,176 INFO [train.py:1232] Epoch 13, validation: loss=2.469, simple_loss=2.405, pruned_loss=0.8896, over 362.00 frames. 
+2026-03-28 20:07:16,176 INFO [train.py:1233] Maximum memory allocated so far is 686MB
+2026-03-28 20:07:16,770 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.0.self_attn2.whiten, num_groups=1, num_channels=256, metric=71.60 vs. limit=7.507625
+2026-03-28 20:07:19,316 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.0.conv_module2.whiten, num_groups=1, num_channels=256, metric=149.45 vs. limit=7.5038125
+2026-03-28 20:07:19,689 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-13.pt
+2026-03-28 20:07:20,291 INFO [train.py:1200] Epoch 14, batch 0, loss[loss=2.752, simple_loss=2.696, pruned_loss=0.9095, over 960.00 frames. ], tot_loss[loss=2.752, simple_loss=2.696, pruned_loss=0.9095, over 960.00 frames. ], batch size: 10, lr: 1.73e-03, grad_scale: 32.0
+2026-03-28 20:07:20,292 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:20,479 INFO [train.py:1232] Epoch 14, validation: loss=2.294, simple_loss=2.249, pruned_loss=0.7495, over 362.00 frames. 
+2026-03-28 20:07:20,479 INFO [train.py:1233] Maximum memory allocated so far is 686MB
+2026-03-28 20:07:22,755 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-14.pt
+2026-03-28 20:07:23,350 INFO [train.py:1200] Epoch 15, batch 0, loss[loss=2.769, simple_loss=2.731, pruned_loss=0.8202, over 824.00 frames. ], tot_loss[loss=2.769, simple_loss=2.731, pruned_loss=0.8202, over 824.00 frames. ], batch size: 9, lr: 1.76e-03, grad_scale: 32.0
+2026-03-28 20:07:23,351 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:23,556 INFO [train.py:1232] Epoch 15, validation: loss=2.189, simple_loss=2.145, pruned_loss=0.7315, over 362.00 frames. 
+2026-03-28 20:07:23,556 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:24,688 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.1.conv_module1.whiten, num_groups=1, num_channels=256, metric=164.49 vs. limit=7.5044375
+2026-03-28 20:07:24,824 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-15.pt
+2026-03-28 20:07:25,458 INFO [train.py:1200] Epoch 16, batch 0, loss[loss=2.297, simple_loss=2.292, pruned_loss=0.5485, over 605.00 frames. ], tot_loss[loss=2.297, simple_loss=2.292, pruned_loss=0.5485, over 605.00 frames. ], batch size: 5, lr: 1.79e-03, grad_scale: 32.0
+2026-03-28 20:07:25,459 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:25,657 INFO [train.py:1232] Epoch 16, validation: loss=2.138, simple_loss=2.091, pruned_loss=0.7525, over 362.00 frames. 
+2026-03-28 20:07:25,657 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:27,970 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-16.pt
+2026-03-28 20:07:29,402 INFO [train.py:1200] Epoch 17, batch 0, loss[loss=2.2, simple_loss=2.186, pruned_loss=0.5975, over 795.00 frames. ], tot_loss[loss=2.2, simple_loss=2.186, pruned_loss=0.5975, over 795.00 frames. ], batch size: 8, lr: 1.82e-03, grad_scale: 32.0
+2026-03-28 20:07:29,403 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:29,585 INFO [train.py:1232] Epoch 17, validation: loss=2.113, simple_loss=2.063, pruned_loss=0.7752, over 362.00 frames. 
+2026-03-28 20:07:29,586 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:31,873 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-17.pt
+2026-03-28 20:07:32,556 INFO [train.py:1200] Epoch 18, batch 0, loss[loss=2.117, simple_loss=2.118, pruned_loss=0.5074, over 622.00 frames. ], tot_loss[loss=2.117, simple_loss=2.118, pruned_loss=0.5074, over 622.00 frames. ], batch size: 5, lr: 1.85e-03, grad_scale: 32.0
+2026-03-28 20:07:32,556 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:32,764 INFO [train.py:1232] Epoch 18, validation: loss=2.1, simple_loss=2.048, pruned_loss=0.7907, over 362.00 frames. 
+2026-03-28 20:07:32,764 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:35,034 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-18.pt
+2026-03-28 20:07:35,471 INFO [train.py:1200] Epoch 19, batch 0, loss[loss=2.124, simple_loss=2.111, pruned_loss=0.6023, over 476.00 frames. ], tot_loss[loss=2.124, simple_loss=2.111, pruned_loss=0.6023, over 476.00 frames. ], batch size: 5, lr: 1.88e-03, grad_scale: 32.0
+2026-03-28 20:07:35,471 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:35,656 INFO [train.py:1232] Epoch 19, validation: loss=2.094, simple_loss=2.041, pruned_loss=0.8001, over 362.00 frames. 
+2026-03-28 20:07:35,657 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:37,389 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-19.pt
+2026-03-28 20:07:38,059 INFO [train.py:1200] Epoch 20, batch 0, loss[loss=2.278, simple_loss=2.255, pruned_loss=0.7067, over 725.00 frames. ], tot_loss[loss=2.278, simple_loss=2.255, pruned_loss=0.7067, over 725.00 frames. ], batch size: 8, lr: 1.90e-03, grad_scale: 32.0
+2026-03-28 20:07:38,059 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:38,259 INFO [train.py:1232] Epoch 20, validation: loss=2.09, simple_loss=2.038, pruned_loss=0.8022, over 362.00 frames. 
+2026-03-28 20:07:38,259 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:42,237 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-20.pt
+2026-03-28 20:07:42,745 INFO [train.py:1200] Epoch 21, batch 0, loss[loss=2.044, simple_loss=2.021, pruned_loss=0.6551, over 967.00 frames. ], tot_loss[loss=2.044, simple_loss=2.021, pruned_loss=0.6551, over 967.00 frames. ], batch size: 10, lr: 1.94e-03, grad_scale: 32.0
+2026-03-28 20:07:42,745 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:42,937 INFO [train.py:1232] Epoch 21, validation: loss=2.084, simple_loss=2.035, pruned_loss=0.7982, over 362.00 frames. 
+2026-03-28 20:07:42,938 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:45,096 WARNING [optim.py:588] Clipping_scale=2.0, grad-norm quartiles 3.404e+01 7.153e+01 1.111e+02 1.502e+02 2.459e+02, threshold=2.222e+02, percent-clipped=0.0
+2026-03-28 20:07:46,404 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-21.pt
+2026-03-28 20:07:47,001 INFO [train.py:1200] Epoch 22, batch 0, loss[loss=2.045, simple_loss=2.025, pruned_loss=0.6573, over 977.00 frames. ], tot_loss[loss=2.045, simple_loss=2.025, pruned_loss=0.6573, over 977.00 frames. ], batch size: 10, lr: 1.97e-03, grad_scale: 32.0
+2026-03-28 20:07:47,002 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:47,195 INFO [train.py:1232] Epoch 22, validation: loss=2.078, simple_loss=2.032, pruned_loss=0.7902, over 362.00 frames. 
+2026-03-28 20:07:47,195 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:47,247 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.1.nonlin_attention.whiten2, num_groups=1, num_channels=256, metric=242.37 vs. limit=5.008916666666667
+2026-03-28 20:07:50,309 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-22.pt
+2026-03-28 20:07:50,902 INFO [train.py:1200] Epoch 23, batch 0, loss[loss=2.016, simple_loss=2.027, pruned_loss=0.5107, over 655.00 frames. ], tot_loss[loss=2.016, simple_loss=2.027, pruned_loss=0.5107, over 655.00 frames. ], batch size: 5, lr: 2.01e-03, grad_scale: 32.0
+2026-03-28 20:07:50,902 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:51,092 INFO [train.py:1232] Epoch 23, validation: loss=2.069, simple_loss=2.026, pruned_loss=0.7774, over 362.00 frames. 
+2026-03-28 20:07:51,093 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:51,825 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.0.self_attn_weights.whiten_keys, num_groups=4, num_channels=64, metric=4.64 vs. limit=3.0028125
+2026-03-28 20:07:52,837 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-23.pt
+2026-03-28 20:07:53,425 INFO [train.py:1200] Epoch 24, batch 0, loss[loss=2.098, simple_loss=2.076, pruned_loss=0.6985, over 696.00 frames. ], tot_loss[loss=2.098, simple_loss=2.076, pruned_loss=0.6985, over 696.00 frames. ], batch size: 7, lr: 2.04e-03, grad_scale: 32.0
+2026-03-28 20:07:53,425 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:53,621 INFO [train.py:1232] Epoch 24, validation: loss=2.057, simple_loss=2.019, pruned_loss=0.7652, over 362.00 frames. 
+2026-03-28 20:07:53,622 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:56,484 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-24.pt
+2026-03-28 20:07:57,460 INFO [train.py:1200] Epoch 25, batch 0, loss[loss=1.826, simple_loss=1.819, pruned_loss=0.5614, over 835.00 frames. ], tot_loss[loss=1.826, simple_loss=1.819, pruned_loss=0.5614, over 835.00 frames. ], batch size: 9, lr: 2.06e-03, grad_scale: 32.0
+2026-03-28 20:07:57,460 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:07:57,667 INFO [train.py:1232] Epoch 25, validation: loss=2.043, simple_loss=2.007, pruned_loss=0.7559, over 362.00 frames. 
+2026-03-28 20:07:57,667 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:07:58,239 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.conv_module1.whiten, num_groups=1, num_channels=128, metric=110.09 vs. limit=7.50765625
+2026-03-28 20:07:59,570 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-25.pt
+2026-03-28 20:08:00,167 INFO [train.py:1200] Epoch 26, batch 0, loss[loss=1.782, simple_loss=1.793, pruned_loss=0.4839, over 608.00 frames. ], tot_loss[loss=1.782, simple_loss=1.793, pruned_loss=0.4839, over 608.00 frames. ], batch size: 5, lr: 2.09e-03, grad_scale: 32.0
+2026-03-28 20:08:00,167 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:00,395 INFO [train.py:1232] Epoch 26, validation: loss=2.024, simple_loss=1.991, pruned_loss=0.7437, over 362.00 frames. 
+2026-03-28 20:08:00,395 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:08:00,989 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.nonlin_attention.whiten1, num_groups=1, num_channels=96, metric=14.78 vs. limit=5.0053125
+2026-03-28 20:08:01,766 INFO [scaling.py:1028] Whitening: name=encoder.encoders.1.encoder.layers.1.feed_forward1.out_whiten, num_groups=1, num_channels=192, metric=65.59 vs. limit=7.50796875
+2026-03-28 20:08:01,939 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.nonlin_attention.whiten2, num_groups=1, num_channels=128, metric=47.64 vs. limit=5.010625
+2026-03-28 20:08:03,263 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-26.pt
+2026-03-28 20:08:03,854 INFO [train.py:1200] Epoch 27, batch 0, loss[loss=1.917, simple_loss=1.9, pruned_loss=0.6495, over 986.00 frames. ], tot_loss[loss=1.917, simple_loss=1.9, pruned_loss=0.6495, over 986.00 frames. ], batch size: 11, lr: 2.11e-03, grad_scale: 32.0
+2026-03-28 20:08:03,854 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:04,059 INFO [train.py:1232] Epoch 27, validation: loss=2, simple_loss=1.97, pruned_loss=0.7321, over 362.00 frames. 
+2026-03-28 20:08:04,060 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:08:04,287 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.0.conv_module1.whiten, num_groups=1, num_channels=128, metric=103.93 vs. limit=7.50828125
+2026-03-28 20:08:05,339 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.1.encoder.layers.1.self_attn_weights.pos_emb_skip_rate, batch_count=22.083333333333332, ans=0.49723958333333335
+2026-03-28 20:08:06,314 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-27.pt
+2026-03-28 20:08:06,929 INFO [train.py:1200] Epoch 28, batch 0, loss[loss=1.716, simple_loss=1.718, pruned_loss=0.5191, over 700.00 frames. ], tot_loss[loss=1.716, simple_loss=1.718, pruned_loss=0.5191, over 700.00 frames. ], batch size: 6, lr: 2.14e-03, grad_scale: 32.0
+2026-03-28 20:08:06,929 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:07,138 INFO [train.py:1232] Epoch 28, validation: loss=1.972, simple_loss=1.944, pruned_loss=0.7261, over 362.00 frames. 
+2026-03-28 20:08:07,138 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:08:07,591 INFO [scaling.py:1028] Whitening: name=encoder.encoders.1.encoder.layers.1.self_attn1.whiten, num_groups=1, num_channels=192, metric=185.81 vs. limit=7.5171875
+2026-03-28 20:08:09,361 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-28.pt
+2026-03-28 20:08:10,996 INFO [train.py:1200] Epoch 29, batch 0, loss[loss=1.921, simple_loss=1.904, pruned_loss=0.6697, over 425.00 frames. ], tot_loss[loss=1.921, simple_loss=1.904, pruned_loss=0.6697, over 425.00 frames. ], batch size: 5, lr: 2.16e-03, grad_scale: 32.0
+2026-03-28 20:08:10,996 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:11,220 INFO [train.py:1232] Epoch 29, validation: loss=1.941, simple_loss=1.912, pruned_loss=0.7273, over 362.00 frames. 
+2026-03-28 20:08:11,221 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:08:11,530 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.1.conv_module1.whiten, num_groups=1, num_channels=256, metric=216.84 vs. limit=7.50890625
+2026-03-28 20:08:11,779 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.1.feed_forward1.out_whiten, num_groups=1, num_channels=256, metric=83.70 vs. limit=7.50890625
+2026-03-28 20:08:12,287 INFO [scaling.py:1028] Whitening: name=encoder.encoders.1.encoder.layers.1.nonlin_attention.whiten2, num_groups=1, num_channels=192, metric=176.83 vs. limit=5.011875
+2026-03-28 20:08:12,420 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-29.pt
+2026-03-28 20:08:13,038 INFO [train.py:1200] Epoch 30, batch 0, loss[loss=1.763, simple_loss=1.758, pruned_loss=0.582, over 978.00 frames. ], tot_loss[loss=1.763, simple_loss=1.758, pruned_loss=0.582, over 978.00 frames. ], batch size: 10, lr: 2.19e-03, grad_scale: 32.0
+2026-03-28 20:08:13,038 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:13,250 INFO [train.py:1232] Epoch 30, validation: loss=1.904, simple_loss=1.871, pruned_loss=0.7317, over 362.00 frames. 
+2026-03-28 20:08:13,250 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:08:15,783 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-30.pt
+2026-03-28 20:08:16,377 INFO [train.py:1200] Epoch 31, batch 0, loss[loss=1.643, simple_loss=1.636, pruned_loss=0.5525, over 660.00 frames. ], tot_loss[loss=1.643, simple_loss=1.636, pruned_loss=0.5525, over 660.00 frames. ], batch size: 6, lr: 2.21e-03, grad_scale: 32.0
+2026-03-28 20:08:16,378 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:16,591 INFO [train.py:1232] Epoch 31, validation: loss=1.857, simple_loss=1.821, pruned_loss=0.7398, over 362.00 frames. 
+2026-03-28 20:08:16,592 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:08:16,807 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.nonlin_attention.whiten2, num_groups=1, num_channels=128, metric=40.89 vs. limit=5.012708333333333
+2026-03-28 20:08:18,264 WARNING [optim.py:588] Clipping_scale=2.0, grad-norm quartiles 4.103e+00 2.801e+01 3.652e+01 4.506e+01 1.168e+02, threshold=7.304e+01, percent-clipped=0.0
+2026-03-28 20:08:19,386 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-31.pt
+2026-03-28 20:08:19,884 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.1.encoder.layers.0.nonlin_attention.balancer.prob, batch_count=26.25, ans=0.49876953125
+2026-03-28 20:08:20,012 INFO [train.py:1200] Epoch 32, batch 0, loss[loss=1.737, simple_loss=1.719, pruned_loss=0.6354, over 894.00 frames. ], tot_loss[loss=1.737, simple_loss=1.719, pruned_loss=0.6354, over 894.00 frames. ], batch size: 10, lr: 2.24e-03, grad_scale: 32.0
+2026-03-28 20:08:20,012 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:20,224 INFO [train.py:1232] Epoch 32, validation: loss=1.804, simple_loss=1.762, pruned_loss=0.751, over 362.00 frames. 
+2026-03-28 20:08:20,225 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:08:20,275 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.1.feed_forward3.out_whiten, num_groups=1, num_channels=256, metric=116.46 vs. limit=7.50984375
+2026-03-28 20:08:21,389 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.feed_forward1.out_whiten, num_groups=1, num_channels=128, metric=29.49 vs. limit=7.50984375
+2026-03-28 20:08:21,708 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.0.layers.0.conv_module1.balancer1.prob, batch_count=26.25, ans=0.49876953125
+2026-03-28 20:08:22,243 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-32.pt
+2026-03-28 20:08:22,724 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.0.layers.0.feed_forward1.out_proj.dropout_p, batch_count=27.083333333333332, ans=0.29972916666666666
+2026-03-28 20:08:22,845 INFO [train.py:1200] Epoch 33, batch 0, loss[loss=1.334, simple_loss=1.343, pruned_loss=0.4081, over 747.00 frames. ], tot_loss[loss=1.334, simple_loss=1.343, pruned_loss=0.4081, over 747.00 frames. ], batch size: 5, lr: 2.26e-03, grad_scale: 32.0
+2026-03-28 20:08:22,845 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:23,067 INFO [train.py:1232] Epoch 33, validation: loss=1.746, simple_loss=1.695, pruned_loss=0.7692, over 362.00 frames. 
+2026-03-28 20:08:23,067 INFO [train.py:1233] Maximum memory allocated so far is 693MB
+2026-03-28 20:08:23,483 INFO [scaling.py:1028] Whitening: name=encoder.encoders.1.encoder.layers.0.nonlin_attention.whiten1, num_groups=1, num_channels=144, metric=20.13 vs. limit=5.006770833333333
+2026-03-28 20:08:24,679 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-33.pt
+2026-03-28 20:08:25,268 INFO [train.py:1200] Epoch 34, batch 0, loss[loss=1.7, simple_loss=1.654, pruned_loss=0.736, over 491.00 frames. ], tot_loss[loss=1.7, simple_loss=1.654, pruned_loss=0.736, over 491.00 frames. ], batch size: 5, lr: 2.28e-03, grad_scale: 32.0
+2026-03-28 20:08:25,268 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:25,490 INFO [train.py:1232] Epoch 34, validation: loss=1.692, simple_loss=1.633, pruned_loss=0.7794, over 362.00 frames. 
+2026-03-28 20:08:25,490 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:26,674 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-34.pt
+2026-03-28 20:08:27,290 INFO [train.py:1200] Epoch 35, batch 0, loss[loss=1.484, simple_loss=1.452, pruned_loss=0.616, over 652.00 frames. ], tot_loss[loss=1.484, simple_loss=1.452, pruned_loss=0.616, over 652.00 frames. ], batch size: 6, lr: 2.31e-03, grad_scale: 32.0
+2026-03-28 20:08:27,291 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:27,509 INFO [train.py:1232] Epoch 35, validation: loss=1.628, simple_loss=1.562, pruned_loss=0.7858, over 362.00 frames. 
+2026-03-28 20:08:27,510 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:29,188 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-35.pt
+2026-03-28 20:08:29,801 INFO [train.py:1200] Epoch 36, batch 0, loss[loss=1.454, simple_loss=1.41, pruned_loss=0.6507, over 929.00 frames. ], tot_loss[loss=1.454, simple_loss=1.41, pruned_loss=0.6507, over 929.00 frames. ], batch size: 9, lr: 2.33e-03, grad_scale: 32.0
+2026-03-28 20:08:29,801 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:30,026 INFO [train.py:1232] Epoch 36, validation: loss=1.561, simple_loss=1.487, pruned_loss=0.7964, over 362.00 frames. 
+2026-03-28 20:08:30,026 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:30,566 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.0.conv_module2.whiten, num_groups=1, num_channels=256, metric=188.00 vs. limit=7.5110625
+2026-03-28 20:08:32,282 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-36.pt
+2026-03-28 20:08:32,930 INFO [train.py:1200] Epoch 37, batch 0, loss[loss=1.347, simple_loss=1.295, pruned_loss=0.6429, over 885.00 frames. ], tot_loss[loss=1.347, simple_loss=1.295, pruned_loss=0.6429, over 885.00 frames. ], batch size: 10, lr: 2.35e-03, grad_scale: 32.0
+2026-03-28 20:08:32,931 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:33,157 INFO [train.py:1232] Epoch 37, validation: loss=1.485, simple_loss=1.401, pruned_loss=0.8006, over 362.00 frames. 
+2026-03-28 20:08:33,157 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:34,082 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.2.encoder.layers.0.conv_module2.balancer2.min_abs, batch_count=30.333333333333332, ans=0.20045500000000002
+2026-03-28 20:08:34,187 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.0.layers.0.balancer1.prob, batch_count=30.333333333333332, ans=0.498578125
+2026-03-28 20:08:34,368 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-37.pt
+2026-03-28 20:08:35,003 INFO [train.py:1200] Epoch 38, batch 0, loss[loss=1.236, simple_loss=1.18, pruned_loss=0.6226, over 1007.00 frames. ], tot_loss[loss=1.236, simple_loss=1.18, pruned_loss=0.6226, over 1007.00 frames. ], batch size: 11, lr: 2.38e-03, grad_scale: 32.0
+2026-03-28 20:08:35,004 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:35,221 INFO [train.py:1232] Epoch 38, validation: loss=1.395, simple_loss=1.305, pruned_loss=0.7923, over 362.00 frames. 
+2026-03-28 20:08:35,222 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:36,153 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.conv_module1.whiten, num_groups=1, num_channels=128, metric=100.37 vs. limit=7.5116875
+2026-03-28 20:08:36,414 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-38.pt
+2026-03-28 20:08:36,958 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.0.feed_forward1.out_whiten, num_groups=1, num_channels=256, metric=88.21 vs. limit=7.512
+2026-03-28 20:08:37,014 INFO [train.py:1200] Epoch 39, batch 0, loss[loss=1.191, simple_loss=1.134, pruned_loss=0.6051, over 857.00 frames. ], tot_loss[loss=1.191, simple_loss=1.134, pruned_loss=0.6051, over 857.00 frames. ], batch size: 9, lr: 2.40e-03, grad_scale: 32.0
+2026-03-28 20:08:37,014 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:37,241 INFO [train.py:1232] Epoch 39, validation: loss=1.316, simple_loss=1.216, pruned_loss=0.7953, over 362.00 frames. 
+2026-03-28 20:08:37,241 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:37,511 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.1.encoder.layers.0.const_attention_rate, batch_count=32.0, ans=0.2482
+2026-03-28 20:08:37,668 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.0.conv_module2.whiten, num_groups=1, num_channels=256, metric=180.70 vs. limit=7.512
+2026-03-28 20:08:39,806 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-39.pt
+2026-03-28 20:08:41,340 INFO [train.py:1200] Epoch 40, batch 0, loss[loss=1.084, simple_loss=1.007, pruned_loss=0.6328, over 751.00 frames. ], tot_loss[loss=1.084, simple_loss=1.007, pruned_loss=0.6328, over 751.00 frames. ], batch size: 8, lr: 2.42e-03, grad_scale: 32.0
+2026-03-28 20:08:41,340 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:41,592 INFO [train.py:1232] Epoch 40, validation: loss=1.227, simple_loss=1.12, pruned_loss=0.7824, over 362.00 frames. 
+2026-03-28 20:08:41,592 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:42,846 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-40.pt
+2026-03-28 20:08:43,443 INFO [train.py:1200] Epoch 41, batch 0, loss[loss=0.9141, simple_loss=0.8556, pruned_loss=0.5143, over 621.00 frames. ], tot_loss[loss=0.9141, simple_loss=0.8556, pruned_loss=0.5143, over 621.00 frames. ], batch size: 5, lr: 2.45e-03, grad_scale: 32.0
+2026-03-28 20:08:43,444 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:43,694 INFO [train.py:1232] Epoch 41, validation: loss=1.155, simple_loss=1.039, pruned_loss=0.7828, over 362.00 frames. 
+2026-03-28 20:08:43,694 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:44,397 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.1.whiten, num_groups=1, num_channels=256, metric=58.56 vs. limit=4.013466666666667
+2026-03-28 20:08:44,416 INFO [scaling.py:1028] Whitening: name=encoder.encoders.1.encoder.layers.1.nonlin_attention.whiten2, num_groups=1, num_channels=192, metric=163.12 vs. limit=5.0168333333333335
+2026-03-28 20:08:44,721 WARNING [optim.py:588] Clipping_scale=2.0, grad-norm quartiles 1.579e+01 4.526e+01 5.261e+01 6.559e+01 7.866e+01, threshold=1.052e+02, percent-clipped=11.0
+2026-03-28 20:08:45,935 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-41.pt
+2026-03-28 20:08:46,495 INFO [scaling.py:1028] Whitening: name=encoder.encoders.1.encoder.layers.0.self_attn1.whiten, num_groups=1, num_channels=192, metric=57.66 vs. limit=7.525875
+2026-03-28 20:08:46,543 INFO [train.py:1200] Epoch 42, batch 0, loss[loss=0.9416, simple_loss=0.8596, pruned_loss=0.597, over 906.00 frames. ], tot_loss[loss=0.9416, simple_loss=0.8596, pruned_loss=0.597, over 906.00 frames. ], batch size: 10, lr: 2.47e-03, grad_scale: 32.0
+2026-03-28 20:08:46,543 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:46,764 INFO [train.py:1232] Epoch 42, validation: loss=1.083, simple_loss=0.9613, pruned_loss=0.7724, over 362.00 frames. 
+2026-03-28 20:08:46,764 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:47,789 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.self_attn1.whiten, num_groups=1, num_channels=128, metric=24.82 vs. limit=7.525875
+2026-03-28 20:08:47,918 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.feed_forward1.out_whiten, num_groups=1, num_channels=128, metric=69.20 vs. limit=7.5129375
+2026-03-28 20:08:49,369 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-42.pt
+2026-03-28 20:08:50,747 INFO [train.py:1200] Epoch 43, batch 0, loss[loss=0.8184, simple_loss=0.7354, pruned_loss=0.553, over 568.00 frames. ], tot_loss[loss=0.8184, simple_loss=0.7354, pruned_loss=0.553, over 568.00 frames. ], batch size: 6, lr: 2.50e-03, grad_scale: 32.0
+2026-03-28 20:08:50,747 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:50,971 INFO [train.py:1232] Epoch 43, validation: loss=1.029, simple_loss=0.9007, pruned_loss=0.7704, over 362.00 frames. 
+2026-03-28 20:08:50,971 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:52,772 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-43.pt
+2026-03-28 20:08:54,217 INFO [train.py:1200] Epoch 44, batch 0, loss[loss=0.8947, simple_loss=0.7852, pruned_loss=0.6583, over 869.00 frames. ], tot_loss[loss=0.8947, simple_loss=0.7852, pruned_loss=0.6583, over 869.00 frames. ], batch size: 9, lr: 2.52e-03, grad_scale: 32.0
+2026-03-28 20:08:54,217 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:54,452 INFO [train.py:1232] Epoch 44, validation: loss=0.994, simple_loss=0.8598, pruned_loss=0.7692, over 362.00 frames. 
+2026-03-28 20:08:54,452 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:55,484 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-44.pt
+2026-03-28 20:08:56,104 INFO [train.py:1200] Epoch 45, batch 0, loss[loss=0.6352, simple_loss=0.5582, pruned_loss=0.4631, over 607.00 frames. ], tot_loss[loss=0.6352, simple_loss=0.5582, pruned_loss=0.4631, over 607.00 frames. ], batch size: 5, lr: 2.54e-03, grad_scale: 32.0
+2026-03-28 20:08:56,104 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:56,347 INFO [train.py:1232] Epoch 45, validation: loss=0.9728, simple_loss=0.8335, pruned_loss=0.7726, over 362.00 frames. 
+2026-03-28 20:08:56,347 INFO [train.py:1233] Maximum memory allocated so far is 695MB
+2026-03-28 20:08:57,529 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-45.pt
+2026-03-28 20:08:58,098 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.conv_module2.whiten, num_groups=1, num_channels=128, metric=81.31 vs. limit=7.51421875
+2026-03-28 20:08:58,155 INFO [train.py:1200] Epoch 46, batch 0, loss[loss=0.715, simple_loss=0.6184, pruned_loss=0.5476, over 1017.00 frames. ], tot_loss[loss=0.715, simple_loss=0.6184, pruned_loss=0.5476, over 1017.00 frames. ], batch size: 10, lr: 2.56e-03, grad_scale: 32.0
+2026-03-28 20:08:58,155 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:08:58,390 INFO [train.py:1232] Epoch 46, validation: loss=0.9559, simple_loss=0.8154, pruned_loss=0.7651, over 362.00 frames. 
+2026-03-28 20:08:58,391 INFO [train.py:1233] Maximum memory allocated so far is 698MB
+2026-03-28 20:09:00,705 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-46.pt
+2026-03-28 20:09:01,344 INFO [train.py:1200] Epoch 47, batch 0, loss[loss=0.6454, simple_loss=0.5481, pruned_loss=0.5202, over 601.00 frames. ], tot_loss[loss=0.6454, simple_loss=0.5481, pruned_loss=0.5202, over 601.00 frames. ], batch size: 5, lr: 2.59e-03, grad_scale: 32.0
+2026-03-28 20:09:01,344 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:09:01,582 INFO [train.py:1232] Epoch 47, validation: loss=0.9461, simple_loss=0.8019, pruned_loss=0.7669, over 362.00 frames. 
+2026-03-28 20:09:01,582 INFO [train.py:1233] Maximum memory allocated so far is 698MB
+2026-03-28 20:09:03,667 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.2.encoder.layers.1.nonlin_attention.balancer.prob, batch_count=38.833333333333336, ans=0.4981796875
+2026-03-28 20:09:03,691 INFO [scaling.py:1028] Whitening: name=encoder.encoders.1.encoder.layers.1.self_attn1.whiten, num_groups=1, num_channels=192, metric=65.71 vs. limit=7.529125
+2026-03-28 20:09:03,833 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-47.pt
+2026-03-28 20:09:04,468 INFO [train.py:1200] Epoch 48, batch 0, loss[loss=0.7176, simple_loss=0.607, pruned_loss=0.5816, over 942.00 frames. ], tot_loss[loss=0.7176, simple_loss=0.607, pruned_loss=0.5816, over 942.00 frames. ], batch size: 10, lr: 2.61e-03, grad_scale: 32.0
+2026-03-28 20:09:04,468 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:09:04,699 INFO [train.py:1232] Epoch 48, validation: loss=0.94, simple_loss=0.7939, pruned_loss=0.7653, over 362.00 frames. 
+2026-03-28 20:09:04,699 INFO [train.py:1233] Maximum memory allocated so far is 698MB
+2026-03-28 20:09:04,720 INFO [scaling.py:218] ScheduledFloat: name=encoder.encoders.0.layers.1.ff3_skip_rate, batch_count=39.666666666666664, ans=0.0991075
+2026-03-28 20:09:05,888 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-48.pt
+2026-03-28 20:09:06,504 INFO [train.py:1200] Epoch 49, batch 0, loss[loss=0.6905, simple_loss=0.5812, pruned_loss=0.5641, over 671.00 frames. ], tot_loss[loss=0.6905, simple_loss=0.5812, pruned_loss=0.5641, over 671.00 frames. ], batch size: 6, lr: 2.63e-03, grad_scale: 32.0
+2026-03-28 20:09:06,504 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:09:06,742 INFO [train.py:1232] Epoch 49, validation: loss=0.938, simple_loss=0.7909, pruned_loss=0.7628, over 362.00 frames. 
+2026-03-28 20:09:06,742 INFO [train.py:1233] Maximum memory allocated so far is 698MB
+2026-03-28 20:09:07,676 INFO [scaling.py:1028] Whitening: name=encoder.encoders.2.encoder.layers.0.conv_module2.whiten, num_groups=1, num_channels=256, metric=190.11 vs. limit=7.5151875
+2026-03-28 20:09:08,216 INFO [scaling.py:1028] Whitening: name=encoder.encoders.0.layers.1.feed_forward1.out_whiten, num_groups=1, num_channels=128, metric=72.60 vs. limit=7.5151875
+2026-03-28 20:09:09,723 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-49.pt
+2026-03-28 20:09:10,332 INFO [train.py:1200] Epoch 50, batch 0, loss[loss=0.7165, simple_loss=0.5992, pruned_loss=0.5926, over 937.00 frames. ], tot_loss[loss=0.7165, simple_loss=0.5992, pruned_loss=0.5926, over 937.00 frames. ], batch size: 10, lr: 2.65e-03, grad_scale: 32.0
+2026-03-28 20:09:10,332 INFO [train.py:1223] Computing validation loss
+2026-03-28 20:09:10,584 INFO [train.py:1232] Epoch 50, validation: loss=0.9377, simple_loss=0.7865, pruned_loss=0.7691, over 362.00 frames. 
+2026-03-28 20:09:10,585 INFO [train.py:1233] Maximum memory allocated so far is 698MB
+2026-03-28 20:09:13,749 INFO [checkpoint.py:74] Saving checkpoint to ASR/zipformer/exp_small/epoch-50.pt
+2026-03-28 20:09:14,084 INFO [train.py:1486] Done!
