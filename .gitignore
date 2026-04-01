@@ -11,31 +11,45 @@ env/
 # Logs
 *.log
 
-# Torch checkpoints
+# Torch checkpoints / model artifacts
 *.pt
 *.bin
 *.safetensors
+*.pth
+*.ckpt
+*.bin
+*.tar
+*.zip
+*.wav
+*.flac
+*.log
 
 # TensorBoard / experiment outputs
 runs/
 tensorboard/
 ASR/zipformer/exp/
+ASR/zipformer/exp_*/
 exp/
+exp_*/
 
-# Lhotse / feature artifacts (rất lớn, thường không nên đẩy)
+# Lhotse / feature artifacts
 fbank/
 manifests/
 manifests_fixed/
 
-# Audio raw data (nếu không muốn public)
+# Raw / generated speech data
 audio/
+dataset/
+musan/
+musan_data/
+MUSAN/
+musan_cuts.jsonl.gz
 
-#linh tinh
+# Generated metadata / language resources
 data/
 lang/
 transcripts/
 README_PREPARED.txt
-asr_script.txt
 
 # OS / editor
 .DS_Store

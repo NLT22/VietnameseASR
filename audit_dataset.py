@@ -27,7 +27,7 @@ def audit(split):
             if info.channels != 1:
                 print("Bad channels:", wav, info.channels)
                 bad += 1
-            if info.duration < 0.3 or info.duration > 20:
+            if info.duration < 0.3 or info.duration > 30:
                 print("Strange duration:", wav, info.duration)
             if not text:
                 print("Empty text:", wav)

@@ -1,16 +1,13 @@
 # VietnameseASR / vi_asr_corpus
 
-Tài liệu này hướng dẫn sử dụng hai thành phần chính trong project:
-
-1. `prepare_vi_asr_corpus.py`: chuẩn bị dữ liệu thô thành cấu trúc corpus dùng cho ASR.
-2. `run.sh`: chạy pipeline chuẩn bị dữ liệu và huấn luyện mô hình theo từng stage.
+Tài liệu này mô tả cách chuẩn bị corpus, chạy pipeline bằng `run.sh`, xem kết quả train/decode, mở TensorBoard, và cách tổ chức file để tránh đẩy dữ liệu lớn lên Git.
 
 ## 1. Cấu trúc project
 
-Ví dụ cấu trúc thư mục sau khi chuẩn bị dữ liệu:
+Ví dụ cấu trúc thư mục:
 
 ```bash
-vi_asr_corpus/
+~/icefall/egs/vi_asr_corpus/
 ├── ASR/
 │   └── zipformer/
 │       ├── train.py
@@ -30,423 +27,429 @@ vi_asr_corpus/
 ├── manifests_fixed/
 ├── fbank/
 ├── data/
-│   └── lang_bpe_500/
+│   └── lang_bpe_100/
+│       ├── bpe.model
+│       ├── bpe.vocab
+│       ├── tokens.txt
+│       └── words.txt
 ├── local/
 │   ├── prepare_manifests.py
 │   ├── compute_fbank.py
 │   ├── export_text_corpus.py
 │   ├── train_bpe_model.py
+│   ├── prepare_lang_bpe.py
+│   ├── validate_manifest.py
+│   ├── display_manifest_statistics.py
 │   └── tokenize_test.py
-└── run.sh
+├── prepare_vi_asr_corpus.py
+├── run.sh
+├── .gitignore
+└── README.md
 ```
 
-## 2. Hướng dẫn dùng `prepare_vi_asr_corpus.py`
+## 2. Chuẩn bị corpus bằng `prepare_vi_asr_corpus.py`
 
-Script này dùng để:
-- đọc một thư mục chứa các file ghi âm
-- đọc file `prompts.txt` với mỗi dòng là transcript tương ứng với một file audio
-- sắp xếp các file audio theo tên tăng dần
-- ghép từng file audio với từng dòng transcript theo thứ tự
-- chuyển toàn bộ audio về chuẩn `mono, 16kHz, PCM_16 WAV`
-- chia dữ liệu thành `train / dev / test`
-- tạo các file `train.tsv`, `dev.tsv`, `test.tsv`
+Script hiện hỗ trợ 2 chế độ:
 
-### 2.1. Đầu vào yêu cầu
+- **single-speaker mode**: truyền `--audio-dir --prompts --speaker`
+- **auto mode**: truyền `--auto`, script tự quét `dataset/`
 
-Bạn cần chuẩn bị:
-
-#### a) Thư mục audio
-
-Ví dụ:
+### 2.1. Single-speaker mode
 
 ```bash
-/home/trung/Downloads/Record/
-├── 0001.m4a
-├── 0002.m4a
-├── 0003.m4a
-└── ...
-```
+cd ~/icefall/egs/vi_asr_corpus
 
-Các file phải được đặt tên sao cho khi sắp xếp tăng dần theo tên thì đúng thứ tự transcript.
-
-#### b) File prompts
-
-Ví dụ `prompts.txt`:
-
-```text
-xin chào mọi người
-hôm nay trời đẹp quá
-tôi đang học nhận dạng tiếng nói
-```
-
-Yêu cầu:
-- mỗi dòng tương ứng đúng 1 file audio
-- số dòng phải bằng số file audio
-- dòng 1 khớp với file audio thứ 1 sau khi sắp xếp tên
-- dòng 2 khớp với file audio thứ 2, v.v.
-
-### 2.2. Cách chạy cơ bản
-
-```bash
 python prepare_vi_asr_corpus.py \
   --audio-dir /duong/dan/toi/thu_muc_audio \
   --prompts /duong/dan/toi/prompts.txt \
   --speaker trung \
-  --output-root /duong/dan/toi/vi_asr_corpus
+  --overwrite
 ```
 
-Ví dụ thực tế:
+### 2.2. Auto mode
+
+Giả sử cấu trúc:
 
 ```bash
-python prepare_vi_asr_corpus.py \
-  --audio-dir /home/trung/Downloads/Record-20260328T033526Z-1-001/Record \
-  --prompts /home/trung/Downloads/Record-20260328T033526Z-1-001/prompts.txt \
-  --speaker trung \
-  --output-root /home/trung/icefall/egs/vi_asr_corpus/prepared
+~/icefall/egs/vi_asr_corpus/
+├── prepare_vi_asr_corpus.py
+├── dataset/
+│   ├── trung/
+│   │   ├── abc(1).wav
+│   │   ├── abc(2).wav
+│   │   └── script.txt
+│   ├── lan/
+│   │   ├── rec(1).m4a
+│   │   ├── rec(2).m4a
+│   │   └── prompts.txt
+│   └── minh/
+│       ├── sample1.wav
+│       ├── sample2.wav
+│       └── transcript.txt
 ```
 
-### 2.3. Các tham số chính
-
-#### `--audio-dir`
-Đường dẫn tới thư mục chứa file ghi âm đầu vào.
-
-#### `--prompts`
-Đường dẫn tới file transcript, mỗi dòng ứng với một file ghi âm.
-
-#### `--speaker`
-Tên hoặc mã speaker, ví dụ:
+chạy:
 
 ```bash
---speaker trung
---speaker spk001
+cd ~/icefall/egs/vi_asr_corpus
+
+python prepare_vi_asr_corpus.py --auto --overwrite
 ```
 
-Tên này sẽ được dùng để tạo:
-- thư mục speaker trong `audio/train`, `audio/dev`, `audio/test`
-- `utt_id` dạng `trung_000001`, `trung_000002`, ...
+### 2.3. Text normalization
 
-#### `--output-root`
-Thư mục đầu ra chứa corpus đã chuẩn bị.
+Hiện mặc định **normalize text luôn**. Việc normalize gồm:
 
-#### `--train-ratio`, `--dev-ratio`, `--test-ratio`
-Tỉ lệ chia tập dữ liệu, ví dụ:
-
-```bash
---train-ratio 0.8 --dev-ratio 0.1 --test-ratio 0.1
-```
-
-#### `--normalize-text`
-Chuẩn hóa text:
+- Unicode NFC
 - lowercase
-- chuẩn Unicode NFC
 - bỏ dấu câu
-- chuẩn hóa khoảng trắng
+- gom nhiều khoảng trắng thành 1
+- bỏ dòng trống nếu có trong file prompt/script
 
-#### `--overwrite`
-Xóa và tạo lại thư mục output-root. Chỉ dùng khi bạn chắc chắn muốn ghi đè.
-
-### 2.4. Kết quả đầu ra
-
-Sau khi chạy thành công, bạn sẽ có:
+Nếu muốn tắt normalize:
 
 ```bash
-output-root/
-├── audio/
-│   ├── train/<speaker>/*.wav
-│   ├── dev/<speaker>/*.wav
-│   └── test/<speaker>/*.wav
-├── transcripts/
-│   ├── train.tsv
-│   ├── dev.tsv
-│   └── test.tsv
-└── README_PREPARED.txt
+python prepare_vi_asr_corpus.py --auto --no-normalize-text --overwrite
 ```
 
-Các file `.tsv` có dạng:
+### 2.4. `--overwrite` có tác dụng gì
 
-```tsv
-utt_id	speaker	audio_path	text
-trung_000001	trung	audio/train/trung/trung_000001.wav	xin chào mọi người
-```
+`--overwrite` hiện **an toàn**: nó chỉ xóa các phần do script quản lý trong `output-root`:
 
-### 2.5. Lưu ý quan trọng
+- `audio/`
+- `transcripts/`
+- `README_PREPARED.txt`
 
-1. Không nên đặt `output-root` trùng đúng thư mục hiện tại nếu script có chế độ overwrite.
-2. Số file audio phải bằng số dòng trong `prompts.txt`.
-3. Nên dùng transcript đã được kiểm tra kỹ trước khi tạo corpus.
-4. Với nhiều speaker, nên chuẩn bị dữ liệu từng speaker riêng hoặc dùng bản script append nếu bạn có.
+Nó **không xóa** các thư mục/file khác như:
 
-## 3. Hướng dẫn dùng `run.sh`
+- `ASR/`
+- `fbank/`
+- `manifests/`
+- `manifests_fixed/`
+- `data/`
+- `local/`
+- `run.sh`
+- `train.py`, `decode.py`, ...
 
-`run.sh` là script chạy toàn bộ pipeline theo stage, giúp bạn không phải gõ tay từng lệnh.
+Vì vậy bạn có thể dùng `--overwrite` để build lại corpus mà không làm mất code và artifact khác.
 
-Một pipeline chuẩn thường gồm:
-1. kiểm tra dataset
-2. tạo manifests
-3. sửa manifests bằng `lhotse fix`
-4. trích transcript train
-5. train BPE
-6. tính fbank
-7. test tokenization
-8. train model
-9. decode / evaluate
+## 3. Pipeline `run.sh`
 
-### 3.1. Cách chạy tổng quát
+`run.sh` chạy toàn bộ pipeline theo stage.
 
-Từ thư mục project:
+### 3.1. Các stage hiện tại
+
+- **Stage 0**: audit dataset
+- **Stage 1**: prepare manifests
+- **Stage 2**: `lhotse fix`
+- **Stage 3**: export text corpus
+- **Stage 4**: train BPE
+- **Stage 5**: prepare minimal BPE lang dir
+- **Stage 6**: compute fbank / cuts
+- **Stage 7**: validate cut manifests
+- **Stage 8**: display manifest statistics
+- **Stage 9**: tokenize smoke test
+- **Stage 10**: train
+- **Stage 11**: decode
+- **Stage 12**: in lệnh mở TensorBoard
+- **Stage 13**: in lệnh xem file kết quả
+
+### 3.2. Chạy toàn bộ
 
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 bash run.sh
 ```
 
-Hoặc chạy theo stage:
+### 3.3. Chạy theo stage
+
+Chỉ chuẩn bị dữ liệu đến tokenize smoke test:
 
 ```bash
-bash run.sh --stage 0 --stop-stage 5
+cd ~/icefall/egs/vi_asr_corpus
+bash run.sh --stage 0 --stop_stage 9
 ```
 
-Ý nghĩa:
-- `--stage`: bắt đầu từ bước nào
-- `--stop-stage`: dừng ở bước nào
-
-### 3.2. Ví dụ từng giai đoạn
-
-#### Chỉ chuẩn bị dữ liệu đến fbank
+Chỉ train:
 
 ```bash
-bash run.sh --stage 0 --stop-stage 5
+cd ~/icefall/egs/vi_asr_corpus
+bash run.sh --stage 10 --stop_stage 10
 ```
 
-#### Chỉ train model
+Chỉ decode:
 
 ```bash
-bash run.sh --stage 7 --stop-stage 7
+cd ~/icefall/egs/vi_asr_corpus
+bash run.sh --stage 11 --stop_stage 11
 ```
 
-#### Chỉ decode sau khi đã có checkpoint
+## 4. Các tham số của `run.sh`
+
+`run.sh` hiện hỗ trợ các tham số chính sau:
 
 ```bash
-bash run.sh --stage 8 --stop-stage 8
+--num_epochs
+--world_size
+--max_duration
+--base_lr
+--use_fp16
+--enable_musan
+--enable_spec_aug
+--bucketing_sampler
+--num_buckets
+--perturb_speed
+--decode_method
+--use_averaged_model
+--avg
 ```
 
-### 3.3. Ví dụ logic thường dùng trong `run.sh`
-
-Thông thường script sẽ có dạng:
+### Ví dụ train smoke test ổn định
 
 ```bash
-stage=0
-stop_stage=100
+cd ~/icefall/egs/vi_asr_corpus
+
+bash run.sh \
+  --stage 10 --stop_stage 10 \
+  --num_epochs 1 \
+  --world_size 1 \
+  --max_duration 30 \
+  --base_lr 0.02 \
+  --use_fp16 1 \
+  --enable_musan 0 \
+  --enable_spec_aug 0 \
+  --bucketing_sampler 0
 ```
 
-Các stage thường là:
+### Ví dụ thử `DynamicBucketingSampler`
 
-#### Stage 0: Audit dataset
-Chạy kiểm tra dữ liệu đầu vào:
-- file audio có tồn tại không
-- transcript có rỗng không
-- sample rate có đúng không
-- duration có bất thường không
-
-#### Stage 1: Prepare manifests
-Sinh:
-- `train_recordings.jsonl.gz`
-- `train_supervisions.jsonl.gz`
-- tương tự cho dev/test
-
-#### Stage 2: Fix manifests
-Dùng:
+Nếu dataset đã đủ lớn và bạn đã test thấy bucketing chạy được:
 
 ```bash
-lhotse fix ...
+cd ~/icefall/egs/vi_asr_corpus
+
+bash run.sh \
+  --stage 10 --stop_stage 10 \
+  --num_epochs 1 \
+  --bucketing_sampler 1 \
+  --num_buckets 4 \
+  --enable_spec_aug 0 \
+  --enable_musan 0
 ```
 
-để làm sạch manifest.
-
-#### Stage 3: Export text corpus
-Gộp transcript train vào một file text dùng để huấn luyện BPE.
-
-#### Stage 4: Train BPE
-Huấn luyện SentencePiece BPE, sinh:
-- `bpe.model`
-- `bpe.vocab`
-
-#### Stage 5: Compute fbank
-Sinh:
-- `train_cuts.jsonl.gz`
-- `dev_cuts.jsonl.gz`
-- `test_cuts.jsonl.gz`
-- các file đặc trưng trong `fbank/`
-
-#### Stage 6: Tokenize test
-Kiểm tra token hóa với `bpe.model`.
-
-#### Stage 7: Train
-Chạy huấn luyện Zipformer.
-
-#### Stage 8: Decode
-Chạy giải mã trên tập test hoặc dev.
-
-### 3.4. Cách chỉnh `run.sh`
-
-Bạn thường cần chỉnh các biến này trong script:
+### Ví dụ bật speed perturb khi tạo fbank
 
 ```bash
-corpus_root=$PWD
-exp_dir=$PWD/ASR/zipformer/exp
-bpe_dir=$PWD/data/lang_bpe_500
+cd ~/icefall/egs/vi_asr_corpus
 
-num_epochs=20
-world_size=1
-max_duration=30
+bash run.sh --stage 6 --stop_stage 6 --perturb_speed 1
 ```
 
-Ý nghĩa:
-- `corpus_root`: thư mục gốc project
-- `exp_dir`: nơi lưu checkpoint, log, tensorboard
-- `bpe_dir`: nơi chứa `bpe.model`
-- `num_epochs`: số epoch train
-- `world_size`: số GPU / số process DDP
-- `max_duration`: tổng thời lượng tối đa mỗi batch
+## 5. Tăng cường dữ liệu hiện có
 
-### 3.5. Ví dụ lệnh train thường dùng
+Trong pipeline hiện tại có sẵn:
 
-Với dataset nhỏ, nên chạy an toàn như sau:
+### 5.1. MUSAN noise mixing
+
+Bật:
 
 ```bash
-python ASR/zipformer/train.py \
-  --world-size 1 \
-  --num-epochs 2 \
-  --start-epoch 1 \
-  --use-fp16 0 \
-  --exp-dir ASR/zipformer/exp \
-  --manifest-dir ./fbank \
-  --bpe-model ./data/lang_bpe_500/bpe.model \
-  --max-duration 30 \
-  --enable-musan 0 \
-  --bucketing-sampler 0 \
-  --enable-spec-aug 0
+--enable_musan 1
 ```
 
-Giải thích thêm:
-- `--bucketing-sampler 0`: nên tắt với dataset rất nhỏ
-- `--enable-spec-aug 0`: tránh augmentation quá mạnh khi mới smoke test
-- `--enable-musan 0`: không cần noise augmentation ở giai đoạn đầu
+Điều kiện: phải có `musan_cuts.jsonl.gz` trong `manifest-dir` tương ứng.
 
-### 3.6. Sau khi train xong
+### 5.2. SpecAugment
 
-Checkpoint sẽ thường nằm ở:
+Bật:
 
 ```bash
-ASR/zipformer/exp/
+--enable_spec_aug 1
 ```
 
-Ví dụ:
-- `epoch-1.pt`
-- `epoch-2.pt`
-- `best-train-loss.pt`
-- `best-valid-loss.pt`
+Với dataset rất nhỏ, nên để `0` khi smoke test. Khi dữ liệu nhiều hơn có thể bật lại.
 
-Lúc này bạn có thể chạy:
-- `decode.py`
-- `streaming_decode.py`
-- `export.py`
-- `export-onnx.py`
+### 5.3. Speed perturb
 
-## 4. Quy trình làm việc khuyến nghị
+Bật ở bước tạo cuts/fbank:
 
-### Trường hợp mới bắt đầu
-1. chuẩn bị file audio + prompts
-2. chạy `prepare_vi_asr_corpus.py`
-3. chạy `run.sh` từ stage 0 đến stage 5
-4. kiểm tra `fbank/`, `bpe.model`
-5. train smoke test vài epoch
-6. decode thử
+```bash
+--perturb_speed 1
+```
 
-### Trường hợp thêm speaker mới
-1. thêm dữ liệu mới
-2. cập nhật lại corpus
-3. rebuild từ:
-   - manifests
-   - manifests_fixed
-   - transcript_words.txt
-   - bpe.model
-   - fbank
-4. train lại hoặc fine-tune tiếp
+### 5.4. DynamicBucketingSampler
 
-## 5. Một số lỗi thường gặp
+Bật:
 
-### Lỗi số bucket lớn hơn số cut
+```bash
+--bucketing_sampler 1 --num_buckets 4
+```
 
-Ví dụ:
+Khuyến nghị:
+
+- dataset nhỏ: `--bucketing_sampler 0`
+- dataset lớn hơn: bật `1`
+
+## 6. Xem kết quả train và decode
+
+### 6.1. Xem checkpoint
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+ls ASR/zipformer
+ls ASR/zipformer/exp_100bpe_0.02
+```
+
+### 6.2. Xem file decode
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+ls ASR/zipformer/exp_100bpe_0.02/greedy_search
+```
+
+### 6.3. Xem transcript nhận dạng
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+cat ASR/zipformer/exp_100bpe_0.02/greedy_search/recogs-test-epoch-30_avg-1_context-2_max-sym-per-frame-1.txt
+```
+
+Tên file thực tế có thể khác theo `epoch`, `avg` và `decode_method`. Để xem tất cả file:
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+find ASR/zipformer/exp_100bpe_0.02 -maxdepth 2 -type f | sort
+```
+
+### 6.4. Xem WER summary
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+cat ASR/zipformer/exp_100bpe_0.02/greedy_search/wer-summary-test-epoch-30_avg-1_context-2_max-sym-per-frame-1.txt
+```
+
+### 6.5. Tìm nhanh các file kết quả
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+find ASR/zipformer/exp_100bpe_0.02 -maxdepth 2 -type f | sort
+```
+
+## 7. Mở TensorBoard
+
+Chạy đúng các lệnh sau:
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+tensorboard --logdir ASR/zipformer/exp/tensorboard --port 6006
+```
+
+Nếu bạn đang dùng thư mục experiment khác, ví dụ `exp_100bpe_0.02`, hãy đổi đúng logdir:
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+tensorboard --logdir ASR/zipformer/exp_100bpe_0.02/tensorboard --port 6006
+```
+
+Sau đó mở trình duyệt tại:
 
 ```text
-AssertionError: The number of buckets (30) must be smaller than or equal to the number of cuts (8)
+http://localhost:6006
 ```
 
-Cách xử lý:
-- dùng `--bucketing-sampler 0`
-- hoặc giảm `--num-buckets`
+## 8. Một số lưu ý thực tế
 
-### Lỗi transcript không khớp audio
-Nguyên nhân:
-- số dòng prompts khác số file audio
-- thứ tự file audio không khớp transcript
-
-### Lỗi output-root bị ghi đè
-Nguyên nhân:
-- dùng `--overwrite` không cẩn thận
-
-## 6. Gợi ý tổ chức dữ liệu
-
-Nên:
-- dùng file audio ngắn, mỗi file một câu
-- transcript sạch, nhất quán
-- speaker ID rõ ràng
-- dev/test khác train nếu có đủ speaker
-
-## 7. Tóm tắt
-
-- `prepare_vi_asr_corpus.py` dùng để chuyển dữ liệu thô thành corpus chuẩn cho ASR.
-- `run.sh` dùng để chạy pipeline từng stage từ chuẩn bị dữ liệu đến train/decode.
-- Với dataset nhỏ, nên tắt:
-  - bucketing sampler
-  - spec augment
-  - musan
-- Khi dữ liệu thay đổi, nên rebuild lại các artifact phụ thuộc phía sau.
-
-## 8. Ví dụ nhanh
-
-### Chuẩn bị corpus
+### 8.1. Dataset nhỏ
+Với dataset rất nhỏ, cấu hình an toàn là:
 
 ```bash
-python prepare_vi_asr_corpus.py \
-  --audio-dir ./raw_audio \
-  --prompts ./prompts.txt \
-  --speaker trung \
-  --output-root ./prepared \
-  --normalize-text
+--enable_musan 0
+--enable_spec_aug 0
+--bucketing_sampler 0
 ```
 
-### Chạy pipeline
+### 8.2. Khi dữ liệu tăng lên
+Bạn có thể thử lại:
 
 ```bash
-bash run.sh --stage 0 --stop-stage 5
+--bucketing_sampler 1
+--num_buckets 4
+--enable_spec_aug 1
+--perturb_speed 1
 ```
 
-### Train smoke test
+rồi sau đó mới cân nhắc `MUSAN`.
+
+### 8.3. Nếu dữ liệu thay đổi
+Khi thêm speaker hoặc sửa transcript, nên rebuild lại từ:
+
+- manifests
+- manifests_fixed
+- transcript_words.txt
+- bpe.model
+- prepare_lang_bpe
+- fbank
+- validate_manifest
+
+## 9. Git và `.gitignore`
+
+Project này có rất nhiều thư mục dữ liệu lớn, thường **không nên đẩy lên GitHub**.
+
+### 9.1. Nên ignore
+- `dataset/`
+- `audio/`
+- `musan/`
+- `fbank/`
+- `manifests/`
+- `manifests_fixed/`
+- `transcripts/`
+- `data/`
+- `lang/`
+- checkpoint và log trong `exp/`
+
+### 9.2. Ý tưởng
+Git chỉ nên giữ:
+- code
+- script
+- README
+- cấu hình
+- file nhỏ, có thể tái tạo
+
+Còn những thứ có thể generate lại hoặc quá lớn thì nên ignore.
+
+## 10. Ví dụ nhanh
+
+### Chuẩn bị corpus auto
 
 ```bash
-python ASR/zipformer/train.py \
-  --world-size 1 \
-  --num-epochs 2 \
-  --start-epoch 1 \
-  --use-fp16 0 \
-  --exp-dir ASR/zipformer/exp \
-  --manifest-dir ./fbank \
-  --bpe-model ./data/lang_bpe_500/bpe.model \
-  --max-duration 30 \
-  --enable-musan 0 \
-  --bucketing-sampler 0 \
-  --enable-spec-aug 0
+cd ~/icefall/egs/vi_asr_corpus
+python prepare_vi_asr_corpus.py --auto --overwrite
+```
+
+### Chạy pipeline data prep
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+bash run.sh --stage 0 --stop_stage 9
+```
+
+### Train
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+bash run.sh --stage 10 --stop_stage 10 --num_epochs 1 --bucketing_sampler 1 --num_buckets 4
+```
+
+### Decode
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+bash run.sh --stage 11 --stop_stage 11 --num_epochs 30 --decode_method greedy_search --avg 1 --use_averaged_model 0
+```
+
+### Mở TensorBoard
+
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+tensorboard --logdir ASR/zipformer/exp_100bpe_0.02/tensorboard --port 6006
 ```
