@@ -1,81 +1,44 @@
-hôm nay trời rất đẹp và nắng nhẹ
-thời tiết buổi sáng khá dễ chịu
-trời hôm nay có gió nhẹ và không quá nóng
-buổi chiều nay trời có thể mát hơn
-tôi thích thời tiết như thế này
-hôm nay có nhiều mây nhưng không mưa
-dự báo ngày mai có mưa vừa
-thời tiết tuần này khá ổn định
-trời đang nắng nhưng không quá gắt
-sáng nay trời hơi se lạnh
-tôi đang học nhận dạng tiếng nói
-tôi đang nghiên cứu về trí tuệ nhân tạo
-hệ thống nhận dạng giọng nói ngày càng phát triển
-tôi muốn xây dựng một mô hình ASR tiếng Việt
-dữ liệu huấn luyện ảnh hưởng rất lớn đến mô hình
-tôi đang thử nghiệm một mô hình deep learning
-mô hình này sử dụng mạng neural sâu
-tôi cần thu thập thêm dữ liệu âm thanh
-tôi đang xử lý dữ liệu speech
-hệ thống này có thể chạy realtime
-bạn có thể giúp tôi mở cửa sổ được không
-làm ơn bật quạt giúp tôi
-bạn có thể đóng cửa lại được không
-xin hãy giảm âm lượng xuống một chút
-hãy mở đèn trong phòng lên
-bạn có thể giúp tôi lấy nước không
-làm ơn tắt máy tính giúp tôi
-hãy gọi cho tôi vào buổi chiều
-bạn có thể gửi email cho tôi không
-hãy nhắc tôi vào ngày mai
-việt nam là một quốc gia ở đông nam á
-hà nội là thủ đô của việt nam
-thành phố hồ chí minh là trung tâm kinh tế lớn
-đà nẵng là một thành phố du lịch nổi tiếng
-việt nam có nhiều danh lam thắng cảnh
-ẩm thực việt nam rất phong phú
-người việt nam rất thân thiện
-nền kinh tế đang phát triển nhanh
-du lịch đóng vai trò quan trọng
-giáo dục ngày càng được cải thiện
-chiều nay tôi sẽ đến trường vào lúc ba giờ
-tôi có cuộc họp lúc tám giờ sáng
-chuyến bay sẽ khởi hành lúc mười giờ
-hãy đặt báo thức lúc sáu giờ sáng
-tôi sẽ đi ngủ lúc mười một giờ
-cuộc hẹn diễn ra vào hai giờ chiều
-lịch học bắt đầu từ thứ hai
-tôi sẽ về nhà lúc năm giờ
-buổi học kết thúc lúc chín giờ tối
-hãy nhắc tôi lúc bảy giờ
-giá của sản phẩm này là hai trăm nghìn đồng
-chiếc điện thoại này giá mười triệu đồng
-tôi mua quyển sách với giá năm mươi nghìn
-giá vé là một trăm hai mươi nghìn đồng
-sản phẩm này đang được giảm giá
-tổng hóa đơn là ba trăm nghìn đồng
-tôi cần thanh toán hai triệu đồng
-giá tiền đã bao gồm thuế
-chi phí vận chuyển là ba mươi nghìn
-giá cả có thể thay đổi theo thời gian
-số điện thoại của tôi là không chín tám bảy sáu năm bốn ba hai một
-hãy gọi cho tôi theo số không một hai ba bốn năm sáu bảy tám chín
-mã xác nhận là một hai ba bốn
-số tài khoản là một không không hai ba bốn năm sáu
-mã pin của tôi là không không một hai
-số thứ tự là hai mươi ba
-tôi có ba mươi hai người bạn
-có tổng cộng một trăm học sinh
-tôi đã đọc năm mươi trang sách
-nhiệt độ hôm nay là ba mươi độ
-trí tuệ nhân tạo đang thay đổi nhiều lĩnh vực
-công nghệ đang phát triển rất nhanh
-máy học giúp giải quyết nhiều bài toán
-deep learning được ứng dụng rộng rãi
-dữ liệu lớn đóng vai trò quan trọng
-robot đang thay thế con người trong một số công việc
-công nghệ nhận dạng hình ảnh ngày càng chính xác
-xử lý ngôn ngữ tự nhiên rất thú vị
-các mô hình AI ngày càng mạnh hơn
-tương lai của AI rất tiềm năng
-tôi đang uống một cốc cà phê
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước

@@ -1,5 +1,5 @@
 utt_id	speaker	audio_path	text
-trung_000082	trung	audio/dev/trung/trung_000082.wav	buổi sáng tôi thường đi bộ
-trung_000083	trung	audio/dev/trung/trung_000083.wav	tôi thích nghe nhạc khi làm việc
-trung_000084	trung	audio/dev/trung/trung_000084.wav	tôi đang đọc một cuốn sách hay
-trung_000085	trung	audio/dev/trung/trung_000085.wav	tôi sẽ đi du lịch vào mùa hè
+Dung_000002	Dung	audio/dev/Dung/Dung_000002.wav	chiều nay nếu bạn qua được thì tốt quá mình sẽ ngồi xem lại từng trang thuyết trình sửa những chỗ diễn đạt còn rối thêm ví dụ cho dễ hiểu hơn rồi tranh thủ tập nói thử một lượt để xem phần nào còn dài quá phần nào còn thiếu ý cần bổ sung
+Khoi_000002	Khoi	audio/dev/Khoi/Khoi_000002.wav	ừ chiều nay tôi có cuộc họp lúc ba giờ nên chắc phải chuẩn bị tài liệu trước bạn nhớ gửi giúp tôi file báo cáo bản cập nhật mới nhất qua email để tôi xem lại cho chắc nhé
+Quan_000002	Quan	audio/dev/Quan/Quan_000002.wav	dạo này công việc bận rộn thật sự hôm nào cũng phải làm thêm giờ đến tận tối mịt mới được về nhà ăn vội bát cơm rồi lại ngồi vào bàn làm tiếp báo cáo cho ngày mai
+Trung_000002	Trung	audio/dev/Trung/Trung_000002.wav	hôm nay tôi đang cố gắng sắp xếp tài liệu cho gọn để cả nhóm dễ theo dõi nên tôi phải nhờ thêm một người hỗ trợ cho nhanh do vậy khi nào rảnh bạn xem giúp tôi danh sách câu đọc còn thiếu để tôi bổ sung ngày cần ghi nhớ là ngày mười tám tháng mười một năm hai nghìn không trăm hai mươi tư làm như vậy thì dữ liệu tạo ra sẽ sạch và hữu ích hơn cho mô hình

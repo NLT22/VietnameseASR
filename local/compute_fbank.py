@@ -33,7 +33,12 @@ def get_args():
     return parser.parse_args()
 
 
-def filter_cuts(cut_set: CutSet, sp: spm.SentencePieceProcessor, min_duration: float, max_duration: float) -> CutSet:
+def filter_cuts(
+    cut_set: CutSet,
+    sp: spm.SentencePieceProcessor,
+    min_duration: float,
+    max_duration: float,
+) -> CutSet:
     def keep(c):
         if c.duration < min_duration or c.duration > max_duration:
             return False
@@ -41,10 +46,6 @@ def filter_cuts(cut_set: CutSet, sp: spm.SentencePieceProcessor, min_duration: f
             return False
         text = c.supervisions[0].text.strip()
         if not text:
-            return False
-        T = ((c.num_frames - 7) // 2 + 1) // 2
-        tokens = sp.encode(text, out_type=str)
-        if (T - 2) < len(tokens):
             return False
         return True
 
