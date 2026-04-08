@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import random
 import argparse
 import csv
 import math
@@ -75,6 +76,19 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=default_output_root,
         help="Output corpus root. Default: directory containing this script",
+    )
+
+    parser.add_argument(
+    "--shuffle-before-split",
+    action="store_true",
+    help="Shuffle (audio, text) pairs before splitting train/dev/test.",
+)
+
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help="Random seed for shuffling.",
     )
 
     # preprocessing
@@ -372,8 +386,16 @@ def build_rows_for_pack(
     rows_by_split: Dict[str, List[Dict[str, str]]] = {"train": [], "dev": [], "test": []}
     speaker_counts = {"train": 0, "dev": 0, "test": 0}
 
-    split_names = make_split_names(len(pack.audio_files), train_ratio, dev_ratio)
-    for idx, (src_audio, text, split) in enumerate(zip(pack.audio_files, pack.texts, split_names), start=1):
+    pairs = list(zip(pack.audio_files, pack.texts))
+
+    # Shuffle nếu bật option
+    if getattr(pack, "shuffle", False):
+        rng = random.Random(pack.seed)
+        rng.shuffle(pairs)
+
+    split_names = make_split_names(len(pairs), train_ratio, dev_ratio)
+
+    for idx, ((src_audio, text), split) in enumerate(zip(pairs, split_names), start=1):
         utt_id = f"{pack.speaker}_{idx:06d}"
         dst_wav = audio_root / split / pack.speaker / f"{utt_id}.wav"
 
@@ -414,6 +436,9 @@ def run_single_mode(args: argparse.Namespace, skip_empty_lines: bool) -> None:
         audio_files=audio_files,
         texts=texts,
     )
+
+    pack.shuffle = args.shuffle_before_split
+    pack.seed = args.seed
 
     audio_root, transcripts_root = safe_prepare_output_root(args.output_root, args.overwrite)
     rows_by_split, speaker_counts = build_rows_for_pack(
@@ -470,6 +495,10 @@ def run_auto_mode(args: argparse.Namespace, skip_empty_lines: bool) -> None:
     total_files = 0
 
     for pack in packs:
+        
+        pack.shuffle = args.shuffle_before_split
+        pack.seed = args.seed
+
         speaker_rows, speaker_counts = build_rows_for_pack(
             pack=pack,
             output_root=args.output_root,

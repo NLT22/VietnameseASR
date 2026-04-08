@@ -1,45 +1,328 @@
 utt_id	speaker	audio_path	text
-Dung_000001	Dung	audio/train/Dung/Dung_000001.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan01	Dung	audio/train_aug_musan/Dung/Dung_000001_musan01.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan02	Dung	audio/train_aug_musan/Dung/Dung_000001_musan02.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan03	Dung	audio/train_aug_musan/Dung/Dung_000001_musan03.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan04	Dung	audio/train_aug_musan/Dung/Dung_000001_musan04.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan05	Dung	audio/train_aug_musan/Dung/Dung_000001_musan05.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan06	Dung	audio/train_aug_musan/Dung/Dung_000001_musan06.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan07	Dung	audio/train_aug_musan/Dung/Dung_000001_musan07.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan08	Dung	audio/train_aug_musan/Dung/Dung_000001_musan08.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan09	Dung	audio/train_aug_musan/Dung/Dung_000001_musan09.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Dung_000001_musan10	Dung	audio/train_aug_musan/Dung/Dung_000001_musan10.wav	sáng nay tôi dậy sớm hơn mọi hôm một chút ngồi bên cửa sổ nghe tiếng xe ngoài đường còn thưa vừa uống ngụm trà ấm vừa nghĩ xem hôm nay nên làm việc gì trước việc gì để sau để đến tối nhìn lại không thấy cả ngày trôi đi mà chẳng hoàn thành được mấy
-Khoi_000001	Khoi	audio/train/Khoi/Khoi_000001.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan01	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan01.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan02	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan02.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan03	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan03.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan04	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan04.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan05	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan05.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan06	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan06.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan07	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan07.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan08	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan08.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan09	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan09.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Khoi_000001_musan10	Khoi	audio/train_aug_musan/Khoi/Khoi_000001_musan10.wav	hôm nay trời hơi oi nên tôi định ra ngoài sớm một chút để mua đồ ăn sáng tiện thể ghé qua cửa hàng gần nhà hỏi xem họ có bán loại bánh mì mới mà tuần trước tôi thấy quảng cáo không
-Quan_000001	Quan	audio/train/Quan/Quan_000001.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan01	Quan	audio/train_aug_musan/Quan/Quan_000001_musan01.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan02	Quan	audio/train_aug_musan/Quan/Quan_000001_musan02.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan03	Quan	audio/train_aug_musan/Quan/Quan_000001_musan03.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan04	Quan	audio/train_aug_musan/Quan/Quan_000001_musan04.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan05	Quan	audio/train_aug_musan/Quan/Quan_000001_musan05.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan06	Quan	audio/train_aug_musan/Quan/Quan_000001_musan06.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan07	Quan	audio/train_aug_musan/Quan/Quan_000001_musan07.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan08	Quan	audio/train_aug_musan/Quan/Quan_000001_musan08.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan09	Quan	audio/train_aug_musan/Quan/Quan_000001_musan09.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Quan_000001_musan10	Quan	audio/train_aug_musan/Quan/Quan_000001_musan10.wav	hôm nay trời mưa to quá nhỉ sáng nay lúc đi làm thì đường ngập hết cả lên làm tôi phải vòng qua đường khác xa hơn cả chục cây số mới tới được công ty đấy
-Trung_000001	Trung	audio/train/Trung/Trung_000001.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan01	Trung	audio/train_aug_musan/Trung/Trung_000001_musan01.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan02	Trung	audio/train_aug_musan/Trung/Trung_000001_musan02.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan03	Trung	audio/train_aug_musan/Trung/Trung_000001_musan03.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan04	Trung	audio/train_aug_musan/Trung/Trung_000001_musan04.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan05	Trung	audio/train_aug_musan/Trung/Trung_000001_musan05.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan06	Trung	audio/train_aug_musan/Trung/Trung_000001_musan06.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan07	Trung	audio/train_aug_musan/Trung/Trung_000001_musan07.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan08	Trung	audio/train_aug_musan/Trung/Trung_000001_musan08.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan09	Trung	audio/train_aug_musan/Trung/Trung_000001_musan09.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
-Trung_000001_musan10	Trung	audio/train_aug_musan/Trung/Trung_000001_musan10.wav	thật ra thì hôm nay chị bán hàng đang xem lại thông tin đơn hàng để tránh nhập sai địa chỉ vì vậy tôi muốn kiểm tra lại giá và phí vận chuyển sau cùng có những lúc tôi phải tính rất kỹ vì tổng chi phí phát sinh cao hơn dự kiến ban đầu chi phí dự kiến vào khoảng ba trăm hai mươi nghìn đồng hy vọng là sau vài lần thử nghiệm kết quả sẽ ổn định hơn trước
+Dung_000001	Dung	audio/train/Dung/Dung_000001.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000002	Dung	audio/train/Dung/Dung_000002.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000003	Dung	audio/train/Dung/Dung_000003.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000004	Dung	audio/train/Dung/Dung_000004.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000005	Dung	audio/train/Dung/Dung_000005.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000006	Dung	audio/train/Dung/Dung_000006.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000007	Dung	audio/train/Dung/Dung_000007.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000008	Dung	audio/train/Dung/Dung_000008.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000009	Dung	audio/train/Dung/Dung_000009.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000010	Dung	audio/train/Dung/Dung_000010.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000011	Dung	audio/train/Dung/Dung_000011.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000012	Dung	audio/train/Dung/Dung_000012.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000013	Dung	audio/train/Dung/Dung_000013.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000014	Dung	audio/train/Dung/Dung_000014.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000015	Dung	audio/train/Dung/Dung_000015.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000016	Dung	audio/train/Dung/Dung_000016.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000017	Dung	audio/train/Dung/Dung_000017.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000018	Dung	audio/train/Dung/Dung_000018.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000019	Dung	audio/train/Dung/Dung_000019.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000020	Dung	audio/train/Dung/Dung_000020.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000021	Dung	audio/train/Dung/Dung_000021.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000022	Dung	audio/train/Dung/Dung_000022.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000023	Dung	audio/train/Dung/Dung_000023.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000024	Dung	audio/train/Dung/Dung_000024.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000025	Dung	audio/train/Dung/Dung_000025.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000026	Dung	audio/train/Dung/Dung_000026.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000027	Dung	audio/train/Dung/Dung_000027.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000028	Dung	audio/train/Dung/Dung_000028.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000029	Dung	audio/train/Dung/Dung_000029.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000030	Dung	audio/train/Dung/Dung_000030.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000031	Dung	audio/train/Dung/Dung_000031.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000032	Dung	audio/train/Dung/Dung_000032.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000033	Dung	audio/train/Dung/Dung_000033.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000034	Dung	audio/train/Dung/Dung_000034.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000035	Dung	audio/train/Dung/Dung_000035.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000036	Dung	audio/train/Dung/Dung_000036.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000037	Dung	audio/train/Dung/Dung_000037.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000038	Dung	audio/train/Dung/Dung_000038.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000039	Dung	audio/train/Dung/Dung_000039.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000040	Dung	audio/train/Dung/Dung_000040.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000041	Dung	audio/train/Dung/Dung_000041.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000042	Dung	audio/train/Dung/Dung_000042.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000043	Dung	audio/train/Dung/Dung_000043.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000044	Dung	audio/train/Dung/Dung_000044.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000045	Dung	audio/train/Dung/Dung_000045.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000046	Dung	audio/train/Dung/Dung_000046.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000047	Dung	audio/train/Dung/Dung_000047.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000048	Dung	audio/train/Dung/Dung_000048.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000049	Dung	audio/train/Dung/Dung_000049.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000050	Dung	audio/train/Dung/Dung_000050.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000051	Dung	audio/train/Dung/Dung_000051.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000052	Dung	audio/train/Dung/Dung_000052.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000053	Dung	audio/train/Dung/Dung_000053.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000054	Dung	audio/train/Dung/Dung_000054.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000055	Dung	audio/train/Dung/Dung_000055.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000056	Dung	audio/train/Dung/Dung_000056.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000057	Dung	audio/train/Dung/Dung_000057.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000058	Dung	audio/train/Dung/Dung_000058.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000059	Dung	audio/train/Dung/Dung_000059.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000060	Dung	audio/train/Dung/Dung_000060.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000061	Dung	audio/train/Dung/Dung_000061.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000062	Dung	audio/train/Dung/Dung_000062.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000063	Dung	audio/train/Dung/Dung_000063.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000064	Dung	audio/train/Dung/Dung_000064.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000065	Dung	audio/train/Dung/Dung_000065.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000066	Dung	audio/train/Dung/Dung_000066.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000067	Dung	audio/train/Dung/Dung_000067.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000068	Dung	audio/train/Dung/Dung_000068.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000069	Dung	audio/train/Dung/Dung_000069.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000070	Dung	audio/train/Dung/Dung_000070.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000071	Dung	audio/train/Dung/Dung_000071.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000072	Dung	audio/train/Dung/Dung_000072.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000073	Dung	audio/train/Dung/Dung_000073.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000074	Dung	audio/train/Dung/Dung_000074.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000075	Dung	audio/train/Dung/Dung_000075.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000076	Dung	audio/train/Dung/Dung_000076.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000077	Dung	audio/train/Dung/Dung_000077.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000078	Dung	audio/train/Dung/Dung_000078.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Dung_000079	Dung	audio/train/Dung/Dung_000079.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Dung_000080	Dung	audio/train/Dung/Dung_000080.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Dung_000081	Dung	audio/train/Dung/Dung_000081.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000001	Khoi	audio/train/Khoi/Khoi_000001.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000002	Khoi	audio/train/Khoi/Khoi_000002.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000003	Khoi	audio/train/Khoi/Khoi_000003.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000004	Khoi	audio/train/Khoi/Khoi_000004.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000005	Khoi	audio/train/Khoi/Khoi_000005.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000006	Khoi	audio/train/Khoi/Khoi_000006.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000007	Khoi	audio/train/Khoi/Khoi_000007.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000008	Khoi	audio/train/Khoi/Khoi_000008.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000009	Khoi	audio/train/Khoi/Khoi_000009.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000010	Khoi	audio/train/Khoi/Khoi_000010.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000011	Khoi	audio/train/Khoi/Khoi_000011.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000012	Khoi	audio/train/Khoi/Khoi_000012.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000013	Khoi	audio/train/Khoi/Khoi_000013.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000014	Khoi	audio/train/Khoi/Khoi_000014.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000015	Khoi	audio/train/Khoi/Khoi_000015.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000016	Khoi	audio/train/Khoi/Khoi_000016.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000017	Khoi	audio/train/Khoi/Khoi_000017.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000018	Khoi	audio/train/Khoi/Khoi_000018.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000019	Khoi	audio/train/Khoi/Khoi_000019.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000020	Khoi	audio/train/Khoi/Khoi_000020.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000021	Khoi	audio/train/Khoi/Khoi_000021.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000022	Khoi	audio/train/Khoi/Khoi_000022.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000023	Khoi	audio/train/Khoi/Khoi_000023.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000024	Khoi	audio/train/Khoi/Khoi_000024.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000025	Khoi	audio/train/Khoi/Khoi_000025.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000026	Khoi	audio/train/Khoi/Khoi_000026.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000027	Khoi	audio/train/Khoi/Khoi_000027.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000028	Khoi	audio/train/Khoi/Khoi_000028.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000029	Khoi	audio/train/Khoi/Khoi_000029.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000030	Khoi	audio/train/Khoi/Khoi_000030.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000031	Khoi	audio/train/Khoi/Khoi_000031.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000032	Khoi	audio/train/Khoi/Khoi_000032.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000033	Khoi	audio/train/Khoi/Khoi_000033.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000034	Khoi	audio/train/Khoi/Khoi_000034.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000035	Khoi	audio/train/Khoi/Khoi_000035.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000036	Khoi	audio/train/Khoi/Khoi_000036.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000037	Khoi	audio/train/Khoi/Khoi_000037.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000038	Khoi	audio/train/Khoi/Khoi_000038.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000039	Khoi	audio/train/Khoi/Khoi_000039.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000040	Khoi	audio/train/Khoi/Khoi_000040.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000041	Khoi	audio/train/Khoi/Khoi_000041.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000042	Khoi	audio/train/Khoi/Khoi_000042.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000043	Khoi	audio/train/Khoi/Khoi_000043.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000044	Khoi	audio/train/Khoi/Khoi_000044.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000045	Khoi	audio/train/Khoi/Khoi_000045.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000046	Khoi	audio/train/Khoi/Khoi_000046.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000047	Khoi	audio/train/Khoi/Khoi_000047.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000048	Khoi	audio/train/Khoi/Khoi_000048.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000049	Khoi	audio/train/Khoi/Khoi_000049.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000050	Khoi	audio/train/Khoi/Khoi_000050.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000051	Khoi	audio/train/Khoi/Khoi_000051.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000052	Khoi	audio/train/Khoi/Khoi_000052.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000053	Khoi	audio/train/Khoi/Khoi_000053.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000054	Khoi	audio/train/Khoi/Khoi_000054.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000055	Khoi	audio/train/Khoi/Khoi_000055.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000056	Khoi	audio/train/Khoi/Khoi_000056.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000057	Khoi	audio/train/Khoi/Khoi_000057.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000058	Khoi	audio/train/Khoi/Khoi_000058.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000059	Khoi	audio/train/Khoi/Khoi_000059.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000060	Khoi	audio/train/Khoi/Khoi_000060.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000061	Khoi	audio/train/Khoi/Khoi_000061.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000062	Khoi	audio/train/Khoi/Khoi_000062.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000063	Khoi	audio/train/Khoi/Khoi_000063.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000064	Khoi	audio/train/Khoi/Khoi_000064.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000065	Khoi	audio/train/Khoi/Khoi_000065.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000066	Khoi	audio/train/Khoi/Khoi_000066.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000067	Khoi	audio/train/Khoi/Khoi_000067.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000068	Khoi	audio/train/Khoi/Khoi_000068.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000069	Khoi	audio/train/Khoi/Khoi_000069.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000070	Khoi	audio/train/Khoi/Khoi_000070.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000071	Khoi	audio/train/Khoi/Khoi_000071.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000072	Khoi	audio/train/Khoi/Khoi_000072.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000073	Khoi	audio/train/Khoi/Khoi_000073.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000074	Khoi	audio/train/Khoi/Khoi_000074.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000075	Khoi	audio/train/Khoi/Khoi_000075.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000076	Khoi	audio/train/Khoi/Khoi_000076.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000077	Khoi	audio/train/Khoi/Khoi_000077.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000078	Khoi	audio/train/Khoi/Khoi_000078.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000079	Khoi	audio/train/Khoi/Khoi_000079.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000080	Khoi	audio/train/Khoi/Khoi_000080.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000081	Khoi	audio/train/Khoi/Khoi_000081.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000082	Khoi	audio/train/Khoi/Khoi_000082.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000083	Khoi	audio/train/Khoi/Khoi_000083.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000084	Khoi	audio/train/Khoi/Khoi_000084.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000085	Khoi	audio/train/Khoi/Khoi_000085.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000086	Khoi	audio/train/Khoi/Khoi_000086.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000087	Khoi	audio/train/Khoi/Khoi_000087.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000088	Khoi	audio/train/Khoi/Khoi_000088.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000089	Khoi	audio/train/Khoi/Khoi_000089.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000090	Khoi	audio/train/Khoi/Khoi_000090.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Khoi_000091	Khoi	audio/train/Khoi/Khoi_000091.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Khoi_000092	Khoi	audio/train/Khoi/Khoi_000092.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Khoi_000093	Khoi	audio/train/Khoi/Khoi_000093.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000001	Quan	audio/train/Quan/Quan_000001.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000002	Quan	audio/train/Quan/Quan_000002.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000003	Quan	audio/train/Quan/Quan_000003.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000004	Quan	audio/train/Quan/Quan_000004.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000005	Quan	audio/train/Quan/Quan_000005.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000006	Quan	audio/train/Quan/Quan_000006.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000007	Quan	audio/train/Quan/Quan_000007.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000008	Quan	audio/train/Quan/Quan_000008.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000009	Quan	audio/train/Quan/Quan_000009.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000010	Quan	audio/train/Quan/Quan_000010.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000011	Quan	audio/train/Quan/Quan_000011.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000012	Quan	audio/train/Quan/Quan_000012.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000013	Quan	audio/train/Quan/Quan_000013.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000014	Quan	audio/train/Quan/Quan_000014.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000015	Quan	audio/train/Quan/Quan_000015.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000016	Quan	audio/train/Quan/Quan_000016.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000017	Quan	audio/train/Quan/Quan_000017.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000018	Quan	audio/train/Quan/Quan_000018.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000019	Quan	audio/train/Quan/Quan_000019.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000020	Quan	audio/train/Quan/Quan_000020.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000021	Quan	audio/train/Quan/Quan_000021.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000022	Quan	audio/train/Quan/Quan_000022.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000023	Quan	audio/train/Quan/Quan_000023.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000024	Quan	audio/train/Quan/Quan_000024.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000025	Quan	audio/train/Quan/Quan_000025.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000026	Quan	audio/train/Quan/Quan_000026.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000027	Quan	audio/train/Quan/Quan_000027.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000028	Quan	audio/train/Quan/Quan_000028.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000029	Quan	audio/train/Quan/Quan_000029.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000030	Quan	audio/train/Quan/Quan_000030.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000031	Quan	audio/train/Quan/Quan_000031.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000032	Quan	audio/train/Quan/Quan_000032.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000033	Quan	audio/train/Quan/Quan_000033.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000034	Quan	audio/train/Quan/Quan_000034.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000035	Quan	audio/train/Quan/Quan_000035.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000036	Quan	audio/train/Quan/Quan_000036.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000037	Quan	audio/train/Quan/Quan_000037.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000038	Quan	audio/train/Quan/Quan_000038.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000039	Quan	audio/train/Quan/Quan_000039.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000040	Quan	audio/train/Quan/Quan_000040.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000041	Quan	audio/train/Quan/Quan_000041.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000042	Quan	audio/train/Quan/Quan_000042.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000043	Quan	audio/train/Quan/Quan_000043.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000044	Quan	audio/train/Quan/Quan_000044.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000045	Quan	audio/train/Quan/Quan_000045.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000046	Quan	audio/train/Quan/Quan_000046.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000047	Quan	audio/train/Quan/Quan_000047.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000048	Quan	audio/train/Quan/Quan_000048.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000049	Quan	audio/train/Quan/Quan_000049.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000050	Quan	audio/train/Quan/Quan_000050.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000051	Quan	audio/train/Quan/Quan_000051.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000052	Quan	audio/train/Quan/Quan_000052.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000053	Quan	audio/train/Quan/Quan_000053.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000054	Quan	audio/train/Quan/Quan_000054.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000055	Quan	audio/train/Quan/Quan_000055.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000056	Quan	audio/train/Quan/Quan_000056.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000057	Quan	audio/train/Quan/Quan_000057.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000058	Quan	audio/train/Quan/Quan_000058.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000059	Quan	audio/train/Quan/Quan_000059.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000060	Quan	audio/train/Quan/Quan_000060.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000061	Quan	audio/train/Quan/Quan_000061.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000062	Quan	audio/train/Quan/Quan_000062.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000063	Quan	audio/train/Quan/Quan_000063.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000064	Quan	audio/train/Quan/Quan_000064.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000065	Quan	audio/train/Quan/Quan_000065.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000066	Quan	audio/train/Quan/Quan_000066.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000067	Quan	audio/train/Quan/Quan_000067.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000068	Quan	audio/train/Quan/Quan_000068.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000069	Quan	audio/train/Quan/Quan_000069.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Quan_000070	Quan	audio/train/Quan/Quan_000070.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Quan_000071	Quan	audio/train/Quan/Quan_000071.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Quan_000072	Quan	audio/train/Quan/Quan_000072.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000001	Trung	audio/train/Trung/Trung_000001.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000002	Trung	audio/train/Trung/Trung_000002.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000003	Trung	audio/train/Trung/Trung_000003.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000004	Trung	audio/train/Trung/Trung_000004.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000005	Trung	audio/train/Trung/Trung_000005.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000006	Trung	audio/train/Trung/Trung_000006.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000007	Trung	audio/train/Trung/Trung_000007.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000008	Trung	audio/train/Trung/Trung_000008.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000009	Trung	audio/train/Trung/Trung_000009.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000010	Trung	audio/train/Trung/Trung_000010.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000011	Trung	audio/train/Trung/Trung_000011.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000012	Trung	audio/train/Trung/Trung_000012.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000013	Trung	audio/train/Trung/Trung_000013.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000014	Trung	audio/train/Trung/Trung_000014.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000015	Trung	audio/train/Trung/Trung_000015.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000016	Trung	audio/train/Trung/Trung_000016.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000017	Trung	audio/train/Trung/Trung_000017.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000018	Trung	audio/train/Trung/Trung_000018.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000019	Trung	audio/train/Trung/Trung_000019.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000020	Trung	audio/train/Trung/Trung_000020.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000021	Trung	audio/train/Trung/Trung_000021.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000022	Trung	audio/train/Trung/Trung_000022.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000023	Trung	audio/train/Trung/Trung_000023.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000024	Trung	audio/train/Trung/Trung_000024.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000025	Trung	audio/train/Trung/Trung_000025.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000026	Trung	audio/train/Trung/Trung_000026.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000027	Trung	audio/train/Trung/Trung_000027.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000028	Trung	audio/train/Trung/Trung_000028.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000029	Trung	audio/train/Trung/Trung_000029.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000030	Trung	audio/train/Trung/Trung_000030.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000031	Trung	audio/train/Trung/Trung_000031.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000032	Trung	audio/train/Trung/Trung_000032.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000033	Trung	audio/train/Trung/Trung_000033.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000034	Trung	audio/train/Trung/Trung_000034.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000035	Trung	audio/train/Trung/Trung_000035.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000036	Trung	audio/train/Trung/Trung_000036.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000037	Trung	audio/train/Trung/Trung_000037.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000038	Trung	audio/train/Trung/Trung_000038.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000039	Trung	audio/train/Trung/Trung_000039.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000040	Trung	audio/train/Trung/Trung_000040.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000041	Trung	audio/train/Trung/Trung_000041.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000042	Trung	audio/train/Trung/Trung_000042.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000043	Trung	audio/train/Trung/Trung_000043.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000044	Trung	audio/train/Trung/Trung_000044.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000045	Trung	audio/train/Trung/Trung_000045.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000046	Trung	audio/train/Trung/Trung_000046.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000047	Trung	audio/train/Trung/Trung_000047.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000048	Trung	audio/train/Trung/Trung_000048.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000049	Trung	audio/train/Trung/Trung_000049.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000050	Trung	audio/train/Trung/Trung_000050.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000051	Trung	audio/train/Trung/Trung_000051.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000052	Trung	audio/train/Trung/Trung_000052.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000053	Trung	audio/train/Trung/Trung_000053.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000054	Trung	audio/train/Trung/Trung_000054.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000055	Trung	audio/train/Trung/Trung_000055.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000056	Trung	audio/train/Trung/Trung_000056.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000057	Trung	audio/train/Trung/Trung_000057.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000058	Trung	audio/train/Trung/Trung_000058.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000059	Trung	audio/train/Trung/Trung_000059.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000060	Trung	audio/train/Trung/Trung_000060.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000061	Trung	audio/train/Trung/Trung_000061.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000062	Trung	audio/train/Trung/Trung_000062.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000063	Trung	audio/train/Trung/Trung_000063.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000064	Trung	audio/train/Trung/Trung_000064.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000065	Trung	audio/train/Trung/Trung_000065.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000066	Trung	audio/train/Trung/Trung_000066.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000067	Trung	audio/train/Trung/Trung_000067.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000068	Trung	audio/train/Trung/Trung_000068.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000069	Trung	audio/train/Trung/Trung_000069.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000070	Trung	audio/train/Trung/Trung_000070.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000071	Trung	audio/train/Trung/Trung_000071.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000072	Trung	audio/train/Trung/Trung_000072.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000073	Trung	audio/train/Trung/Trung_000073.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000074	Trung	audio/train/Trung/Trung_000074.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000075	Trung	audio/train/Trung/Trung_000075.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000076	Trung	audio/train/Trung/Trung_000076.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói
+Trung_000077	Trung	audio/train/Trung/Trung_000077.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000078	Trung	audio/train/Trung/Trung_000078.wav	tôi ghi âm dữ liệu thử nghiệm vào lúc tám giờ ba mươi phút trong phòng yên tĩnh để kiểm tra hệ thống nhận dạng tiếng nói hôm nay
+Trung_000079	Trung	audio/train/Trung/Trung_000079.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000080	Trung	audio/train/Trung/Trung_000080.wav	hôm nay tôi kiểm tra hệ thống nhận dạng tiếng nói bằng dữ liệu thử nghiệm và ghi âm trong phòng yên tĩnh vào lúc tám giờ ba mươi phút
+Trung_000081	Trung	audio/train/Trung/Trung_000081.wav	trong phòng yên tĩnh vào lúc tám giờ ba mươi phút hôm nay tôi ghi âm dữ liệu thử nghiệm để kiểm tra hệ thống nhận dạng tiếng nói

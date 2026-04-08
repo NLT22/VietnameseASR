@@ -5,8 +5,10 @@ stage=0
 stop_stage=100
 
 corpus_root="$PWD"
-exp_dir="$PWD/ASR/zipformer/exp_100bpe_0.02"
-bpe_dir="$PWD/data/lang_bpe_100"
+
+vocab_size=100
+bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
+exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}"
 
 num_epochs=30
 world_size=1
@@ -21,9 +23,8 @@ num_buckets=4
 perturb_speed=0
 musan_dir="$PWD/musan"
 
-# Offline MUSAN augmentation for train split
 offline_musan_aug=1
-copies_per_utt=10
+copies_per_utt=0
 snr_min=10
 snr_max=20
 
@@ -35,6 +36,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --stage) stage="$2"; shift 2 ;;
     --stop_stage|--stop-stage|-stop_stage|-stop-stage) stop_stage="$2"; shift 2 ;;
+    --vocab_size|--vocab-size) vocab_size="$2"; shift 2 ;;
     --num_epochs|--num-epochs) num_epochs="$2"; shift 2 ;;
     --world_size|--world-size) world_size="$2"; shift 2 ;;
     --max_duration|--max-duration) max_duration="$2"; shift 2 ;;
@@ -55,15 +57,19 @@ while [[ $# -gt 0 ]]; do
     --avg) avg="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME] [--use_averaged_model 0|1] [--avg N]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME] [--use_averaged_model 0|1] [--avg N]" >&2
       exit 1
       ;;
   esac
 done
 
+bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
+exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}"
+
 echo "corpus_root=$corpus_root"
-echo "exp_dir=$exp_dir"
+echo "vocab_size=$vocab_size"
 echo "bpe_dir=$bpe_dir"
+echo "exp_dir=$exp_dir"
 echo "num_epochs=$num_epochs"
 echo "world_size=$world_size"
 echo "max_duration=$max_duration"
@@ -95,7 +101,13 @@ if [ "$stage" -le 1 ] && [ "$stop_stage" -ge 1 ]; then
       echo "ERROR: --offline_musan_aug 1 requires --musan_dir /path/to/musan" >&2
       exit 1
     fi
-    python3 augment_train_with_musan.py       --corpus-root .       --musan-dir "$musan_dir"       --copies-per-utt "$copies_per_utt"       --snr-min "$snr_min"       --snr-max "$snr_max"       --overwrite
+    python3 augment_train_with_musan.py \
+      --corpus-root . \
+      --musan-dir "$musan_dir" \
+      --copies-per-utt "$copies_per_utt" \
+      --snr-min "$snr_min" \
+      --snr-max "$snr_max" \
+      --overwrite
   else
     echo "Skip offline MUSAN augmentation because offline_musan_aug=0"
   fi
@@ -121,7 +133,7 @@ fi
 
 if [ "$stage" -le 5 ] && [ "$stop_stage" -ge 5 ]; then
   echo "Stage 5: Train BPE"
-  python3 local/train_bpe_model.py
+  python3 local/train_bpe_model.py --vocab-size "$vocab_size"
 fi
 
 if [ "$stage" -le 6 ] && [ "$stop_stage" -ge 6 ]; then
@@ -145,8 +157,12 @@ if [ "$stage" -le 8 ] && [ "$stop_stage" -ge 8 ]; then
       echo "ERROR: --enable_musan 1 requires --musan_dir /path/to/musan" >&2
       exit 1
     fi
-    python3 local/prepare_musan_manifest.py       --musan-dir "${musan_dir}"       --output-manifest manifests/musan_recordings.jsonl.gz
-    python3 local/compute_fbank_musan.py       --manifest manifests/musan_recordings.jsonl.gz       --output-dir fbank
+    python3 local/prepare_musan_manifest.py \
+      --musan-dir "${musan_dir}" \
+      --output-manifest manifests/musan_recordings.jsonl.gz
+    python3 local/compute_fbank_musan.py \
+      --manifest manifests/musan_recordings.jsonl.gz \
+      --output-dir fbank
   else
     echo "Skip online MUSAN preparation because enable_musan=0"
   fi
@@ -164,17 +180,40 @@ fi
 
 if [ "$stage" -le 11 ] && [ "$stop_stage" -ge 11 ]; then
   echo "Stage 11: Tokenize smoke test"
-  python3 local/tokenize_test.py
+  python3 local/tokenize_test.py \
+  --vocab-size "${vocab_size}" \
+  --text "hôm nay tôi học nhận dạng tiếng nói"
 fi
 
 if [ "$stage" -le 12 ] && [ "$stop_stage" -ge 12 ]; then
   echo "Stage 12: Train"
-  python3 ASR/zipformer/train.py     --world-size "${world_size}"     --num-epochs "${num_epochs}"     --start-epoch 1     --use-fp16 "${use_fp16}"     --manifest-dir ./fbank     --base-lr "${base_lr}"     --exp-dir "${exp_dir}"     --max-duration "${max_duration}"     --bpe-model "${bpe_dir}/bpe.model"     --enable-musan "${enable_musan}"     --enable-spec-aug "${enable_spec_aug}"     --bucketing-sampler "${bucketing_sampler}"     --num-buckets "${num_buckets}"
+  python3 ASR/zipformer/train.py \
+    --world-size "${world_size}" \
+    --num-epochs "${num_epochs}" \
+    --start-epoch 1 \
+    --use-fp16 "${use_fp16}" \
+    --manifest-dir ./fbank \
+    --base-lr "${base_lr}" \
+    --exp-dir "${exp_dir}" \
+    --max-duration "${max_duration}" \
+    --bpe-model "${bpe_dir}/bpe.model" \
+    --enable-musan "${enable_musan}" \
+    --enable-spec-aug "${enable_spec_aug}" \
+    --bucketing-sampler "${bucketing_sampler}" \
+    --num-buckets "${num_buckets}"
 fi
 
 if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ]; then
   echo "Stage 13: Decode"
   epoch="${num_epochs}"
-  python3 ASR/zipformer/decode.py     --epoch "${epoch}"     --avg "${avg}"     --use-averaged-model "${use_averaged_model}"     --exp-dir "${exp_dir}"     --manifest-dir ./fbank     --bpe-model "${bpe_dir}/bpe.model"     --max-duration "${max_duration}"     --decoding-method "${decode_method}"     --bucketing-sampler 0
+  python3 ASR/zipformer/decode.py \
+    --epoch "${epoch}" \
+    --avg "${avg}" \
+    --use-averaged-model "${use_averaged_model}" \
+    --exp-dir "${exp_dir}" \
+    --manifest-dir ./fbank \
+    --bpe-model "${bpe_dir}/bpe.model" \
+    --max-duration "${max_duration}" \
+    --decoding-method "${decode_method}" \
+    --bucketing-sampler 0
 fi
-

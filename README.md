@@ -1,145 +1,258 @@
 # VietnameseASR / vi_asr_corpus
 
-Tài liệu này mô tả cách chuẩn bị corpus, chạy pipeline bằng `run.sh`, dùng MUSAN theo cả kiểu offline và online, xem kết quả train/decode, và mở TensorBoard.
+README này chỉ giữ phần cần thiết để biết các file chạy như nào và thứ tự dùng trong project hiện tại.
 
-## 1. Cấu trúc project
-
-Ví dụ cấu trúc thư mục:
+## 1. Cấu trúc chính
 
 ```bash
 ~/icefall/egs/vi_asr_corpus/
-├── ASR/
-│   └── zipformer/
-│       ├── train.py
-│       ├── decode.py
-│       ├── streaming_decode.py
-│       ├── asr_datamodule.py
-│       └── ...
+├── ASR/zipformer/
 ├── audio/
-│   ├── train/<speaker>/*.wav
-│   ├── dev/<speaker>/*.wav
-│   ├── test/<speaker>/*.wav
-│   └── train_aug_musan/<speaker>/*.wav
 ├── transcripts/
-│   ├── train.tsv
-│   ├── dev.tsv
-│   └── test.tsv
 ├── manifests/
 ├── manifests_fixed/
 ├── fbank/
-│   └── musan_cuts.jsonl.gz
 ├── data/
-│   └── lang_bpe_100/
-│       ├── bpe.model
-│       ├── bpe.vocab
-│       ├── tokens.txt
-│       └── words.txt
+│   └── lang_bpe_<vocab_size>/
 ├── local/
 │   ├── prepare_manifests.py
-│   ├── compute_fbank.py
 │   ├── export_text_corpus.py
 │   ├── train_bpe_model.py
 │   ├── prepare_lang_bpe.py
+│   ├── compute_fbank.py
 │   ├── validate_manifest.py
 │   ├── display_manifest_statistics.py
 │   ├── tokenize_test.py
 │   ├── prepare_musan_manifest.py
 │   └── compute_fbank_musan.py
-├── augment_train_with_musan.py
 ├── prepare_vi_asr_corpus.py
+├── augment_train_with_musan.py
 ├── run.sh
-├── .gitignore
 └── README.md
 ```
 
-## 2. Chuẩn bị corpus bằng `prepare_vi_asr_corpus.py`
+---
 
-Script hiện hỗ trợ 2 chế độ:
+## 2. `prepare_vi_asr_corpus.py`
 
-- **single-speaker mode**: truyền `--audio-dir --prompts --speaker`
-- **auto mode**: truyền `--auto`, script tự quét `dataset/`
+File này dùng để tạo `audio/` và `transcripts/`.
 
-### 2.1. Single-speaker mode
-
+### Chế độ 1: single-speaker
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
 python prepare_vi_asr_corpus.py \
-  --audio-dir /duong/dan/toi/thu_muc_audio \
+  --audio-dir /duong/dan/toi/audio \
   --prompts /duong/dan/toi/prompts.txt \
   --speaker trung \
   --overwrite
 ```
 
-### 2.2. Auto mode
-
-Giả sử cấu trúc:
-
-```bash
-~/icefall/egs/vi_asr_corpus/
-├── prepare_vi_asr_corpus.py
-├── dataset/
-│   ├── trung/
-│   │   ├── abc(1).wav
-│   │   ├── abc(2).wav
-│   │   └── script.txt
-│   ├── lan/
-│   │   ├── rec(1).m4a
-│   │   ├── rec(2).m4a
-│   │   └── prompts.txt
-│   └── minh/
-│       ├── sample1.wav
-│       ├── sample2.wav
-│       └── transcript.txt
-```
-
-chạy:
-
+### Chế độ 2: auto multi-speaker
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
-python prepare_vi_asr_corpus.py --auto --overwrite
+
+python prepare_vi_asr_corpus.py \
+  --auto \
+  --overwrite
 ```
 
-### 2.3. Text normalization
+### Shuffle trước khi split
+Nếu dữ liệu của bạn đang được ghi theo block kiểu:
 
-Hiện mặc định **normalize text luôn**. Việc normalize gồm:
+```text
+câu 1
+câu 1
+câu 1
+...
+câu 2
+...
+câu 3
+```
 
-- Unicode NFC
-- lowercase
-- bỏ dấu câu
-- gom nhiều khoảng trắng thành 1
-- bỏ dòng trống nếu có trong file prompt/script
+thì nên bật shuffle pair `(audio, text)` trước khi chia train/dev/test:
 
-Nếu muốn tắt normalize:
+```bash
+python prepare_vi_asr_corpus.py \
+  --auto \
+  --shuffle-before-split \
+  --seed 42 \
+  --overwrite
+```
+
+### Normalize text
+Mặc định đang bật normalize. Nếu muốn tắt:
 
 ```bash
 python prepare_vi_asr_corpus.py --auto --no-normalize-text --overwrite
 ```
 
-### 2.4. `--overwrite` có tác dụng gì
+---
 
-`--overwrite` hiện **an toàn**: nó chỉ xóa các phần do script quản lý trong `output-root`:
+## 3. `augment_train_with_musan.py`
 
-- `audio/`
-- `transcripts/`
-- `README_PREPARED.txt`
+File này dùng để **tạo thêm audio train mới trên disk** từ MUSAN.
 
-Nó **không xóa** các thư mục/file khác như:
+Nó sẽ:
+- đọc `transcripts/train.tsv`
+- với mỗi utterance train gốc, sinh thêm `n` bản noisy mới
+- thêm các dòng mới vào `transcripts/train.tsv`
+- lưu audio mới vào `audio/train_aug_musan/`
 
-- `ASR/`
-- `fbank/`
-- `manifests/`
-- `manifests_fixed/`
-- `data/`
-- `local/`
-- `run.sh`
-- `train.py`, `decode.py`, ...
+Ví dụ:
 
-## 3. Pipeline `run.sh`
+```bash
+cd ~/icefall/egs/vi_asr_corpus
 
-`run.sh` chạy toàn bộ pipeline theo stage.
+python augment_train_with_musan.py \
+  --corpus-root . \
+  --musan-dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
+  --copies-per-utt 3 \
+  --snr-min 10 \
+  --snr-max 20
+```
 
-### 3.1. Các stage hiện tại
+Nếu muốn làm lại từ đầu:
+
+```bash
+python augment_train_with_musan.py \
+  --corpus-root . \
+  --musan-dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
+  --copies-per-utt 3 \
+  --snr-min 10 \
+  --snr-max 20 \
+  --overwrite
+```
+
+---
+
+## 4. Các file trong `local/`
+
+### `prepare_manifests.py`
+Tạo:
+- `manifests/train_recordings.jsonl.gz`
+- `manifests/train_supervisions.jsonl.gz`
+- tương tự cho dev/test
+
+Chạy:
+```bash
+python local/prepare_manifests.py
+```
+
+### `export_text_corpus.py`
+Gộp text train để chuẩn bị train SentencePiece/BPE.
+
+Chạy:
+```bash
+python local/export_text_corpus.py
+```
+
+### `train_bpe_model.py`
+Train SentencePiece BPE.
+
+File này đã sửa để nhận `--vocab-size`, không cần đổi tay trong code nữa.
+
+Ví dụ:
+```bash
+python local/train_bpe_model.py --vocab-size 100
+```
+
+Kết quả sẽ nằm ở:
+```bash
+data/lang_bpe_100/
+```
+
+### `prepare_lang_bpe.py`
+Chuẩn bị tối thiểu `tokens.txt`, `words.txt` từ `bpe.model`.
+
+Ví dụ:
+```bash
+python local/prepare_lang_bpe.py --lang-dir data/lang_bpe_100
+```
+
+### `compute_fbank.py`
+Tạo `train_cuts.jsonl.gz`, `dev_cuts.jsonl.gz`, `test_cuts.jsonl.gz` và feature trong `fbank/`.
+
+Ví dụ:
+```bash
+python local/compute_fbank.py \
+  --bpe-model data/lang_bpe_100/bpe.model \
+  --manifest-dir manifests_fixed \
+  --output-dir fbank
+```
+
+Nếu muốn speed perturb:
+```bash
+python local/compute_fbank.py \
+  --bpe-model data/lang_bpe_100/bpe.model \
+  --manifest-dir manifests_fixed \
+  --output-dir fbank \
+  --perturb-speed
+```
+
+### `validate_manifest.py`
+Kiểm tra cut manifests có hợp lệ cho ASR không.
+
+Ví dụ:
+```bash
+python local/validate_manifest.py --all --manifest-dir fbank
+```
+
+### `display_manifest_statistics.py`
+In thống kê cut để xem số lượng câu, total duration, mean duration,...
+
+Ví dụ:
+```bash
+python local/display_manifest_statistics.py --all --manifest-dir fbank
+```
+
+### `tokenize_test.py`
+Test tokenize với đúng `vocab_size`.
+
+Ví dụ:
+```bash
+python local/tokenize_test.py --vocab-size 100
+```
+
+Hoặc:
+```bash
+python local/tokenize_test.py --vocab-size 100 --text "hôm nay tôi học nhận dạng tiếng nói"
+```
+
+### `prepare_musan_manifest.py`
+Quét thư mục MUSAN và tạo manifest recordings cho MUSAN.
+
+Ví dụ:
+```bash
+python local/prepare_musan_manifest.py \
+  --musan-dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
+  --output-manifest manifests/musan_recordings.jsonl.gz
+```
+
+### `compute_fbank_musan.py`
+Tạo `fbank/musan_cuts.jsonl.gz` để dùng MUSAN online khi train.
+
+Ví dụ:
+```bash
+python local/compute_fbank_musan.py \
+  --manifest manifests/musan_recordings.jsonl.gz \
+  --output-dir fbank
+```
+
+---
+
+## 5. `run.sh`
+
+`run.sh` hiện đã sửa để:
+- nhận `--vocab_size`
+- tự suy ra:
+  - `data/lang_bpe_<vocab_size>`
+  - `ASR/zipformer/exp_bpe<vocab_size>`
+- hỗ trợ cả:
+  - offline MUSAN augmentation
+  - online MUSAN augmentation
+
+### Các stage hiện tại
 
 - **Stage 0**: audit dataset
 - **Stage 1**: offline MUSAN augmentation cho train split
@@ -155,44 +268,11 @@ Nó **không xóa** các thư mục/file khác như:
 - **Stage 11**: tokenize smoke test
 - **Stage 12**: train
 - **Stage 13**: decode
-- **Stage 14**: in lệnh mở TensorBoard
-- **Stage 15**: in lệnh xem file kết quả
 
-### 3.2. Chạy toàn bộ
+### Các tham số chính
 
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
-bash run.sh
-```
-
-### 3.3. Chạy theo stage
-
-Chỉ chuẩn bị dữ liệu đến tokenize smoke test:
-
-```bash
-cd ~/icefall/egs/vi_asr_corpus
-bash run.sh --stage 0 --stop_stage 11
-```
-
-Chỉ train:
-
-```bash
-cd ~/icefall/egs/vi_asr_corpus
-bash run.sh --stage 12 --stop_stage 12
-```
-
-Chỉ decode:
-
-```bash
-cd ~/icefall/egs/vi_asr_corpus
-bash run.sh --stage 13 --stop_stage 13
-```
-
-## 4. Các tham số của `run.sh`
-
-`run.sh` hiện hỗ trợ các tham số chính sau:
-
-```bash
+--vocab_size
 --num_epochs
 --world_size
 --max_duration
@@ -213,276 +293,86 @@ bash run.sh --stage 13 --stop_stage 13
 --avg
 ```
 
-## 5. MUSAN: offline và online khác nhau thế nào
+---
 
-## 5.1. Offline MUSAN augmentation
+## 6. Ví dụ chạy
 
-Đây là kiểu:
-- lấy mỗi file trong `train.tsv`
-- sinh thêm `n` file noisy mới trên disk
-- append thêm các dòng mới vào `transcripts/train.tsv`
-
-Bật bằng:
-
-```bash
---offline_musan_aug 1
---musan_dir /path/to/musan
---copies_per_utt 2
---snr_min 10
---snr_max 20
-```
-
-Ví dụ:
-
+### 6.1. Chạy data prep cơ bản với vocab size 100
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
 bash run.sh \
-  --stage 1 --stop_stage 1 \
-  --offline_musan_aug 1 \
-  --musan_dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
-  --copies_per_utt 3 \
-  --snr_min 10 \
-  --snr_max 20
+  --vocab_size 100 \
+  --stage 0 --stop_stage 11
 ```
 
-### Kết quả
-- tạo audio mới trong `audio/train_aug_musan/`
-- thêm `utt_id` mới vào `transcripts/train.tsv`
-- transcript giữ nguyên như file gốc
-
-## 5.2. Online MUSAN augmentation
-
-Đây là kiểu:
-- không tạo file audio noisy mới trên disk
-- chỉ tạo `musan_cuts.jsonl.gz`
-- đến lúc train, `asr_datamodule.py` dùng `CutMix` để trộn noise online trong batch
-
-Bật bằng:
-
-```bash
---enable_musan 1
---musan_dir /path/to/musan
-```
-
-Ví dụ:
-
+### 6.2. Chỉ train BPE với vocab size 100
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
 bash run.sh \
-  --stage 8 --stop_stage 12 \
-  --enable_musan 1 \
-  --musan_dir /home/trung/icefall/egs/librispeech/ASR/download/musan
+  --vocab_size 100 \
+  --stage 5 --stop_stage 6
 ```
 
-## 5.3. Nên dùng kiểu nào
-
-Với dữ liệu rất ít, thứ tự thử hợp lý là:
-
-1. **baseline**: không augmentation
-2. **offline MUSAN**: để tăng số lượng dữ liệu train thực sự
-3. **online MUSAN**: để tăng đa dạng hơn khi train
-4. **SpecAugment**: bật sau cùng
-
-Với dataset nhỏ, không nên bật quá nhiều augmentation cùng lúc ngay từ đầu.
-
-## 6. Tăng cường dữ liệu hiện có
-
-### 6.1. Offline MUSAN
-Bật:
-
-```bash
---offline_musan_aug 1
-```
-
-### 6.2. Online MUSAN CutMix
-Bật:
-
-```bash
---enable_musan 1
-```
-
-Điều kiện: phải có `musan_cuts.jsonl.gz`, và `run.sh` sẽ tự chuẩn bị nếu bạn truyền `--musan_dir`.
-
-### 6.3. SpecAugment
-Bật:
-
-```bash
---enable_spec_aug 1
-```
-
-Với dataset rất nhỏ, nên để `0` khi smoke test.
-
-### 6.4. Speed perturb
-Bật:
-
-```bash
---perturb_speed 1
-```
-
-ở bước tạo cuts/fbank.
-
-### 6.5. DynamicBucketingSampler
-Bật:
-
-```bash
---bucketing_sampler 1 --num_buckets 4
-```
-
-Khuyến nghị:
-
-- dataset nhỏ: `--bucketing_sampler 0`
-- dataset lớn hơn: bật `1`
-
-## 7. Ví dụ pipeline thường dùng
-
-### 7.1. Baseline không augmentation
-
+### 6.3. Train model
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
 bash run.sh \
-  --stage 0 --stop_stage 13 \
-  --enable_musan 0 \
-  --enable_spec_aug 0 \
-  --bucketing_sampler 0
+  --vocab_size 100 \
+  --stage 12 --stop_stage 12
 ```
 
-### 7.2. Chỉ offline MUSAN augmentation
-
+### 6.4. Decode
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
 bash run.sh \
-  --stage 1 --stop_stage 13 \
+  --vocab_size 100 \
+  --stage 13 --stop_stage 13
+```
+
+### 6.5. Offline MUSAN augmentation + train
+```bash
+cd ~/icefall/egs/vi_asr_corpus
+
+bash run.sh \
+  --vocab_size 100 \
   --offline_musan_aug 1 \
   --musan_dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
   --copies_per_utt 2 \
   --snr_min 10 \
   --snr_max 20 \
   --enable_musan 0 \
-  --enable_spec_aug 0
+  --stage 1 --stop_stage 12
 ```
 
-### 7.3. Chỉ online MUSAN augmentation
-
+### 6.6. Online MUSAN augmentation + train
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
 bash run.sh \
-  --stage 0 --stop_stage 13 \
+  --vocab_size 100 \
   --enable_musan 1 \
   --musan_dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
-  --enable_spec_aug 0
+  --stage 8 --stop_stage 12
 ```
 
-### 7.4. Kết hợp cả offline và online
-
+### 6.7. Kết hợp cả offline + online MUSAN
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
 bash run.sh \
-  --stage 1 --stop_stage 13 \
+  --vocab_size 100 \
   --offline_musan_aug 1 \
   --musan_dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
   --copies_per_utt 2 \
   --snr_min 10 \
   --snr_max 20 \
   --enable_musan 1 \
-  --enable_spec_aug 0
+  --stage 1 --stop_stage 12
 ```
 
-## 8. Xem kết quả train và decode
+---
 
-### 8.1. Xem checkpoint
-
-```bash
-cd ~/icefall/egs/vi_asr_corpus
-ls ASR/zipformer
-ls ASR/zipformer/exp_100bpe_0.02
-```
-
-### 8.2. Xem file decode
-
-```bash
-cd ~/icefall/egs/vi_asr_corpus
-ls ASR/zipformer/exp_100bpe_0.02/greedy_search
-```
-
-### 8.3. Xem transcript nhận dạng
-
-```bash
-cd ~/icefall/egs/vi_asr_corpus
-cat ASR/zipformer/exp_100bpe_0.02/greedy_search/recogs-test-epoch-30_avg-1_context-2_max-sym-per-frame-1.txt
-```
-
-Tên file thực tế có thể khác theo `epoch`, `avg` và `decode_method`. Để xem tất cả file:
-
-```bash
-cd ~/icefall/egs/vi_asr_corpus
-find ASR/zipformer/exp_100bpe_0.02 -maxdepth 2 -type f | sort
-```
-
-### 8.4. Xem WER summary
-
-```bash
-cd ~/icefall/egs/vi_asr_corpus
-cat ASR/zipformer/exp_100bpe_0.02/greedy_search/wer-summary-test-epoch-30_avg-1_context-2_max-sym-per-frame-1.txt
-```
-
-## 9. Mở TensorBoard
-
-```bash
-cd ~/icefall/egs/vi_asr_corpus
-tensorboard --logdir ASR/zipformer/exp_100bpe_0.02/tensorboard --port 6006
-```
-
-Sau đó mở:
-
-```text
-http://localhost:6006
-```
-
-## 10. Nếu dữ liệu thay đổi
-
-Khi:
-- thêm speaker
-- sửa transcript
-- chạy offline MUSAN augmentation lại
-
-thì nên rebuild lại từ:
-
-- manifests
-- manifests_fixed
-- transcript_words.txt
-- bpe.model
-- prepare_lang_bpe
-- fbank
-- validate_manifest
-
-## 11. Git và `.gitignore`
-
-Project này có rất nhiều thư mục dữ liệu lớn, thường **không nên đẩy lên GitHub**.
-
-### 11.1. Nên ignore
-- `dataset/`
-- `audio/`
-- `musan/`
-- `fbank/`
-- `manifests/`
-- `manifests_fixed/`
-- `transcripts/`
-- `data/`
-- `lang/`
-- checkpoint và log trong `exp/`
-
-### 11.2. Ý tưởng
-Git chỉ nên giữ:
-- code
-- script
-- README
-- cấu hình
-- file nhỏ, có thể tái tạo
-
-Còn những thứ có thể generate lại hoặc quá lớn thì nên ignore.
