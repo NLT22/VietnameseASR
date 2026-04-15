@@ -1,10 +1,24 @@
 from pathlib import Path
 import csv
+import argparse
 import soundfile as sf
 
 ROOT = Path("./")
-def audit(split):
-    tsv = ROOT / "transcripts" / f"{split}.tsv"
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--transcript-dir",
+        type=Path,
+        default=Path("transcripts"),
+        help="Directory containing train/dev/test TSV transcripts.",
+    )
+    return parser.parse_args()
+
+
+def audit(split, transcript_dir):
+    tsv = ROOT / transcript_dir / f"{split}.tsv"
     bad = 0
     total = 0
 
@@ -35,5 +49,11 @@ def audit(split):
 
     print(split, "total =", total, "bad =", bad)
 
-for s in ["train", "dev", "test"]:
-    audit(s)
+def main():
+    args = get_args()
+    for s in ["train", "dev", "test"]:
+        audit(s, args.transcript_dir)
+
+
+if __name__ == "__main__":
+    main()

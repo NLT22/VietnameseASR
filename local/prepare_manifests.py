@@ -15,11 +15,17 @@ def get_args():
         default=Path("data/manifests"),
         help="Directory to write train/dev/test Lhotse manifests.",
     )
+    parser.add_argument(
+        "--transcript-dir",
+        type=Path,
+        default=Path("transcripts"),
+        help="Directory containing train/dev/test TSV transcripts.",
+    )
     return parser.parse_args()
 
 
-def prepare_split(split: str, output_dir: Path):
-    tsv_path = ROOT / "transcripts" / f"{split}.tsv"
+def prepare_split(split: str, transcript_dir: Path, output_dir: Path):
+    tsv_path = ROOT / transcript_dir / f"{split}.tsv"
     recordings = []
     supervisions = []
 
@@ -58,4 +64,4 @@ if __name__ == "__main__":
     args = get_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for split in ["train", "dev", "test"]:
-        prepare_split(split, args.output_dir)
+        prepare_split(split, args.transcript_dir, args.output_dir)

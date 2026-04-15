@@ -31,6 +31,18 @@ def parse_args() -> argparse.Namespace:
         help="Root folder of MUSAN",
     )
     parser.add_argument(
+        "--transcript-dir",
+        type=Path,
+        default=Path("transcripts"),
+        help="Transcript directory containing train.tsv.",
+    )
+    parser.add_argument(
+        "--audio-root",
+        type=Path,
+        default=Path("audio"),
+        help="Audio root where augmented files are stored.",
+    )
+    parser.add_argument(
         "--copies-per-utt",
         type=int,
         default=2,
@@ -163,8 +175,8 @@ def main() -> None:
     rng = random.Random(args.seed)
 
     corpus_root = args.corpus_root.resolve()
-    train_tsv = corpus_root / "transcripts" / "train.tsv"
-    audio_root = corpus_root / "audio"
+    train_tsv = corpus_root / args.transcript_dir / "train.tsv"
+    audio_root = corpus_root / args.audio_root
     out_audio_root = audio_root / args.output_subdir
 
     if not train_tsv.is_file():

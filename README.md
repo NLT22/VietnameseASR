@@ -8,13 +8,19 @@ README này chỉ giữ phần cần thiết để biết các file chạy như 
 ~/icefall/egs/vi_asr_corpus/
 ├── ASR/zipformer/
 ├── audio/
+├── audio_nr/
 ├── transcripts/
+├── transcripts_nr/
 ├── fbank/
+├── fbank_nr/
 ├── data/
 │   ├── manifests/
 │   │   └── fixed/
+│   ├── manifests_nr/
+│   │   └── fixed/
 │   └── lang_bpe_<vocab_size>/
 ├── local/
+│   ├── noise_reduce_audio.py
 │   ├── prepare_manifests.py
 │   ├── export_text_corpus.py
 │   ├── train_bpe_model.py
@@ -29,6 +35,18 @@ README này chỉ giữ phần cần thiết để biết các file chạy như 
 ├── run.sh
 └── README.md
 ```
+
+---
+
+## Dependency tùy chọn cho NoiseReduce
+
+Nếu muốn tạo biến thể `nr` bằng thư viện `noisereduce`, cài thêm:
+
+```bash
+pip install noisereduce
+```
+
+Nếu thiếu thư viện này, `local/noise_reduce_audio.py` sẽ báo lỗi rõ ràng và hướng dẫn cài.
 
 ---
 
@@ -127,6 +145,26 @@ python augment_train_with_musan.py \
 
 ## 4. Các file trong `local/`
 
+### `noise_reduce_audio.py`
+Tạo một bản audio/transcript riêng đã giảm noise bằng `noisereduce`.
+
+Input mặc định:
+- `transcripts/{train,dev,test}.tsv`
+- audio được trỏ bởi cột `audio_path`
+
+Output mặc định:
+- `audio_nr/{train,dev,test}/...`
+- `transcripts_nr/{train,dev,test}.tsv`
+
+Ví dụ:
+```bash
+python local/noise_reduce_audio.py \
+  --input-transcript-dir transcripts \
+  --output-transcript-dir transcripts_nr \
+  --output-audio-root audio_nr \
+  --overwrite
+```
+
 ### `prepare_manifests.py`
 Tạo:
 - `data/manifests/train_recordings.jsonl.gz`
@@ -135,7 +173,9 @@ Tạo:
 
 Chạy:
 ```bash
-python prepare_manifests.py --output-dir data/manifests
+python prepare_manifests.py \
+  --transcript-dir transcripts \
+  --output-dir data/manifests
 ```
 
 ### `export_text_corpus.py`
@@ -143,7 +183,7 @@ Gộp text train để chuẩn bị train SentencePiece/BPE.
 
 Chạy:
 ```bash
-python local/export_text_corpus.py
+python local/export_text_corpus.py --transcript-dir transcripts
 ```
 
 ### `train_bpe_model.py`
@@ -254,9 +294,12 @@ python local/compute_fbank_musan.py \
   - `ASR/zipformer/exp_bpe<vocab_size>` nếu `--model_size base`
   - `ASR/zipformer/exp_bpe<vocab_size>_small` nếu `--model_size small`
   - `ASR/zipformer/exp_bpe<vocab_size>_tiny` nếu `--model_size tiny`
+  - thêm hậu tố `_nr` vào `exp_dir` nếu `--data_variant nr`
 - ghi ASR manifests vào `data/manifests/`
 - ghi fixed manifests vào `data/manifests/fixed/`
+- với `--data_variant nr`, dùng `transcripts_nr/`, `data/manifests_nr/`, `fbank_nr/`
 - hỗ trợ cả:
+  - NoiseReduce offline variant `nr`
   - offline MUSAN augmentation
   - online MUSAN augmentation
 - hỗ trợ preset kích thước model:
@@ -266,20 +309,21 @@ python local/compute_fbank_musan.py \
 
 ### Các stage hiện tại
 
-- **Stage 0**: audit dataset
-- **Stage 1**: offline MUSAN augmentation cho train split
-- **Stage 2**: prepare manifests
-- **Stage 3**: `lhotse fix` vào `data/manifests/fixed`
-- **Stage 4**: export text corpus
-- **Stage 5**: train BPE
-- **Stage 6**: prepare minimal BPE lang dir
-- **Stage 7**: compute fbank / cuts
-- **Stage 8**: compute MUSAN fbank/cuts cho online CutMix
-- **Stage 9**: validate cut manifests
-- **Stage 10**: display manifest statistics
-- **Stage 11**: tokenize smoke test
-- **Stage 12**: train
-- **Stage 13**: decode
+- **Stage 0**: tạo NoiseReduce variant `nr` nếu `--enable_nr 1`
+- **Stage 1**: audit dataset theo `--data_variant`
+- **Stage 2**: offline MUSAN augmentation cho train split
+- **Stage 3**: prepare manifests
+- **Stage 4**: `lhotse fix`
+- **Stage 5**: export text corpus
+- **Stage 6**: train BPE
+- **Stage 7**: prepare minimal BPE lang dir
+- **Stage 8**: compute fbank / cuts
+- **Stage 9**: compute MUSAN fbank/cuts cho online CutMix
+- **Stage 10**: validate cut manifests
+- **Stage 11**: display manifest statistics
+- **Stage 12**: tokenize smoke test
+- **Stage 13**: train
+- **Stage 14**: decode
 
 ### Các tham số chính
 
@@ -303,6 +347,8 @@ python local/compute_fbank_musan.py \
 --decode_method
 --use_averaged_model
 --avg
+--data_variant
+--enable_nr
 --model_size
 --num_encoder_layers
 --feedforward_dim
@@ -339,6 +385,12 @@ Kết quả train nằm ở:
 ASR/zipformer/exp_bpe100_small
 ```
 
+Nếu chạy cùng `--data_variant nr`, kết quả nằm ở:
+
+```bash
+ASR/zipformer/exp_bpe100_small_nr
+```
+
 `--model_size tiny` nhỏ hơn nữa:
 
 ```bash
@@ -357,7 +409,39 @@ Kết quả train nằm ở:
 ASR/zipformer/exp_bpe100_tiny
 ```
 
+Nếu chạy cùng `--data_variant nr`, kết quả nằm ở:
+
+```bash
+ASR/zipformer/exp_bpe100_tiny_nr
+```
+
 Nếu truyền trực tiếp các tham số kiến trúc như `--encoder_dim` hoặc `--decoder_dim`, các giá trị đó sẽ được dùng khi `--model_size base`. Với `small`/`tiny`, preset sẽ ghi đè các giá trị kiến trúc tương ứng.
+
+### Data variant `raw` và `nr`
+
+`--data_variant raw` dùng dữ liệu gốc:
+
+```bash
+transcripts/
+data/manifests/
+fbank/
+ASR/zipformer/exp_bpe100_small
+```
+
+`--data_variant nr` dùng bản đã giảm noise:
+
+```bash
+transcripts_nr/
+data/manifests_nr/
+fbank_nr/
+ASR/zipformer/exp_bpe100_small_nr
+```
+
+Tạo bản `nr` bằng:
+
+```bash
+bash run.sh --enable_nr 1 --stage 0 --stop_stage 0
+```
 
 ---
 
@@ -369,7 +453,7 @@ cd ~/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
-  --stage 0 --stop_stage 11
+  --stage 1 --stop_stage 12
 ```
 
 ### 6.2. Chỉ train BPE với vocab size 100
@@ -378,7 +462,7 @@ cd ~/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
-  --stage 5 --stop_stage 6
+  --stage 6 --stop_stage 7
 ```
 
 ### 6.3. Train model
@@ -389,7 +473,7 @@ bash run.sh \
   --vocab_size 100 \
   --model_size base \
   --base_lr 0.01 \
-  --stage 12 --stop_stage 12
+  --stage 13 --stop_stage 13
 ```
 
 ### 6.4. Decode
@@ -399,7 +483,7 @@ cd ~/icefall/egs/vi_asr_corpus
 bash run.sh \
   --vocab_size 100 \
   --model_size base \
-  --stage 13 --stop_stage 13
+  --stage 14 --stop_stage 14
 ```
 
 ### 6.5. Train model nhỏ cho dataset ít
@@ -413,7 +497,7 @@ bash run.sh \
   --num_epochs 50 \
   --enable_musan 0 \
   --enable_spec_aug 0 \
-  --stage 12 --stop_stage 12
+  --stage 13 --stop_stage 13
 ```
 
 Decode checkpoint tương ứng:
@@ -423,10 +507,42 @@ bash run.sh \
   --vocab_size 100 \
   --model_size small \
   --num_epochs 50 \
-  --stage 13 --stop_stage 13
+  --stage 14 --stop_stage 14
 ```
 
-### 6.6. Preset experiment nên thử
+### 6.6. Tạo và chạy full pipeline NoiseReduce variant `nr`
+
+Chỉ tạo audio/transcript đã giảm noise:
+
+```bash
+bash run.sh \
+  --enable_nr 1 \
+  --stage 0 --stop_stage 0
+```
+
+Chạy full pipeline trên bản `nr`:
+
+```bash
+bash run.sh \
+  --enable_nr 1 \
+  --data_variant nr \
+  --model_size small \
+  --base_lr 0.01 \
+  --num_epochs 50 \
+  --stage 0 --stop_stage 14
+```
+
+Decode checkpoint `nr` đã train:
+
+```bash
+bash run.sh \
+  --data_variant nr \
+  --model_size small \
+  --num_epochs 50 \
+  --stage 14 --stop_stage 14
+```
+
+### 6.7. Preset experiment nên thử
 
 Baseline nhỏ, ít regularization:
 
@@ -438,7 +554,7 @@ bash run.sh \
   --num_epochs 50 \
   --enable_musan 0 \
   --enable_spec_aug 0 \
-  --stage 12 --stop_stage 13
+  --stage 13 --stop_stage 14
 ```
 
 Model nhỏ hơn nữa, LR thấp hơn:
@@ -451,7 +567,7 @@ bash run.sh \
   --num_epochs 80 \
   --enable_musan 0 \
   --enable_spec_aug 0 \
-  --stage 12 --stop_stage 13
+  --stage 13 --stop_stage 14
 ```
 
 Thử decode beam trên checkpoint đã train:
@@ -462,7 +578,7 @@ bash run.sh \
   --model_size small \
   --num_epochs 50 \
   --decode_method modified_beam_search \
-  --stage 13 --stop_stage 13
+  --stage 14 --stop_stage 14
 ```
 
 Sau khi baseline sạch đã ổn, mới thử augmentation nhẹ:
@@ -475,7 +591,7 @@ bash run.sh \
   --num_epochs 80 \
   --enable_spec_aug 1 \
   --enable_musan 0 \
-  --stage 12 --stop_stage 13
+  --stage 13 --stop_stage 14
 ```
 
 Gợi ý ghi lại kết quả:
@@ -486,9 +602,10 @@ small      | 0.01  | 50     | greedy_search        | none       | ...
 small      | 0.01  | 50     | modified_beam_search | none       | ...
 tiny       | 0.005 | 80     | greedy_search        | none       | ...
 small      | 0.005 | 80     | greedy_search        | spec_aug   | ...
+small_nr   | 0.01  | 50     | greedy_search        | noisereduce | ...
 ```
 
-### 6.7. Các phương pháp decode
+### 6.8. Các phương pháp decode
 
 `greedy_search` là cách nhanh nhất và đơn giản nhất. Ở mỗi bước model chọn token tốt nhất hiện tại, gần như không giữ nhiều giả thuyết cạnh tranh. Cách này tốt để smoke test, xem model có học được gì chưa, nhưng WER thường không phải tốt nhất.
 
@@ -498,7 +615,7 @@ bash run.sh \
   --model_size small \
   --num_epochs 50 \
   --decode_method greedy_search \
-  --stage 13 --stop_stage 13
+  --stage 14 --stop_stage 14
 ```
 
 `beam_search` giữ nhiều giả thuyết hơn trong lúc decode. Nó chậm hơn greedy nhưng có thể giảm lỗi khi model phân vân giữa vài chuỗi token. Tham số chính là `--beam-size` trong `decode.py`, hiện `run.sh` dùng default `4`.
@@ -509,7 +626,7 @@ bash run.sh \
   --model_size small \
   --num_epochs 50 \
   --decode_method beam_search \
-  --stage 13 --stop_stage 13
+  --stage 14 --stop_stage 14
 ```
 
 `modified_beam_search` là lựa chọn hay dùng cho transducer trong icefall. Nó decode theo batch tốt hơn `beam_search` thường, vẫn dùng `beam_size`, và thường là ứng viên đầu tiên nên thử sau greedy.
@@ -520,14 +637,14 @@ bash run.sh \
   --model_size small \
   --num_epochs 50 \
   --decode_method modified_beam_search \
-  --stage 13 --stop_stage 13
+  --stage 14 --stop_stage 14
 ```
 
 Các method `fast_beam_search`, `fast_beam_search_nbest`, `fast_beam_search_nbest_oracle`, `fast_beam_search_nbest_LG` dùng decoding graph của k2. Chúng hữu ích cho recipe lớn hoặc khi có graph/LM phù hợp. Với project nhỏ hiện tại, nên ưu tiên `greedy_search`, `beam_search`, và `modified_beam_search` trước.
 
 Các method có LM như `modified_beam_search_lm_shallow_fusion`, `modified_beam_search_lm_rescore`, `modified_beam_search_LODR` cần LM ngoài. Nếu chưa build LM riêng cho corpus này thì tạm thời chưa nên dùng, vì thêm LM sai domain có thể làm WER xấu hơn.
 
-### 6.8. Offline MUSAN augmentation + train
+### 6.9. Offline MUSAN augmentation + train
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
@@ -539,20 +656,20 @@ bash run.sh \
   --snr_min 10 \
   --snr_max 20 \
   --enable_musan 0 \
-  --stage 1 --stop_stage 12
+  --stage 2 --stop_stage 13
 ```
 
-### 6.9. Online MUSAN augmentation + train
+### 6.10. Online MUSAN augmentation + train
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
   --enable_musan 1 \
-  --stage 8 --stop_stage 12
+  --stage 9 --stop_stage 13
 ```
 
-### 6.10. Kết hợp cả offline + online MUSAN
+### 6.11. Kết hợp cả offline + online MUSAN
 ```bash
 cd ~/icefall/egs/vi_asr_corpus
 
@@ -564,7 +681,7 @@ bash run.sh \
   --snr_min 10 \
   --snr_max 20 \
   --enable_musan 1 \
-  --stage 1 --stop_stage 12
+  --stage 2 --stop_stage 13
 ```
 
 ---

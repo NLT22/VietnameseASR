@@ -10,6 +10,10 @@ vocab_size=100
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
 manifest_dir="$PWD/data/manifests"
 fixed_manifest_dir="$PWD/data/manifests/fixed"
+transcript_dir="transcripts"
+audio_root="audio"
+fbank_dir="fbank"
+musan_manifest_dir="$PWD/data/manifests"
 
 num_epochs=30
 world_size=1
@@ -32,6 +36,9 @@ snr_max=20
 decode_method="greedy_search"
 use_averaged_model=0
 avg=1
+
+data_variant="raw"
+enable_nr=0
 
 model_size="base"
 num_encoder_layers="2,2,3,4,3,2"
@@ -65,6 +72,8 @@ while [[ $# -gt 0 ]]; do
     --decode_method|--decode-method) decode_method="$2"; shift 2 ;;
     --use_averaged_model|--use-averaged-model) use_averaged_model="$2"; shift 2 ;;
     --avg) avg="$2"; shift 2 ;;
+    --data_variant|--data-variant) data_variant="$2"; shift 2 ;;
+    --enable_nr|--enable-nr) enable_nr="$2"; shift 2 ;;
     --model_size|--model-size) model_size="$2"; shift 2 ;;
     --num_encoder_layers|--num-encoder-layers) num_encoder_layers="$2"; shift 2 ;;
     --feedforward_dim|--feedforward-dim) feedforward_dim="$2"; shift 2 ;;
@@ -75,7 +84,7 @@ while [[ $# -gt 0 ]]; do
     --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME] [--use_averaged_model 0|1] [--avg N] [--model_size base|small|tiny]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME] [--use_averaged_model 0|1] [--avg N] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small|tiny]" >&2
       exit 1
       ;;
   esac
@@ -108,21 +117,48 @@ case "$model_size" in
     ;;
 esac
 
+case "$data_variant" in
+  raw)
+    transcript_dir="transcripts"
+    audio_root="audio"
+    manifest_dir="$PWD/data/manifests"
+    fixed_manifest_dir="$PWD/data/manifests/fixed"
+    fbank_dir="$PWD/fbank"
+    variant_suffix=""
+    ;;
+  nr)
+    transcript_dir="transcripts_nr"
+    audio_root="audio_nr"
+    manifest_dir="$PWD/data/manifests_nr"
+    fixed_manifest_dir="$PWD/data/manifests_nr/fixed"
+    fbank_dir="$PWD/fbank_nr"
+    variant_suffix="_nr"
+    ;;
+  *)
+    echo "ERROR: --data_variant must be one of: raw, nr" >&2
+    exit 1
+    ;;
+esac
+
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
 if [ "$model_size" = "base" ]; then
-  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}"
+  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}${variant_suffix}"
 else
-  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}_${model_size}"
+  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}_${model_size}${variant_suffix}"
 fi
-manifest_dir="$PWD/data/manifests"
-fixed_manifest_dir="$PWD/data/manifests/fixed"
 
 echo "corpus_root=$corpus_root"
 echo "vocab_size=$vocab_size"
 echo "bpe_dir=$bpe_dir"
 echo "exp_dir=$exp_dir"
+echo "data_variant=$data_variant"
+echo "enable_nr=$enable_nr"
+echo "transcript_dir=$transcript_dir"
+echo "audio_root=$audio_root"
 echo "manifest_dir=$manifest_dir"
 echo "fixed_manifest_dir=$fixed_manifest_dir"
+echo "fbank_dir=$fbank_dir"
+echo "musan_manifest_dir=$musan_manifest_dir"
 echo "num_epochs=$num_epochs"
 echo "world_size=$world_size"
 echo "max_duration=$max_duration"
@@ -151,12 +187,25 @@ echo "decoder_dim=$decoder_dim"
 echo "joiner_dim=$joiner_dim"
 
 if [ "$stage" -le 0 ] && [ "$stop_stage" -ge 0 ]; then
-  echo "Stage 0: Audit dataset"
-  python3 audit_dataset.py
+  echo "Stage 0: NoiseReduce audio variant (optional)"
+  if [ "$enable_nr" = "1" ]; then
+    python3 local/noise_reduce_audio.py \
+      --input-transcript-dir transcripts \
+      --output-transcript-dir transcripts_nr \
+      --output-audio-root audio_nr \
+      --overwrite
+  else
+    echo "Skip NoiseReduce because enable_nr=0"
+  fi
 fi
 
 if [ "$stage" -le 1 ] && [ "$stop_stage" -ge 1 ]; then
-  echo "Stage 1: Offline MUSAN augmentation for train split (optional)"
+  echo "Stage 1: Audit dataset"
+  python3 audit_dataset.py --transcript-dir "${transcript_dir}"
+fi
+
+if [ "$stage" -le 2 ] && [ "$stop_stage" -ge 2 ]; then
+  echo "Stage 2: Offline MUSAN augmentation for train split (optional)"
   if [ "$offline_musan_aug" = "1" ]; then
     if [ -z "$musan_dir" ]; then
       echo "ERROR: --offline_musan_aug 1 requires --musan_dir /path/to/musan" >&2
@@ -165,6 +214,8 @@ if [ "$stage" -le 1 ] && [ "$stop_stage" -ge 1 ]; then
     python3 augment_train_with_musan.py \
       --corpus-root . \
       --musan-dir "$musan_dir" \
+      --transcript-dir "$transcript_dir" \
+      --audio-root "$audio_root" \
       --copies-per-utt "$copies_per_utt" \
       --snr-min "$snr_min" \
       --snr-max "$snr_max" \
@@ -174,79 +225,81 @@ if [ "$stage" -le 1 ] && [ "$stop_stage" -ge 1 ]; then
   fi
 fi
 
-if [ "$stage" -le 2 ] && [ "$stop_stage" -ge 2 ]; then
-  echo "Stage 2: Prepare manifests"
-  python3 prepare_manifests.py --output-dir "${manifest_dir}"
+if [ "$stage" -le 3 ] && [ "$stop_stage" -ge 3 ]; then
+  echo "Stage 3: Prepare manifests"
+  python3 prepare_manifests.py \
+    --transcript-dir "${transcript_dir}" \
+    --output-dir "${manifest_dir}"
 fi
 
-if [ "$stage" -le 3 ] && [ "$stop_stage" -ge 3 ]; then
-  echo "Stage 3: Fix manifests"
+if [ "$stage" -le 4 ] && [ "$stop_stage" -ge 4 ]; then
+  echo "Stage 4: Fix manifests"
   mkdir -p "${fixed_manifest_dir}"
   lhotse fix "${manifest_dir}/train_recordings.jsonl.gz" "${manifest_dir}/train_supervisions.jsonl.gz" "${fixed_manifest_dir}"
   lhotse fix "${manifest_dir}/dev_recordings.jsonl.gz" "${manifest_dir}/dev_supervisions.jsonl.gz" "${fixed_manifest_dir}"
   lhotse fix "${manifest_dir}/test_recordings.jsonl.gz" "${manifest_dir}/test_supervisions.jsonl.gz" "${fixed_manifest_dir}"
 fi
 
-if [ "$stage" -le 4 ] && [ "$stop_stage" -ge 4 ]; then
-  echo "Stage 4: Export text corpus"
-  python3 local/export_text_corpus.py
-fi
-
 if [ "$stage" -le 5 ] && [ "$stop_stage" -ge 5 ]; then
-  echo "Stage 5: Train BPE"
-  python3 local/train_bpe_model.py --vocab-size "$vocab_size"
+  echo "Stage 5: Export text corpus"
+  python3 local/export_text_corpus.py --transcript-dir "${transcript_dir}"
 fi
 
 if [ "$stage" -le 6 ] && [ "$stop_stage" -ge 6 ]; then
-  echo "Stage 6: Prepare minimal BPE lang dir"
-  python3 local/prepare_lang_bpe.py --lang-dir "${bpe_dir}"
+  echo "Stage 6: Train BPE"
+  python3 local/train_bpe_model.py --vocab-size "$vocab_size"
 fi
 
 if [ "$stage" -le 7 ] && [ "$stop_stage" -ge 7 ]; then
-  echo "Stage 7: Compute fbank / cuts"
-  cmd=(python3 local/compute_fbank.py --bpe-model "${bpe_dir}/bpe.model" --manifest-dir "${fixed_manifest_dir}" --output-dir fbank)
+  echo "Stage 7: Prepare minimal BPE lang dir"
+  python3 local/prepare_lang_bpe.py --lang-dir "${bpe_dir}"
+fi
+
+if [ "$stage" -le 8 ] && [ "$stop_stage" -ge 8 ]; then
+  echo "Stage 8: Compute fbank / cuts"
+  cmd=(python3 local/compute_fbank.py --bpe-model "${bpe_dir}/bpe.model" --manifest-dir "${fixed_manifest_dir}" --output-dir "${fbank_dir}")
   if [ "$perturb_speed" = "1" ]; then
     cmd+=(--perturb-speed)
   fi
   "${cmd[@]}"
 fi
 
-if [ "$stage" -le 8 ] && [ "$stop_stage" -ge 8 ]; then
-  echo "Stage 8: Compute MUSAN fbank/cuts for online CutMix (optional)"
+if [ "$stage" -le 9 ] && [ "$stop_stage" -ge 9 ]; then
+  echo "Stage 9: Compute MUSAN fbank/cuts for online CutMix (optional)"
   if [ "$enable_musan" = "1" ]; then
     python3 local/compute_fbank_musan.py \
-      --manifest-dir "${manifest_dir}" \
-      --output-dir fbank
+      --manifest-dir "${musan_manifest_dir}" \
+      --output-dir "${fbank_dir}"
   else
     echo "Skip online MUSAN preparation because enable_musan=0"
   fi
 fi
 
-if [ "$stage" -le 9 ] && [ "$stop_stage" -ge 9 ]; then
-  echo "Stage 9: Validate cut manifests"
-  python3 local/validate_manifest.py --all --manifest-dir fbank
-fi
-
 if [ "$stage" -le 10 ] && [ "$stop_stage" -ge 10 ]; then
-  echo "Stage 10: Display manifest statistics"
-  python3 local/display_manifest_statistics.py --all --manifest-dir fbank
+  echo "Stage 10: Validate cut manifests"
+  python3 local/validate_manifest.py --all --manifest-dir "${fbank_dir}"
 fi
 
 if [ "$stage" -le 11 ] && [ "$stop_stage" -ge 11 ]; then
-  echo "Stage 11: Tokenize smoke test"
+  echo "Stage 11: Display manifest statistics"
+  python3 local/display_manifest_statistics.py --all --manifest-dir "${fbank_dir}"
+fi
+
+if [ "$stage" -le 12 ] && [ "$stop_stage" -ge 12 ]; then
+  echo "Stage 12: Tokenize smoke test"
   python3 local/tokenize_test.py \
   --vocab-size "${vocab_size}" \
   --text "hôm nay tôi học nhận dạng tiếng nói"
 fi
 
-if [ "$stage" -le 12 ] && [ "$stop_stage" -ge 12 ]; then
-  echo "Stage 12: Train"
+if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ]; then
+  echo "Stage 13: Train"
   python3 ASR/zipformer/train.py \
     --world-size "${world_size}" \
     --num-epochs "${num_epochs}" \
     --start-epoch 1 \
     --use-fp16 "${use_fp16}" \
-    --manifest-dir ./fbank \
+    --manifest-dir "${fbank_dir}" \
     --base-lr "${base_lr}" \
     --exp-dir "${exp_dir}" \
     --max-duration "${max_duration}" \
@@ -264,15 +317,15 @@ if [ "$stage" -le 12 ] && [ "$stop_stage" -ge 12 ]; then
     --joiner-dim "${joiner_dim}"
 fi
 
-if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ]; then
-  echo "Stage 13: Decode"
+if [ "$stage" -le 14 ] && [ "$stop_stage" -ge 14 ]; then
+  echo "Stage 14: Decode"
   epoch="${num_epochs}"
   python3 ASR/zipformer/decode.py \
     --epoch "${epoch}" \
     --avg "${avg}" \
     --use-averaged-model "${use_averaged_model}" \
     --exp-dir "${exp_dir}" \
-    --manifest-dir ./fbank \
+    --manifest-dir "${fbank_dir}" \
     --bpe-model "${bpe_dir}/bpe.model" \
     --max-duration "${max_duration}" \
     --decoding-method "${decode_method}" \
