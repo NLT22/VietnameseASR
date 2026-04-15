@@ -51,7 +51,10 @@ data/
 data/*
 !data/manifests/
 data/manifests/*
-!data/manifests/musan_*.jsonl.gz
+!data/manifests/*.jsonl.gz
+!data/manifests/fixed/
+data/manifests/fixed/*
+!data/manifests/fixed/*.jsonl.gz
 lang/
 transcripts/
 README_PREPARED.txt

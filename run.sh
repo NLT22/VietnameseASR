@@ -8,15 +8,16 @@ corpus_root="$PWD"
 
 vocab_size=100
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
-exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}"
+manifest_dir="$PWD/data/manifests"
+fixed_manifest_dir="$PWD/data/manifests/fixed"
 
-num_epochs=5
+num_epochs=30
 world_size=1
 max_duration=50
-base_lr=0.02
+base_lr=0.01
 use_fp16=0
 
-enable_musan=1
+enable_musan=0
 enable_spec_aug=0
 bucketing_sampler=1
 num_buckets=4
@@ -31,6 +32,15 @@ snr_max=20
 decode_method="greedy_search"
 use_averaged_model=0
 avg=1
+
+model_size="base"
+num_encoder_layers="2,2,3,4,3,2"
+feedforward_dim="512,768,1024,1536,1024,768"
+num_heads="4,4,4,8,4,4"
+encoder_dim="192,256,384,512,384,256"
+encoder_unmasked_dim="192,192,256,256,256,192"
+decoder_dim=512
+joiner_dim=512
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -55,21 +65,64 @@ while [[ $# -gt 0 ]]; do
     --decode_method|--decode-method) decode_method="$2"; shift 2 ;;
     --use_averaged_model|--use-averaged-model) use_averaged_model="$2"; shift 2 ;;
     --avg) avg="$2"; shift 2 ;;
+    --model_size|--model-size) model_size="$2"; shift 2 ;;
+    --num_encoder_layers|--num-encoder-layers) num_encoder_layers="$2"; shift 2 ;;
+    --feedforward_dim|--feedforward-dim) feedforward_dim="$2"; shift 2 ;;
+    --num_heads|--num-heads) num_heads="$2"; shift 2 ;;
+    --encoder_dim|--encoder-dim) encoder_dim="$2"; shift 2 ;;
+    --encoder_unmasked_dim|--encoder-unmasked-dim) encoder_unmasked_dim="$2"; shift 2 ;;
+    --decoder_dim|--decoder-dim) decoder_dim="$2"; shift 2 ;;
+    --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME] [--use_averaged_model 0|1] [--avg N]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME] [--use_averaged_model 0|1] [--avg N] [--model_size base|small|tiny]" >&2
       exit 1
       ;;
   esac
 done
 
+case "$model_size" in
+  base)
+    ;;
+  small)
+    num_encoder_layers="2,2,2,2,2,2"
+    feedforward_dim="256,384,512,768,512,384"
+    num_heads="4,4,4,4,4,4"
+    encoder_dim="128,192,256,384,256,192"
+    encoder_unmasked_dim="128,128,192,192,192,128"
+    decoder_dim=256
+    joiner_dim=256
+    ;;
+  tiny)
+    num_encoder_layers="1,1,2,2,2,1"
+    feedforward_dim="192,256,384,512,384,256"
+    num_heads="4,4,4,4,4,4"
+    encoder_dim="96,128,192,256,192,128"
+    encoder_unmasked_dim="96,96,128,128,128,96"
+    decoder_dim=192
+    joiner_dim=192
+    ;;
+  *)
+    echo "ERROR: --model_size must be one of: base, small, tiny" >&2
+    exit 1
+    ;;
+esac
+
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
-exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}"
+if [ "$model_size" = "base" ]; then
+  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}"
+else
+  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}_${model_size}"
+fi
+manifest_dir="$PWD/data/manifests"
+fixed_manifest_dir="$PWD/data/manifests/fixed"
 
 echo "corpus_root=$corpus_root"
 echo "vocab_size=$vocab_size"
 echo "bpe_dir=$bpe_dir"
 echo "exp_dir=$exp_dir"
+echo "manifest_dir=$manifest_dir"
+echo "fixed_manifest_dir=$fixed_manifest_dir"
 echo "num_epochs=$num_epochs"
 echo "world_size=$world_size"
 echo "max_duration=$max_duration"
@@ -88,6 +141,14 @@ echo "snr_max=$snr_max"
 echo "decode_method=$decode_method"
 echo "use_averaged_model=$use_averaged_model"
 echo "avg=$avg"
+echo "model_size=$model_size"
+echo "num_encoder_layers=$num_encoder_layers"
+echo "feedforward_dim=$feedforward_dim"
+echo "num_heads=$num_heads"
+echo "encoder_dim=$encoder_dim"
+echo "encoder_unmasked_dim=$encoder_unmasked_dim"
+echo "decoder_dim=$decoder_dim"
+echo "joiner_dim=$joiner_dim"
 
 if [ "$stage" -le 0 ] && [ "$stop_stage" -ge 0 ]; then
   echo "Stage 0: Audit dataset"
@@ -115,15 +176,15 @@ fi
 
 if [ "$stage" -le 2 ] && [ "$stop_stage" -ge 2 ]; then
   echo "Stage 2: Prepare manifests"
-  python3 prepare_manifests.py
+  python3 prepare_manifests.py --output-dir "${manifest_dir}"
 fi
 
 if [ "$stage" -le 3 ] && [ "$stop_stage" -ge 3 ]; then
   echo "Stage 3: Fix manifests"
-  mkdir -p manifests_fixed
-  lhotse fix manifests/train_recordings.jsonl.gz manifests/train_supervisions.jsonl.gz manifests_fixed
-  lhotse fix manifests/dev_recordings.jsonl.gz manifests/dev_supervisions.jsonl.gz manifests_fixed
-  lhotse fix manifests/test_recordings.jsonl.gz manifests/test_supervisions.jsonl.gz manifests_fixed
+  mkdir -p "${fixed_manifest_dir}"
+  lhotse fix "${manifest_dir}/train_recordings.jsonl.gz" "${manifest_dir}/train_supervisions.jsonl.gz" "${fixed_manifest_dir}"
+  lhotse fix "${manifest_dir}/dev_recordings.jsonl.gz" "${manifest_dir}/dev_supervisions.jsonl.gz" "${fixed_manifest_dir}"
+  lhotse fix "${manifest_dir}/test_recordings.jsonl.gz" "${manifest_dir}/test_supervisions.jsonl.gz" "${fixed_manifest_dir}"
 fi
 
 if [ "$stage" -le 4 ] && [ "$stop_stage" -ge 4 ]; then
@@ -143,7 +204,7 @@ fi
 
 if [ "$stage" -le 7 ] && [ "$stop_stage" -ge 7 ]; then
   echo "Stage 7: Compute fbank / cuts"
-  cmd=(python3 local/compute_fbank.py --bpe-model "${bpe_dir}/bpe.model" --manifest-dir manifests_fixed --output-dir fbank)
+  cmd=(python3 local/compute_fbank.py --bpe-model "${bpe_dir}/bpe.model" --manifest-dir "${fixed_manifest_dir}" --output-dir fbank)
   if [ "$perturb_speed" = "1" ]; then
     cmd+=(--perturb-speed)
   fi
@@ -154,7 +215,7 @@ if [ "$stage" -le 8 ] && [ "$stop_stage" -ge 8 ]; then
   echo "Stage 8: Compute MUSAN fbank/cuts for online CutMix (optional)"
   if [ "$enable_musan" = "1" ]; then
     python3 local/compute_fbank_musan.py \
-      --manifest-dir data/manifests \
+      --manifest-dir "${manifest_dir}" \
       --output-dir fbank
   else
     echo "Skip online MUSAN preparation because enable_musan=0"
@@ -193,7 +254,14 @@ if [ "$stage" -le 12 ] && [ "$stop_stage" -ge 12 ]; then
     --enable-musan "${enable_musan}" \
     --enable-spec-aug "${enable_spec_aug}" \
     --bucketing-sampler "${bucketing_sampler}" \
-    --num-buckets "${num_buckets}"
+    --num-buckets "${num_buckets}" \
+    --num-encoder-layers "${num_encoder_layers}" \
+    --feedforward-dim "${feedforward_dim}" \
+    --num-heads "${num_heads}" \
+    --encoder-dim "${encoder_dim}" \
+    --encoder-unmasked-dim "${encoder_unmasked_dim}" \
+    --decoder-dim "${decoder_dim}" \
+    --joiner-dim "${joiner_dim}"
 fi
 
 if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ]; then
@@ -208,5 +276,12 @@ if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ]; then
     --bpe-model "${bpe_dir}/bpe.model" \
     --max-duration "${max_duration}" \
     --decoding-method "${decode_method}" \
-    --bucketing-sampler 0
+    --bucketing-sampler 0 \
+    --num-encoder-layers "${num_encoder_layers}" \
+    --feedforward-dim "${feedforward_dim}" \
+    --num-heads "${num_heads}" \
+    --encoder-dim "${encoder_dim}" \
+    --encoder-unmasked-dim "${encoder_unmasked_dim}" \
+    --decoder-dim "${decoder_dim}" \
+    --joiner-dim "${joiner_dim}"
 fi

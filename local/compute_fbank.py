@@ -19,7 +19,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--bpe-model", type=str, default="data/lang_bpe_100/bpe.model",
                         help="Path to bpe.model. Used to filter cuts by token/frame ratio.")
-    parser.add_argument("--manifest-dir", type=str, default="manifests_fixed",
+    parser.add_argument("--manifest-dir", type=str, default="data/manifests/fixed",
                         help="Directory containing *_recordings.jsonl.gz and *_supervisions.jsonl.gz")
     parser.add_argument("--output-dir", type=str, default="fbank",
                         help="Directory to save features and *_cuts.jsonl.gz")

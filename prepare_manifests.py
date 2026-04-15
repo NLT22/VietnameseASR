@@ -1,13 +1,24 @@
-# prepare_manifests.py
-from pathlib import Path
 import csv
+import argparse
+from pathlib import Path
+
 from lhotse import Recording, RecordingSet, SupervisionSegment, SupervisionSet
 
 ROOT = Path("./")
-OUT = ROOT / "manifests"
-OUT.mkdir(parents=True, exist_ok=True)
 
-def prepare_split(split: str):
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("data/manifests"),
+        help="Directory to write train/dev/test Lhotse manifests.",
+    )
+    return parser.parse_args()
+
+
+def prepare_split(split: str, output_dir: Path):
     tsv_path = ROOT / "transcripts" / f"{split}.tsv"
     recordings = []
     supervisions = []
@@ -37,11 +48,13 @@ def prepare_split(split: str):
     recs = RecordingSet.from_recordings(recordings)
     sups = SupervisionSet.from_segments(supervisions)
 
-    recs.to_file(OUT / f"{split}_recordings.jsonl.gz")
-    sups.to_file(OUT / f"{split}_supervisions.jsonl.gz")
+    recs.to_file(output_dir / f"{split}_recordings.jsonl.gz")
+    sups.to_file(output_dir / f"{split}_supervisions.jsonl.gz")
 
     print(f"{split}: recordings={len(recs)}, supervisions={len(sups)}")
 
 if __name__ == "__main__":
+    args = get_args()
+    args.output_dir.mkdir(parents=True, exist_ok=True)
     for split in ["train", "dev", "test"]:
-        prepare_split(split)
+        prepare_split(split, args.output_dir)
