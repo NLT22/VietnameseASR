@@ -10,21 +10,21 @@ vocab_size=100
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
 exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}"
 
-num_epochs=30
+num_epochs=5
 world_size=1
-max_duration=100
+max_duration=50
 base_lr=0.02
-use_fp16=1
+use_fp16=0
 
-enable_musan=0
+enable_musan=1
 enable_spec_aug=0
 bucketing_sampler=1
 num_buckets=4
 perturb_speed=0
 musan_dir="$PWD/musan"
 
-offline_musan_aug=1
-copies_per_utt=0
+offline_musan_aug=0
+copies_per_utt=10
 snr_min=10
 snr_max=20
 
@@ -151,17 +151,10 @@ if [ "$stage" -le 7 ] && [ "$stop_stage" -ge 7 ]; then
 fi
 
 if [ "$stage" -le 8 ] && [ "$stop_stage" -ge 8 ]; then
-  echo "Stage 8: Prepare MUSAN manifests/features for online CutMix (optional)"
+  echo "Stage 8: Compute MUSAN fbank/cuts for online CutMix (optional)"
   if [ "$enable_musan" = "1" ]; then
-    if [ -z "$musan_dir" ]; then
-      echo "ERROR: --enable_musan 1 requires --musan_dir /path/to/musan" >&2
-      exit 1
-    fi
-    python3 local/prepare_musan_manifest.py \
-      --musan-dir "${musan_dir}" \
-      --output-manifest manifests/musan_recordings.jsonl.gz
     python3 local/compute_fbank_musan.py \
-      --manifest manifests/musan_recordings.jsonl.gz \
+      --manifest-dir data/manifests \
       --output-dir fbank
   else
     echo "Skip online MUSAN preparation because enable_musan=0"

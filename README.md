@@ -23,7 +23,6 @@ README này chỉ giữ phần cần thiết để biết các file chạy như 
 │   ├── validate_manifest.py
 │   ├── display_manifest_statistics.py
 │   ├── tokenize_test.py
-│   ├── prepare_musan_manifest.py
 │   └── compute_fbank_musan.py
 ├── prepare_vi_asr_corpus.py
 ├── augment_train_with_musan.py
@@ -219,14 +218,19 @@ Hoặc:
 python local/tokenize_test.py --vocab-size 100 --text "hôm nay tôi học nhận dạng tiếng nói"
 ```
 
-### `prepare_musan_manifest.py`
-Quét thư mục MUSAN và tạo manifest recordings cho MUSAN.
+### MUSAN manifests
+Manifest MUSAN dùng format giống LibriSpeech recipe và nằm trong:
 
-Ví dụ:
 ```bash
-python local/prepare_musan_manifest.py \
-  --musan-dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
-  --output-manifest manifests/musan_recordings.jsonl.gz
+data/manifests/musan_recordings_music.jsonl.gz
+data/manifests/musan_recordings_noise.jsonl.gz
+data/manifests/musan_recordings_speech.jsonl.gz
+```
+
+Nếu cần tạo lại từ thư mục MUSAN raw:
+
+```bash
+lhotse prepare musan /home/trung/icefall/egs/librispeech/ASR/download/musan data/manifests
 ```
 
 ### `compute_fbank_musan.py`
@@ -235,7 +239,7 @@ Tạo `fbank/musan_cuts.jsonl.gz` để dùng MUSAN online khi train.
 Ví dụ:
 ```bash
 python local/compute_fbank_musan.py \
-  --manifest manifests/musan_recordings.jsonl.gz \
+  --manifest-dir data/manifests \
   --output-dir fbank
 ```
 
@@ -262,7 +266,7 @@ python local/compute_fbank_musan.py \
 - **Stage 5**: train BPE
 - **Stage 6**: prepare minimal BPE lang dir
 - **Stage 7**: compute fbank / cuts
-- **Stage 8**: prepare MUSAN manifests/features cho online CutMix
+- **Stage 8**: compute MUSAN fbank/cuts cho online CutMix
 - **Stage 9**: validate cut manifests
 - **Stage 10**: display manifest statistics
 - **Stage 11**: tokenize smoke test
@@ -355,7 +359,6 @@ cd ~/icefall/egs/vi_asr_corpus
 bash run.sh \
   --vocab_size 100 \
   --enable_musan 1 \
-  --musan_dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
   --stage 8 --stop_stage 12
 ```
 
@@ -375,4 +378,3 @@ bash run.sh \
 ```
 
 ---
-

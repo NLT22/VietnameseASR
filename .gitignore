@@ -47,6 +47,11 @@ musan_cuts.jsonl.gz
 
 # Generated metadata / language resources
 data/
+!data/
+data/*
+!data/manifests/
+data/manifests/*
+!data/manifests/musan_*.jsonl.gz
 lang/
 transcripts/
 README_PREPARED.txt
