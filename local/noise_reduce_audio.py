@@ -18,7 +18,7 @@ except ModuleNotFoundError as e:
     ) from e
 
 
-ROOT = Path(".")
+ROOT = Path(__file__).resolve().parents[1]
 FIELDS = ["utt_id", "speaker", "audio_path", "text"]
 
 
@@ -105,10 +105,13 @@ def process_split(
             raise FileNotFoundError(f"Missing audio referenced by {src_tsv}: {src_audio}")
 
         dst_audio = output_audio_path(src_rel, split, output_audio_root)
-        reduce_one(src_audio, ROOT / dst_audio)
+        reduce_one(src_audio, dst_audio)
 
         out_row = dict(row)
-        out_row["audio_path"] = dst_audio.as_posix()
+        try:
+            out_row["audio_path"] = dst_audio.relative_to(ROOT).as_posix()
+        except ValueError:
+            out_row["audio_path"] = dst_audio.as_posix()
         out_rows.append(out_row)
 
     write_tsv(output_transcript_dir / f"{split}.tsv", out_rows)
@@ -117,6 +120,21 @@ def process_split(
 
 def main() -> None:
     args = get_args()
+    args.input_transcript_dir = (
+        args.input_transcript_dir
+        if args.input_transcript_dir.is_absolute()
+        else ROOT / args.input_transcript_dir
+    )
+    args.output_transcript_dir = (
+        args.output_transcript_dir
+        if args.output_transcript_dir.is_absolute()
+        else ROOT / args.output_transcript_dir
+    )
+    args.output_audio_root = (
+        args.output_audio_root
+        if args.output_audio_root.is_absolute()
+        else ROOT / args.output_audio_root
+    )
     splits = tuple(s for s in args.splits.split() if s)
     if not splits:
         raise ValueError("--splits must contain at least one split name")

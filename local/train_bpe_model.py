@@ -25,8 +25,8 @@ def get_args():
     parser.add_argument(
         "--root",
         type=Path,
-        default=Path("."),
-        help="Project root. Default: current directory",
+        default=Path(__file__).resolve().parents[1],
+        help="Project root. Default: repository recipe directory",
     )
     return parser.parse_args()
 

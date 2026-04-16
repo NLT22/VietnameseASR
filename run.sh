@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "$script_dir"
+
 stage=0
 stop_stage=100
 
-corpus_root="$PWD"
+corpus_root="$script_dir"
 
 vocab_size=100
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"

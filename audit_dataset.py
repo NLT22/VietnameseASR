@@ -3,7 +3,7 @@ import csv
 import argparse
 import soundfile as sf
 
-ROOT = Path("./")
+ROOT = Path(__file__).resolve().parent
 
 
 def get_args():
@@ -51,6 +51,7 @@ def audit(split, transcript_dir):
 
 def main():
     args = get_args()
+    args.transcript_dir = args.transcript_dir if args.transcript_dir.is_absolute() else ROOT / args.transcript_dir
     for s in ["train", "dev", "test"]:
         audit(s, args.transcript_dir)
 

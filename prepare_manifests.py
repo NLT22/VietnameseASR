@@ -4,7 +4,7 @@ from pathlib import Path
 
 from lhotse import Recording, RecordingSet, SupervisionSegment, SupervisionSet
 
-ROOT = Path("./")
+ROOT = Path(__file__).resolve().parent
 
 
 def get_args():
@@ -61,6 +61,8 @@ def prepare_split(split: str, transcript_dir: Path, output_dir: Path):
 
 if __name__ == "__main__":
     args = get_args()
+    args.transcript_dir = args.transcript_dir if args.transcript_dir.is_absolute() else ROOT / args.transcript_dir
+    args.output_dir = args.output_dir if args.output_dir.is_absolute() else ROOT / args.output_dir
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for split in ["train", "dev", "test"]:
         prepare_split(split, args.transcript_dir, args.output_dir)

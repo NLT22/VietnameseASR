@@ -2,8 +2,12 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
 import sentencepiece as spm
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def get_args():
@@ -26,10 +30,10 @@ def get_args():
 def main():
     args = get_args()
 
-    model_path = f"./data/lang_bpe_{args.vocab_size}/bpe.model"
+    model_path = ROOT / f"data/lang_bpe_{args.vocab_size}/bpe.model"
 
     sp = spm.SentencePieceProcessor()
-    ok = sp.load(model_path)
+    ok = sp.load(str(model_path))
     if not ok:
         raise FileNotFoundError(f"Cannot load SentencePiece model: {model_path}")
 

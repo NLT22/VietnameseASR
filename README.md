@@ -5,7 +5,7 @@ README này chỉ giữ phần cần thiết để biết các file chạy như 
 ## 1. Cấu trúc chính
 
 ```bash
-~/icefall/egs/vi_asr_corpus/
+/path/to/icefall/egs/vi_asr_corpus/
 ├── ASR/zipformer/
 ├── audio/
 ├── audio_nr/
@@ -56,7 +56,7 @@ File này dùng để tạo `audio/` và `transcripts/`.
 
 ### Chế độ 1: single-speaker
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 python prepare_vi_asr_corpus.py \
   --audio-dir /duong/dan/toi/audio \
@@ -67,7 +67,7 @@ python prepare_vi_asr_corpus.py \
 
 ### Chế độ 2: auto multi-speaker
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 python prepare_vi_asr_corpus.py \
   --auto \
@@ -119,11 +119,11 @@ Nó sẽ:
 Ví dụ:
 
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 python augment_train_with_musan.py \
   --corpus-root . \
-  --musan-dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
+  --musan-dir "${MUSAN_DIR}" \
   --copies-per-utt 3 \
   --snr-min 10 \
   --snr-max 20
@@ -134,7 +134,7 @@ Nếu muốn làm lại từ đầu:
 ```bash
 python augment_train_with_musan.py \
   --corpus-root . \
-  --musan-dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
+  --musan-dir "${MUSAN_DIR}" \
   --copies-per-utt 3 \
   --snr-min 10 \
   --snr-max 20 \
@@ -270,7 +270,7 @@ data/manifests/musan_recordings_speech.jsonl.gz
 Nếu cần tạo lại từ thư mục MUSAN raw:
 
 ```bash
-lhotse prepare musan /home/trung/icefall/egs/librispeech/ASR/download/musan data/manifests
+lhotse prepare musan "${MUSAN_DIR}" data/manifests
 ```
 
 ### `compute_fbank_musan.py`
@@ -288,6 +288,7 @@ python local/compute_fbank_musan.py \
 ## 5. `run.sh`
 
 `run.sh` hiện đã sửa để:
+- tự chuyển working directory về thư mục chứa `run.sh`, nên có thể chạy từ bất kỳ đâu miễn path tới `run.sh` đúng
 - nhận `--vocab_size`
 - tự suy ra:
   - `data/lang_bpe_<vocab_size>`
@@ -449,7 +450,7 @@ bash run.sh --enable_nr 1 --stage 0 --stop_stage 0
 
 ### 6.1. Chạy data prep cơ bản với vocab size 100
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
@@ -458,7 +459,7 @@ bash run.sh \
 
 ### 6.2. Chỉ train BPE với vocab size 100
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
@@ -467,7 +468,7 @@ bash run.sh \
 
 ### 6.3. Train model
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
@@ -478,7 +479,7 @@ bash run.sh \
 
 ### 6.4. Decode
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
@@ -488,7 +489,7 @@ bash run.sh \
 
 ### 6.5. Train model nhỏ cho dataset ít
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
@@ -646,12 +647,12 @@ Các method có LM như `modified_beam_search_lm_shallow_fusion`, `modified_beam
 
 ### 6.9. Offline MUSAN augmentation + train
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
   --offline_musan_aug 1 \
-  --musan_dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
+  --musan_dir "${MUSAN_DIR}" \
   --copies_per_utt 2 \
   --snr_min 10 \
   --snr_max 20 \
@@ -661,7 +662,7 @@ bash run.sh \
 
 ### 6.10. Online MUSAN augmentation + train
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
@@ -671,12 +672,12 @@ bash run.sh \
 
 ### 6.11. Kết hợp cả offline + online MUSAN
 ```bash
-cd ~/icefall/egs/vi_asr_corpus
+cd /path/to/icefall/egs/vi_asr_corpus
 
 bash run.sh \
   --vocab_size 100 \
   --offline_musan_aug 1 \
-  --musan_dir /home/trung/icefall/egs/librispeech/ASR/download/musan \
+  --musan_dir "${MUSAN_DIR}" \
   --copies_per_utt 2 \
   --snr_min 10 \
   --snr_max 20 \

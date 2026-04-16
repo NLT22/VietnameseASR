@@ -21,8 +21,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--corpus-root",
         type=Path,
-        default=Path("."),
-        help="Root of vi_asr_corpus. Default: current directory",
+        default=Path(__file__).resolve().parent,
+        help="Root of vi_asr_corpus. Default: directory containing this script",
     )
     parser.add_argument(
         "--musan-dir",
