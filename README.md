@@ -571,7 +571,18 @@ bash run.sh \
   --stage 13 --stop_stage 14
 ```
 
-Thử decode beam trên checkpoint đã train:
+Decode checkpoint đã train. Mặc định `run.sh` sẽ chạy cả 3 method chính:
+`greedy_search`, `modified_beam_search`, `beam_search`.
+
+```bash
+bash run.sh \
+  --vocab_size 100 \
+  --model_size small \
+  --num_epochs 50 \
+  --stage 14 --stop_stage 14
+```
+
+Nếu chỉ muốn chạy một method cụ thể, truyền `--decode_method`, ví dụ:
 
 ```bash
 bash run.sh \
@@ -607,6 +618,22 @@ small_nr   | 0.01  | 50     | greedy_search        | noisereduce | ...
 ```
 
 ### 6.8. Các phương pháp decode
+
+Từ stage 14, default là:
+
+```bash
+--decode_method all
+```
+
+Nó sẽ chạy lần lượt:
+
+```text
+greedy_search
+modified_beam_search
+beam_search
+```
+
+Có thể truyền một method riêng hoặc danh sách cách nhau bằng dấu phẩy/khoảng trắng, ví dụ `--decode_method greedy_search` hoặc `--decode_methods greedy_search,beam_search`.
 
 `greedy_search` là cách nhanh nhất và đơn giản nhất. Ở mỗi bước model chọn token tốt nhất hiện tại, gần như không giữ nhiều giả thuyết cạnh tranh. Cách này tốt để smoke test, xem model có học được gì chưa, nhưng WER thường không phải tốt nhất.
 

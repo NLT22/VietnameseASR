@@ -36,7 +36,7 @@ copies_per_utt=10
 snr_min=10
 snr_max=20
 
-decode_method="greedy_search"
+decode_method="all"
 use_averaged_model=0
 avg=1
 
@@ -72,7 +72,7 @@ while [[ $# -gt 0 ]]; do
     --copies_per_utt|--copies-per-utt) copies_per_utt="$2"; shift 2 ;;
     --snr_min|--snr-min) snr_min="$2"; shift 2 ;;
     --snr_max|--snr-max) snr_max="$2"; shift 2 ;;
-    --decode_method|--decode-method) decode_method="$2"; shift 2 ;;
+    --decode_method|--decode-method|--decode_methods|--decode-methods) decode_method="$2"; shift 2 ;;
     --use_averaged_model|--use-averaged-model) use_averaged_model="$2"; shift 2 ;;
     --avg) avg="$2"; shift 2 ;;
     --data_variant|--data-variant) data_variant="$2"; shift 2 ;;
@@ -87,7 +87,7 @@ while [[ $# -gt 0 ]]; do
     --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME] [--use_averaged_model 0|1] [--avg N] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small|tiny]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small|tiny]" >&2
       exit 1
       ;;
   esac
@@ -323,21 +323,42 @@ fi
 if [ "$stage" -le 14 ] && [ "$stop_stage" -ge 14 ]; then
   echo "Stage 14: Decode"
   epoch="${num_epochs}"
-  python3 ASR/zipformer/decode.py \
-    --epoch "${epoch}" \
-    --avg "${avg}" \
-    --use-averaged-model "${use_averaged_model}" \
-    --exp-dir "${exp_dir}" \
-    --manifest-dir "${fbank_dir}" \
-    --bpe-model "${bpe_dir}/bpe.model" \
-    --max-duration "${max_duration}" \
-    --decoding-method "${decode_method}" \
-    --bucketing-sampler 0 \
-    --num-encoder-layers "${num_encoder_layers}" \
-    --feedforward-dim "${feedforward_dim}" \
-    --num-heads "${num_heads}" \
-    --encoder-dim "${encoder_dim}" \
-    --encoder-unmasked-dim "${encoder_unmasked_dim}" \
-    --decoder-dim "${decoder_dim}" \
-    --joiner-dim "${joiner_dim}"
+  if [[ "$decode_method" == "all" || "$decode_method" == "auto" || "$decode_method" == "all3" ]]; then
+    decode_methods=(greedy_search modified_beam_search beam_search)
+  else
+    # Accept either a single method or a comma/space-separated list.
+    decode_methods=()
+    IFS=', ' read -r -a requested_decode_methods <<< "$decode_method"
+    for method in "${requested_decode_methods[@]}"; do
+      if [ -n "$method" ]; then
+        decode_methods+=("$method")
+      fi
+    done
+  fi
+
+  if [ "${#decode_methods[@]}" -eq 0 ]; then
+    echo "ERROR: no decode methods selected" >&2
+    exit 1
+  fi
+
+  for method in "${decode_methods[@]}"; do
+    echo "Stage 14: Decode with ${method}"
+    python3 ASR/zipformer/decode.py \
+      --epoch "${epoch}" \
+      --avg "${avg}" \
+      --use-averaged-model "${use_averaged_model}" \
+      --exp-dir "${exp_dir}" \
+      --manifest-dir "${fbank_dir}" \
+      --bpe-model "${bpe_dir}/bpe.model" \
+      --max-duration "${max_duration}" \
+      --decoding-method "${method}" \
+      --bucketing-sampler 0 \
+      --num-encoder-layers "${num_encoder_layers}" \
+      --feedforward-dim "${feedforward_dim}" \
+      --num-heads "${num_heads}" \
+      --encoder-dim "${encoder_dim}" \
+      --encoder-unmasked-dim "${encoder_unmasked_dim}" \
+      --decoder-dim "${decoder_dim}" \
+      --joiner-dim "${joiner_dim}"
+  done
 fi
