@@ -127,23 +127,21 @@ Nếu model sinh **blank**, decode sẽ đi tiếp trên audio frame tiếp theo
 
 ## 5. Các cấu hình model đã dùng
 
-Hiện tại recipe có 3 preset chính trong `run.sh`: `base`, `small`, `tiny`.
+Hiện tại recipe có 2 preset chính trong `run.sh`: `base` và `small`.
 
 | Preset | Ý nghĩa | Params |
 |---|---|---:|
 | `base` | Config gốc từ recipe Zipformer hiện tại. | 64,728,611 |
-| `small` | Bản custom thu nhỏ để hợp hơn với tập dữ liệu nhỏ. | 17,733,695 |
-| `tiny` | Bản custom nhỏ hơn nữa để thử nhanh. | 8,151,940 |
+| `small` | Official Zipformer-small, gần pretrained LibriSpeech `icefall-asr-librispeech-zipformer-small-2023-05-16`. | khoảng 23.3M theo LibriSpeech |
 
 Chi tiết config:
 
 | Preset | `num_encoder_layers` | `encoder_dim` | `feedforward_dim` | `decoder_dim` | `joiner_dim` |
 |---|---|---|---|---:|---:|
 | `base` | `2,2,3,4,3,2` | `192,256,384,512,384,256` | `512,768,1024,1536,1024,768` | 512 | 512 |
-| `small` | `2,2,2,2,2,2` | `128,192,256,384,256,192` | `256,384,512,768,512,384` | 256 | 256 |
-| `tiny` | `1,1,2,2,2,1` | `96,128,192,256,192,128` | `192,256,384,512,384,256` | 192 | 192 |
+| `small` | `2,2,2,2,2,2` | `192,256,256,256,256,256` | `512,768,768,768,768,768` | 512 | 512 |
 
-Lưu ý: `small` và `tiny` ở đây là **preset custom trong repo này**, không phải exact official config `Zipformer-small` từ icefall. Chúng được scale xuống từ `base` bằng cách giảm số block, encoder dimension, feed-forward dimension, decoder dimension và joiner dimension.
+Lưu ý: từ ngày 2026-04-20, `small` đã được đổi sang **official Zipformer-small** để tiện finetune pretrained weight LibriSpeech. Các kết quả WER cũ của `small` trong tài liệu này được tạo bằng preset custom-small cũ khoảng 17.7M params, nên không nên decode lẫn checkpoint cũ với config `small` mới. Preset `tiny` đã được bỏ khỏi pipeline hiện tại; những số liệu `tiny` bên dưới chỉ là kết quả lịch sử để đối chiếu.
 
 Số tham số được tính bằng:
 

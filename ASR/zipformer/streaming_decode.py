@@ -37,12 +37,10 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import k2
-import numpy as np
 import sentencepiece as spm
 import torch
-from asr_datamodule import LibriSpeechAsrDataModule
+from asr_datamodule import ViAsrDataModule
 from decode_stream import DecodeStream
-from kaldifeat import Fbank, FbankOptions
 from lhotse import CutSet, set_caching_enabled
 from streaming_beam_search import (
     fast_beam_search_one_best,
@@ -562,13 +560,6 @@ def decode_dataset(
     """
     device = model.device
 
-    opts = FbankOptions()
-    opts.device = device
-    opts.frame_opts.dither = 0
-    opts.frame_opts.snip_edges = False
-    opts.frame_opts.samp_freq = 16000
-    opts.mel_opts.num_bins = 80
-
     log_interval = 100
 
     decode_results = []
@@ -585,24 +576,7 @@ def decode_dataset(
             device=device,
         )
 
-        audio: np.ndarray = cut.load_audio()
-        # audio.shape: (1, num_samples)
-        assert len(audio.shape) == 2
-        assert audio.shape[0] == 1, "Should be single channel"
-        assert audio.dtype == np.float32, audio.dtype
-
-        # The trained model is using normalized samples
-        # - this is to avoid sending [-32k,+32k] signal in...
-        # - some lhotse AudioTransform classes can make the signal
-        #   be out of range [-1, 1], hence the tolerance 10
-        assert (
-            np.abs(audio).max() <= 10
-        ), "Should be normalized to [-1, 1], 10 for tolerance..."
-
-        samples = torch.from_numpy(audio).squeeze(0)
-
-        fbank = Fbank(opts)
-        feature = fbank(samples.to(device))
+        feature = torch.from_numpy(cut.load_features()).to(device)
         decode_stream.set_features(feature, tail_pad_len=30)
         decode_stream.ground_truth = cut.supervisions[0].text
 
@@ -716,7 +690,7 @@ def save_wer_results(
 @torch.no_grad()
 def main():
     parser = get_parser()
-    LibriSpeechAsrDataModule.add_arguments(parser)
+    ViAsrDataModule.add_arguments(parser)
     args = parser.parse_args()
     args.exp_dir = Path(args.exp_dir)
 
@@ -863,13 +837,12 @@ def main():
     num_param = sum([p.numel() for p in model.parameters()])
     logging.info(f"Number of model parameters: {num_param}")
 
-    librispeech = LibriSpeechAsrDataModule(args)
+    dataset = ViAsrDataModule(args)
 
-    test_clean_cuts = librispeech.test_clean_cuts()
-    test_other_cuts = librispeech.test_other_cuts()
+    test_cuts = dataset.test_cuts()
 
-    test_sets = ["test-clean", "test-other"]
-    test_cuts = [test_clean_cuts, test_other_cuts]
+    test_sets = ["test"]
+    test_cuts = [test_cuts]
 
     for test_set, test_cut in zip(test_sets, test_cuts):
         results_dict = decode_dataset(

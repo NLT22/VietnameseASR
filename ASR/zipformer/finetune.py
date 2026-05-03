@@ -67,10 +67,10 @@ import sentencepiece as spm
 import torch
 import torch.multiprocessing as mp
 import torch.nn as nn
-from asr_datamodule import LibriSpeechAsrDataModule
+from asr_datamodule import ViAsrDataModule
 from decoder import Decoder
 from joiner import Joiner
-from lhotse.cut import Cut, CutSet
+from lhotse.cut import Cut
 from lhotse.dataset.sampling.base import CutSampler
 from lhotse.utils import fix_random_seed
 from model import AsrModel
@@ -302,6 +302,27 @@ def add_model_arguments(parser: argparse.ArgumentParser):
         type=str2bool,
         default=False,
         help="If True, use CTC head.",
+    )
+
+    parser.add_argument(
+        "--use-cr-ctc",
+        type=str2bool,
+        default=False,
+        help="If True, use consistency-regularized CTC (ignored in finetune, accepted for CLI compat).",
+    )
+
+    parser.add_argument(
+        "--cr-loss-scale",
+        type=float,
+        default=0.2,
+        help="Scale for CR-CTC loss (ignored in finetune, accepted for CLI compat).",
+    )
+
+    parser.add_argument(
+        "--attention-decoder-loss-scale",
+        type=float,
+        default=0.0,
+        help="Scale for attention-decoder loss (ignored in finetune, accepted for CLI compat).",
     )
 
 
@@ -784,6 +805,11 @@ def load_model_params(
             model.load_state_dict(checkpoint["model"], strict=strict)
     else:
         src_state_dict = checkpoint["model"]
+        if next(iter(src_state_dict)).startswith("module."):
+            logging.info("Loading selected modules from a checkpoint saved by DDP")
+            src_state_dict = {
+                k.removeprefix("module."): v for k, v in src_state_dict.items()
+            }
         dst_state_dict = model.state_dict()
         for module in init_modules:
             logging.info(f"Loading parameters starting with prefix {module}")
@@ -793,9 +819,62 @@ def load_model_params(
             dst_keys = [
                 k for k in dst_state_dict.keys() if k.startswith(module.strip() + ".")
             ]
-            assert set(src_keys) == set(dst_keys)  # two sets should match exactly
-            for key in src_keys:
-                dst_state_dict[key] = src_state_dict.pop(key)
+
+            src_key_set = set(src_keys)
+            dst_key_set = set(dst_keys)
+            common_keys = sorted(src_key_set & dst_key_set)
+            missing_keys = sorted(dst_key_set - src_key_set)
+            unexpected_keys = sorted(src_key_set - dst_key_set)
+            shape_mismatch_keys = []
+            loaded_keys = []
+
+            for key in common_keys:
+                if src_state_dict[key].shape != dst_state_dict[key].shape:
+                    shape_mismatch_keys.append(
+                        (
+                            key,
+                            tuple(src_state_dict[key].shape),
+                            tuple(dst_state_dict[key].shape),
+                        )
+                    )
+                    continue
+                dst_state_dict[key] = src_state_dict[key]
+                loaded_keys.append(key)
+
+            if not loaded_keys:
+                raise RuntimeError(
+                    f"No compatible parameters found for init module '{module}'. "
+                    f"src_keys={len(src_keys)}, dst_keys={len(dst_keys)}, "
+                    f"common_keys={len(common_keys)}"
+                )
+
+            logging.info(
+                "Loaded %s/%s matching parameters for prefix %s",
+                len(loaded_keys),
+                len(dst_keys),
+                module,
+            )
+            if missing_keys:
+                logging.warning(
+                    "Missing %s destination keys for prefix %s. First keys: %s",
+                    len(missing_keys),
+                    module,
+                    missing_keys[:10],
+                )
+            if unexpected_keys:
+                logging.warning(
+                    "Skipped %s unexpected checkpoint keys for prefix %s. First keys: %s",
+                    len(unexpected_keys),
+                    module,
+                    unexpected_keys[:10],
+                )
+            if shape_mismatch_keys:
+                logging.warning(
+                    "Skipped %s shape-mismatched keys for prefix %s. First keys: %s",
+                    len(shape_mismatch_keys),
+                    module,
+                    shape_mismatch_keys[:10],
+                )
 
         model.load_state_dict(dst_state_dict, strict=strict)
 
@@ -1290,20 +1369,8 @@ def run(rank, world_size, args):
     if params.inf_check:
         register_inf_check_hooks(model)
 
-    librispeech = LibriSpeechAsrDataModule(args)
-
-    gigaspeech_cuts = librispeech.gigaspeech_subset_small_cuts()
-    if params.use_mux:
-        librispeech_cuts = librispeech.train_all_shuf_cuts()
-        train_cuts = CutSet.mux(
-            gigaspeech_cuts,  # num cuts = 688182
-            librispeech_cuts,  # num cuts = 843723
-            weights=[688182, 843723],
-            stop_early=True,
-        )
-    else:
-        train_cuts = gigaspeech_cuts
-    logging.info(train_cuts)
+    dataset = ViAsrDataModule(args)
+    train_cuts = dataset.train_cuts()
 
     def remove_short_and_long_utt(c: Cut):
         # Keep only utterances with duration between 1 second and 20 seconds
@@ -1351,19 +1418,13 @@ def run(rank, world_size, args):
     else:
         sampler_state_dict = None
 
-    train_dl = librispeech.train_dataloaders(
+    train_dl = dataset.train_dataloaders(
         train_cuts, sampler_state_dict=sampler_state_dict
     )
 
-    valid_cuts = librispeech.dev_clean_cuts()
-    valid_cuts += librispeech.dev_other_cuts()
-    gigaspeech_dev_cuts = librispeech.gigaspeech_dev_cuts()
-
-    valid_sets = ["librispeech", "gigaspeech"]
-    valid_dls = [
-        librispeech.valid_dataloaders(valid_cuts),
-        librispeech.valid_dataloaders(gigaspeech_dev_cuts),
-    ]
+    valid_cuts = dataset.dev_cuts()
+    valid_sets = ["dev"]
+    valid_dls = [dataset.valid_dataloaders(valid_cuts)]
 
     if not params.print_diagnostics:
         scan_pessimistic_batches_for_oom(
@@ -1503,7 +1564,7 @@ def scan_pessimistic_batches_for_oom(
 
 def main():
     parser = get_parser()
-    LibriSpeechAsrDataModule.add_arguments(parser)
+    ViAsrDataModule.add_arguments(parser)
     args = parser.parse_args()
     args.exp_dir = Path(args.exp_dir)
 

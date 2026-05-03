@@ -40,6 +40,25 @@ decode_method="all"
 use_averaged_model=0
 avg=1
 
+# Streaming (causal) — train với --causal 1 rồi decode bằng streaming_decode.py
+causal=0
+chunk_size="16,32,64,-1"          # dùng khi train (list)
+left_context_frames="64,128,256,-1" # dùng khi train (list)
+decode_chunk_size=32               # dùng khi streaming decode (single value)
+decode_left_context_frames=256     # dùng khi streaming decode (single value)
+streaming_decode_method="greedy_search" # greedy_search | modified_beam_search
+
+use_ctc=0
+use_cr_ctc=0
+ctc_loss_scale=0.2
+cr_loss_scale=0.2
+attention_decoder_loss_scale=0.0
+
+do_finetune=0
+finetune_ckpt=""
+init_modules="encoder"
+exp_suffix=""
+
 data_variant="raw"
 enable_nr=0
 
@@ -75,6 +94,21 @@ while [[ $# -gt 0 ]]; do
     --decode_method|--decode-method|--decode_methods|--decode-methods) decode_method="$2"; shift 2 ;;
     --use_averaged_model|--use-averaged-model) use_averaged_model="$2"; shift 2 ;;
     --avg) avg="$2"; shift 2 ;;
+    --causal) causal="$2"; shift 2 ;;
+    --chunk_size|--chunk-size) chunk_size="$2"; shift 2 ;;
+    --left_context_frames|--left-context-frames) left_context_frames="$2"; shift 2 ;;
+    --decode_chunk_size|--decode-chunk-size) decode_chunk_size="$2"; shift 2 ;;
+    --decode_left_context_frames|--decode-left-context-frames) decode_left_context_frames="$2"; shift 2 ;;
+    --streaming_decode_method|--streaming-decode-method) streaming_decode_method="$2"; shift 2 ;;
+    --use_ctc|--use-ctc) use_ctc="$2"; shift 2 ;;
+    --use_cr_ctc|--use-cr-ctc) use_cr_ctc="$2"; shift 2 ;;
+    --ctc_loss_scale|--ctc-loss-scale) ctc_loss_scale="$2"; shift 2 ;;
+    --cr_loss_scale|--cr-loss-scale) cr_loss_scale="$2"; shift 2 ;;
+    --attention_decoder_loss_scale|--attention-decoder-loss-scale) attention_decoder_loss_scale="$2"; shift 2 ;;
+    --do_finetune|--do-finetune) do_finetune="$2"; shift 2 ;;
+    --finetune_ckpt|--finetune-ckpt) finetune_ckpt="$2"; shift 2 ;;
+    --init_modules|--init-modules) init_modules="$2"; shift 2 ;;
+    --exp_suffix|--exp-suffix) exp_suffix="$2"; shift 2 ;;
     --data_variant|--data-variant) data_variant="$2"; shift 2 ;;
     --enable_nr|--enable-nr) enable_nr="$2"; shift 2 ;;
     --model_size|--model-size) model_size="$2"; shift 2 ;;
@@ -87,7 +121,7 @@ while [[ $# -gt 0 ]]; do
     --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small|tiny]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
       exit 1
       ;;
   esac
@@ -98,24 +132,15 @@ case "$model_size" in
     ;;
   small)
     num_encoder_layers="2,2,2,2,2,2"
-    feedforward_dim="256,384,512,768,512,384"
-    num_heads="4,4,4,4,4,4"
-    encoder_dim="128,192,256,384,256,192"
-    encoder_unmasked_dim="128,128,192,192,192,128"
-    decoder_dim=256
-    joiner_dim=256
-    ;;
-  tiny)
-    num_encoder_layers="1,1,2,2,2,1"
-    feedforward_dim="192,256,384,512,384,256"
-    num_heads="4,4,4,4,4,4"
-    encoder_dim="96,128,192,256,192,128"
-    encoder_unmasked_dim="96,96,128,128,128,96"
-    decoder_dim=192
-    joiner_dim=192
+    feedforward_dim="512,768,768,768,768,768"
+    num_heads="4,4,4,8,4,4"
+    encoder_dim="192,256,256,256,256,256"
+    encoder_unmasked_dim="192,192,192,192,192,192"
+    decoder_dim=512
+    joiner_dim=512
     ;;
   *)
-    echo "ERROR: --model_size must be one of: base, small, tiny" >&2
+    echo "ERROR: --model_size must be one of: base, small" >&2
     exit 1
     ;;
 esac
@@ -144,10 +169,15 @@ case "$data_variant" in
 esac
 
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
+streaming_suffix=""
+if [ "$causal" = "1" ]; then streaming_suffix="_streaming"; fi
+if [ "$do_finetune" = "1" ] && [ -z "$exp_suffix" ]; then
+  exp_suffix="_finetune"
+fi
 if [ "$model_size" = "base" ]; then
-  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}${variant_suffix}"
+  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
 else
-  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}_${model_size}${variant_suffix}"
+  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}_${model_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
 fi
 
 echo "corpus_root=$corpus_root"
@@ -180,6 +210,10 @@ echo "snr_max=$snr_max"
 echo "decode_method=$decode_method"
 echo "use_averaged_model=$use_averaged_model"
 echo "avg=$avg"
+echo "do_finetune=$do_finetune"
+echo "finetune_ckpt=$finetune_ckpt"
+echo "init_modules=$init_modules"
+echo "exp_suffix=$exp_suffix"
 echo "model_size=$model_size"
 echo "num_encoder_layers=$num_encoder_layers"
 echo "feedforward_dim=$feedforward_dim"
@@ -297,7 +331,22 @@ fi
 
 if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ]; then
   echo "Stage 13: Train"
-  python3 ASR/zipformer/train.py \
+  train_script="ASR/zipformer/train.py"
+  finetune_args=()
+  if [ "$do_finetune" = "1" ]; then
+    if [ -z "$finetune_ckpt" ]; then
+      echo "ERROR: --do_finetune 1 requires --finetune_ckpt /path/to/checkpoint.pt" >&2
+      exit 1
+    fi
+    train_script="ASR/zipformer/finetune.py"
+    finetune_args=(
+      --do-finetune 1
+      --finetune-ckpt "${finetune_ckpt}"
+      --init-modules "${init_modules}"
+    )
+  fi
+
+  python3 "${train_script}" \
     --world-size "${world_size}" \
     --num-epochs "${num_epochs}" \
     --start-epoch 1 \
@@ -317,7 +366,16 @@ if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ]; then
     --encoder-dim "${encoder_dim}" \
     --encoder-unmasked-dim "${encoder_unmasked_dim}" \
     --decoder-dim "${decoder_dim}" \
-    --joiner-dim "${joiner_dim}"
+    --joiner-dim "${joiner_dim}" \
+    --use-ctc "${use_ctc}" \
+    --use-cr-ctc "${use_cr_ctc}" \
+    --ctc-loss-scale "${ctc_loss_scale}" \
+    --cr-loss-scale "${cr_loss_scale}" \
+    --attention-decoder-loss-scale "${attention_decoder_loss_scale}" \
+    --causal "${causal}" \
+    --chunk-size "${chunk_size}" \
+    --left-context-frames "${left_context_frames}" \
+    "${finetune_args[@]}"
 fi
 
 if [ "$stage" -le 14 ] && [ "$stop_stage" -ge 14 ]; then
@@ -341,6 +399,15 @@ if [ "$stage" -le 14 ] && [ "$stop_stage" -ge 14 ]; then
     exit 1
   fi
 
+  decode_causal_args=()
+  if [ "$causal" = "1" ]; then
+    decode_causal_args=(
+      --causal 1
+      --chunk-size "${decode_chunk_size}"
+      --left-context-frames "${decode_left_context_frames}"
+    )
+  fi
+
   for method in "${decode_methods[@]}"; do
     echo "Stage 14: Decode with ${method}"
     python3 ASR/zipformer/decode.py \
@@ -359,6 +426,35 @@ if [ "$stage" -le 14 ] && [ "$stop_stage" -ge 14 ]; then
       --encoder-dim "${encoder_dim}" \
       --encoder-unmasked-dim "${encoder_unmasked_dim}" \
       --decoder-dim "${decoder_dim}" \
-      --joiner-dim "${joiner_dim}"
+      --joiner-dim "${joiner_dim}" \
+      "${decode_causal_args[@]}"
   done
+fi
+
+if [ "$stage" -le 15 ] && [ "$stop_stage" -ge 15 ]; then
+  if [ "$causal" != "1" ]; then
+    echo "Stage 15: Streaming decode bị bỏ qua (--causal không phải 1)"
+  else
+    epoch="${num_epochs}"
+    echo "Stage 15: Streaming decode (chunk=${decode_chunk_size}, left_context=${decode_left_context_frames}, method=${streaming_decode_method})"
+    python3 ASR/zipformer/streaming_decode.py \
+      --epoch "${epoch}" \
+      --avg "${avg}" \
+      --use-averaged-model "${use_averaged_model}" \
+      --exp-dir "${exp_dir}" \
+      --manifest-dir "${fbank_dir}" \
+      --bpe-model "${bpe_dir}/bpe.model" \
+      --max-duration "${max_duration}" \
+      --decoding-method "${streaming_decode_method}" \
+      --causal 1 \
+      --chunk-size "${decode_chunk_size}" \
+      --left-context-frames "${decode_left_context_frames}" \
+      --num-encoder-layers "${num_encoder_layers}" \
+      --feedforward-dim "${feedforward_dim}" \
+      --num-heads "${num_heads}" \
+      --encoder-dim "${encoder_dim}" \
+      --encoder-unmasked-dim "${encoder_unmasked_dim}" \
+      --decoder-dim "${decoder_dim}" \
+      --joiner-dim "${joiner_dim}"
+  fi
 fi
