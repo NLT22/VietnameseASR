@@ -18,17 +18,25 @@ Press Ctrl+C to stop.
 import sys
 import queue
 import argparse
-import time
+import math
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List
+
 import torch
+import torchaudio
 import soundfile as sf
 import sounddevice as sd
 import k2
-from lhotse import Fbank, FbankConfig
+from torch.nn.utils.rnn import pad_sequence
 from silero_vad import load_silero_vad
 
 # ── Model paths ───────────────────────────────────────────────────────────────
 STREAMING_MODEL = "ASR/zipformer/exp_bpe100_small_streaming_scratch30_streaming/jit_script_chunk_32_left_256.pt"
-FULL_MODEL      = "ASR/zipformer/exp_bpe100_small_scratch30/jit_script.pt"
+# Best current full-context checkpoint:
+# raw small/scratch30 rerun, epoch-30 avg=10, beam_search WER=3.40%.
+FULL_MODEL      = "ASR/zipformer/exp_bpe100_small_scratch30_20260506_194241/jit_script.pt"
 TOKENS_PATH     = "data/lang_bpe_100/tokens.txt"
 
 # ── Audio / VAD config ────────────────────────────────────────────────────────
@@ -45,13 +53,70 @@ SAVE_AUDIO_DIR        = None   # None = không lưu; đặt qua --save-audio
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-_fbank_extractor = Fbank(FbankConfig(num_mel_bins=MEL_BINS))
+def compute_fbank(waveform: torch.Tensor, device: torch.device) -> torch.Tensor:
+    """Compute fbank using the same options as icefall's JIT helper."""
+    waveform = waveform.to(device=device, dtype=torch.float32)
+    return torchaudio.compliance.kaldi.fbank(
+        waveform.unsqueeze(0),
+        num_mel_bins=MEL_BINS,
+        dither=0,
+        snip_edges=False,
+        high_freq=-400,
+        sample_frequency=SAMPLE_RATE,
+        use_log_fbank=True,
+    )
 
 
-def compute_fbank(waveform: torch.Tensor) -> torch.Tensor:
-    """waveform: (N,) float32 → fbank: (T, 80) — same extractor as training."""
-    feats = _fbank_extractor.extract(waveform.numpy(), sampling_rate=SAMPLE_RATE)
-    return torch.from_numpy(feats)
+@dataclass
+class Hypothesis:
+    ys: List[int]
+    log_prob: float
+
+    @property
+    def key(self) -> str:
+        return "_".join(map(str, self.ys))
+
+
+class HypothesisList:
+    def __init__(self):
+        self._data: Dict[str, Hypothesis] = {}
+
+    def __len__(self):
+        return len(self._data)
+
+    def add(self, hyp: Hypothesis) -> None:
+        old = self._data.get(hyp.key)
+        if old is None or old.log_prob < hyp.log_prob:
+            self._data[hyp.key] = hyp
+
+    def remove(self, hyp: Hypothesis) -> None:
+        self._data.pop(hyp.key)
+
+    def get_most_probable(self, length_norm: bool = False) -> Hypothesis:
+        if length_norm:
+            return max(
+                self._data.values(),
+                key=lambda h: h.log_prob / max(1, len(h.ys)),
+            )
+        return max(self._data.values(), key=lambda h: h.log_prob)
+
+    def filter(self, threshold: float) -> "HypothesisList":
+        ans = HypothesisList()
+        for hyp in self._data.values():
+            if hyp.log_prob > threshold:
+                ans.add(hyp)
+        return ans
+
+    def topk(self, k: int, length_norm: bool = False) -> "HypothesisList":
+        hyps = sorted(
+            self._data.values(),
+            key=lambda h: h.log_prob / max(1, len(h.ys)) if length_norm else h.log_prob,
+            reverse=True,
+        )[:k]
+        ans = HypothesisList()
+        for hyp in hyps:
+            ans.add(hyp)
+        return ans
 
 
 def init_beams(blank_id, context_size):
@@ -107,6 +172,124 @@ def decode_hyp(ys, context_size, token_table):
     return "".join(token_table[i] for i in ys[context_size:]).replace("▁", " ").strip()
 
 
+def token_ids_to_text(token_ids: List[int], token_table) -> str:
+    return "".join(token_table[i] for i in token_ids).replace("▁", " ").strip()
+
+
+@torch.no_grad()
+def jit_greedy_search(model, encoder_out, encoder_out_lens, device) -> List[int]:
+    packed_encoder_out = torch.nn.utils.rnn.pack_padded_sequence(
+        input=encoder_out,
+        lengths=encoder_out_lens.cpu(),
+        batch_first=True,
+        enforce_sorted=False,
+    )
+
+    blank_id = model.decoder.blank_id
+    context_size = model.decoder.context_size
+    batch_size_list = packed_encoder_out.batch_sizes.tolist()
+
+    hyps = [[blank_id] * context_size]
+    decoder_input = torch.tensor(hyps, device=device, dtype=torch.int64)
+    decoder_out = model.decoder(
+        decoder_input,
+        torch.tensor([False]),
+    ).squeeze(1)
+
+    offset = 0
+    for batch_size in batch_size_list:
+        current_encoder_out = packed_encoder_out.data[offset : offset + batch_size]
+        offset += batch_size
+
+        logits = model.joiner(current_encoder_out, decoder_out[:batch_size])
+        y = logits.argmax(dim=1).tolist()
+        emitted = False
+        for i, v in enumerate(y):
+            if v != blank_id:
+                hyps[i].append(v)
+                emitted = True
+        if emitted:
+            decoder_input = [h[-context_size:] for h in hyps[:batch_size]]
+            decoder_input = torch.tensor(decoder_input, device=device, dtype=torch.int64)
+            decoder_out = model.decoder(
+                decoder_input,
+                torch.tensor([False]),
+            ).squeeze(1)
+
+    return hyps[0][context_size:]
+
+
+@torch.no_grad()
+def jit_beam_search(model, encoder_out, beam: int, device) -> List[int]:
+    """Single-utterance RNN-T beam search for exported TorchScript models."""
+    assert encoder_out.ndim == 3 and encoder_out.size(0) == 1, encoder_out.shape
+
+    blank_id = model.decoder.blank_id
+    context_size = model.decoder.context_size
+    unk_id = getattr(model, "unk_id", blank_id)
+
+    B = HypothesisList()
+    B.add(Hypothesis(ys=[blank_id] * context_size, log_prob=0.0))
+
+    decoder_cache: Dict[str, torch.Tensor] = {}
+    T = encoder_out.size(1)
+
+    for t in range(T):
+        current_encoder_out = encoder_out[0, t].unsqueeze(0)
+        A = B
+        B = HypothesisList()
+
+        while True:
+            y_star = A.get_most_probable()
+            A.remove(y_star)
+
+            if y_star.key not in decoder_cache:
+                decoder_input = torch.tensor(
+                    [y_star.ys[-context_size:]],
+                    device=device,
+                    dtype=torch.int64,
+                )
+                decoder_out = model.decoder(
+                    decoder_input,
+                    torch.tensor([False]),
+                ).squeeze(1)
+                decoder_cache[y_star.key] = decoder_out
+            else:
+                decoder_out = decoder_cache[y_star.key]
+
+            logits = model.joiner(current_encoder_out, decoder_out).squeeze(0)
+            log_prob = logits.log_softmax(dim=-1)
+
+            B.add(
+                Hypothesis(
+                    ys=y_star.ys[:],
+                    log_prob=y_star.log_prob + log_prob[blank_id].item(),
+                )
+            )
+
+            values, indices = log_prob.topk(min(beam + 1, log_prob.numel()))
+            for idx, val in zip(indices.tolist(), values.tolist()):
+                if idx in (blank_id, unk_id):
+                    continue
+                A.add(
+                    Hypothesis(
+                        ys=y_star.ys + [idx],
+                        log_prob=y_star.log_prob + val,
+                    )
+                )
+
+            if len(A) == 0:
+                B = B.topk(beam)
+                break
+
+            kept_B = B.filter(A.get_most_probable().log_prob)
+            if len(kept_B) >= beam:
+                B = kept_B.topk(beam)
+                break
+
+    return B.get_most_probable(length_norm=True).ys[context_size:]
+
+
 def clear_line(msg=""):
     sys.stdout.write(f"\r\033[K{msg}")
     sys.stdout.flush()
@@ -118,7 +301,7 @@ def maybe_save_audio(sample_buf: torch.Tensor):
         return
     import os
     os.makedirs(SAVE_AUDIO_DIR, exist_ok=True)
-    fname = os.path.join(SAVE_AUDIO_DIR, f"utt_{time.strftime('%H%M%S_%f')[:12]}.wav")
+    fname = os.path.join(SAVE_AUDIO_DIR, f"utt_{datetime.now().strftime('%H%M%S_%f')}.wav")
     sf.write(fname, sample_buf.numpy(), SAMPLE_RATE)
     print(f"  [saved: {fname}]", file=sys.stderr)
 
@@ -177,16 +360,19 @@ def run_streaming(encoder, decoder, joiner, token_table, device, audio_queue):
                     utterance_active = True
                     clear_line("● REC  ")
                     for w in pre_buf:
-                        fbank_buf = torch.cat([fbank_buf, compute_fbank(w)], dim=0)
+                        feats = compute_fbank(w, torch.device("cpu")).cpu()
+                        fbank_buf = torch.cat([fbank_buf, feats], dim=0)
                     pre_buf = []
                 elif utterance_active:
-                    fbank_buf = torch.cat([fbank_buf, compute_fbank(window)], dim=0)
+                    feats = compute_fbank(window, torch.device("cpu")).cpu()
+                    fbank_buf = torch.cat([fbank_buf, feats], dim=0)
             else:
                 speech_count = 0
                 pre_buf      = []
                 if utterance_active:
                     silence_count += 1
-                    fbank_buf = torch.cat([fbank_buf, compute_fbank(window)], dim=0)
+                    feats = compute_fbank(window, torch.device("cpu")).cpu()
+                    fbank_buf = torch.cat([fbank_buf, feats], dim=0)
 
             # Kết thúc utterance
             if utterance_active and silence_count >= SILENCE_CHUNKS_TO_END:
@@ -233,26 +419,19 @@ def run_streaming(encoder, decoder, joiner, token_table, device, audio_queue):
 # ── Full (non-streaming) inference ───────────────────────────────────────────
 
 @torch.no_grad()
-def run_full(encoder, decoder, joiner, token_table, device, audio_queue):
-    context_size = decoder.context_size
-    blank_id     = decoder.blank_id
-
-    def encode_full(fbank_buf):
-        feat   = fbank_buf.unsqueeze(0).to(device)
-        x_lens = torch.tensor([fbank_buf.size(0)], dtype=torch.int32, device=device)
-        enc_out, _ = encoder(feat, x_lens)
-        return enc_out.squeeze(0)  # (T', C)
-
+def run_full(model, token_table, device, audio_queue, decode_method):
     utterance_active = False
     silence_count    = 0
     speech_count     = 0
     pre_buf          = []
     pre_raw          = []   # raw samples tương ứng với pre_buf (để save audio)
-    fbank_buf        = torch.zeros(0, MEL_BINS)
     raw_buf          = torch.zeros(0)   # raw samples của utterance hiện tại
     sample_buf       = torch.zeros(0)
 
-    print(f"  Full-context: encode whole utterance after speech ends  beam={BEAM_SIZE}")
+    print(
+        "  Full-context: VAD cuts utterance → fbank whole utterance → "
+        f"{decode_method} decode  beam={BEAM_SIZE}"
+    )
     clear_line("🎤  Listening...")
 
     while True:
@@ -283,13 +462,10 @@ def run_full(encoder, decoder, joiner, token_table, device, audio_queue):
                 if not utterance_active and speech_count >= MIN_SPEECH_CHUNKS:
                     utterance_active = True
                     clear_line("● REC  ")
-                    for w in pre_buf:
-                        fbank_buf = torch.cat([fbank_buf, compute_fbank(w)], dim=0)
                     raw_buf = torch.cat(pre_raw)
                     pre_buf = []
                     pre_raw = []
                 elif utterance_active:
-                    fbank_buf = torch.cat([fbank_buf, compute_fbank(window)], dim=0)
                     raw_buf   = torch.cat([raw_buf, window])
             else:
                 speech_count = 0
@@ -297,24 +473,45 @@ def run_full(encoder, decoder, joiner, token_table, device, audio_queue):
                 pre_raw      = []
                 if utterance_active:
                     silence_count += 1
-                    fbank_buf = torch.cat([fbank_buf, compute_fbank(window)], dim=0)
                     raw_buf   = torch.cat([raw_buf, window])
 
             # Kết thúc utterance → encode 1 lần, beam search toàn bộ
             if utterance_active and silence_count >= SILENCE_CHUNKS_TO_END:
                 maybe_save_audio(raw_buf)
-                if fbank_buf.size(0) > 0:
-                    enc_out = encode_full(fbank_buf)
-                    beams   = init_beams(blank_id, context_size)
-                    for t in range(enc_out.size(0)):
-                        beams = beam_search_step(decoder, joiner, enc_out[t], beams,
-                                                 context_size, blank_id, device)
-                    text = decode_hyp(beams[0][0], context_size, token_table)
+                if raw_buf.numel() > 0:
+                    tail_padding = torch.zeros(int(0.3 * SAMPLE_RATE))
+                    wave = torch.cat([raw_buf, tail_padding])
+                    feats = compute_fbank(wave, device)
+                    features = pad_sequence(
+                        [feats],
+                        batch_first=True,
+                        padding_value=math.log(1e-10),
+                    )
+                    feature_lens = torch.tensor([feats.size(0)], device=device)
+                    encoder_out, encoder_out_lens = model.encoder(
+                        features=features,
+                        feature_lengths=feature_lens,
+                    )
+
+                    if decode_method == "greedy":
+                        token_ids = jit_greedy_search(
+                            model=model,
+                            encoder_out=encoder_out,
+                            encoder_out_lens=encoder_out_lens,
+                            device=device,
+                        )
+                    else:
+                        token_ids = jit_beam_search(
+                            model=model,
+                            encoder_out=encoder_out,
+                            beam=BEAM_SIZE,
+                            device=device,
+                        )
+                    text = token_ids_to_text(token_ids, token_table)
                     if text:
                         sys.stdout.write(f"\r\033[K▶  {text}\n")
                         sys.stdout.flush()
 
-                fbank_buf        = torch.zeros(0, MEL_BINS)
                 raw_buf          = torch.zeros(0)
                 utterance_active = False
                 silence_count    = 0
@@ -324,13 +521,45 @@ def run_full(encoder, decoder, joiner, token_table, device, audio_queue):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+def export_hint(model_path: Path) -> str:
+    if model_path.as_posix() != FULL_MODEL:
+        return ""
+
+    return """
+Model JIT mặc định chưa tồn tại. Export model full-context bằng lệnh:
+
+  cd /home/trung/icefall/egs/vi_asr_corpus
+  source ~/test-icefall/bin/activate
+  python3 ASR/zipformer/export.py \\
+    --exp-dir ASR/zipformer/exp_bpe100_small_scratch30_20260506_194241 \\
+    --tokens data/lang_bpe_100/tokens.txt \\
+    --epoch 30 \\
+    --avg 10 \\
+    --use-averaged-model 0 \\
+    --jit 1 \\
+    --num-encoder-layers 2,2,2,2,2,2 \\
+    --feedforward-dim 512,768,768,768,768,768 \\
+    --num-heads 4,4,4,8,4,4 \\
+    --encoder-dim 192,256,256,256,256,256 \\
+    --encoder-unmasked-dim 192,192,192,192,192,192 \\
+    --decoder-dim 512 \\
+    --joiner-dim 512
+""".strip()
+
+
 def main():
     global BEAM_SIZE, SAVE_AUDIO_DIR
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--mode", choices=["streaming", "full"], default="streaming",
+        "--mode", choices=["streaming", "full"], default="full",
         help="streaming: partial results while speaking | full: result after utterance ends",
     )
+    parser.add_argument("--model", type=str, default=None,
+                        help="Path to TorchScript model. Default follows --mode.")
+    parser.add_argument("--tokens", type=str, default=TOKENS_PATH,
+                        help="Path to tokens.txt")
+    parser.add_argument("--decode-method", choices=["beam", "greedy"], default="beam",
+                        help="Decode method for --mode full")
     parser.add_argument("--device", type=int, default=None,
                         help="Sounddevice input device index (default: system default)")
     parser.add_argument("--beam", type=int, default=BEAM_SIZE,
@@ -343,15 +572,24 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}  |  Mode: {args.mode}  |  Beam: {BEAM_SIZE}")
 
-    model_path = STREAMING_MODEL if args.mode == "streaming" else FULL_MODEL
+    model_path = Path(
+        args.model or (STREAMING_MODEL if args.mode == "streaming" else FULL_MODEL)
+    )
+    if not model_path.is_file():
+        hint = export_hint(model_path)
+        msg = f"ERROR: model file not found: {model_path}"
+        if hint:
+            msg += "\n\n" + hint
+        raise SystemExit(msg)
     print(f"Loading model: {model_path}")
-    asr_model = torch.jit.load(model_path, map_location=device)
+    asr_model = torch.jit.load(str(model_path), map_location=device)
     asr_model.eval()
+    asr_model.to(device)
     encoder = asr_model.encoder
     decoder = asr_model.decoder
     joiner  = asr_model.joiner
 
-    token_table = k2.SymbolTable.from_file(TOKENS_PATH)
+    token_table = k2.SymbolTable.from_file(args.tokens)
 
     print("Loading Silero VAD...")
     global vad_model
@@ -383,7 +621,13 @@ def main():
         if args.mode == "streaming":
             run_streaming(encoder, decoder, joiner, token_table, device, audio_queue)
         else:
-            run_full(encoder, decoder, joiner, token_table, device, audio_queue)
+            run_full(
+                asr_model,
+                token_table,
+                device,
+                audio_queue,
+                decode_method=args.decode_method,
+            )
 
 
 if __name__ == "__main__":

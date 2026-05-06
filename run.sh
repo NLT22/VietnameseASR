@@ -58,6 +58,7 @@ do_finetune=0
 finetune_ckpt=""
 init_modules="encoder"
 exp_suffix=""
+exp_dir_policy="auto"  # auto: create unique exp dir for train if non-empty; reuse: old behavior; fail: stop if non-empty
 
 data_variant="raw"
 enable_nr=0
@@ -109,6 +110,7 @@ while [[ $# -gt 0 ]]; do
     --finetune_ckpt|--finetune-ckpt) finetune_ckpt="$2"; shift 2 ;;
     --init_modules|--init-modules) init_modules="$2"; shift 2 ;;
     --exp_suffix|--exp-suffix) exp_suffix="$2"; shift 2 ;;
+    --exp_dir_policy|--exp-dir-policy) exp_dir_policy="$2"; shift 2 ;;
     --data_variant|--data-variant) data_variant="$2"; shift 2 ;;
     --enable_nr|--enable-nr) enable_nr="$2"; shift 2 ;;
     --model_size|--model-size) model_size="$2"; shift 2 ;;
@@ -121,11 +123,20 @@ while [[ $# -gt 0 ]]; do
     --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
       exit 1
       ;;
   esac
 done
+
+case "$exp_dir_policy" in
+  auto|reuse|fail)
+    ;;
+  *)
+    echo "ERROR: --exp_dir_policy must be one of: auto, reuse, fail" >&2
+    exit 1
+    ;;
+esac
 
 case "$model_size" in
   base)
@@ -152,7 +163,7 @@ case "$data_variant" in
     manifest_dir="$PWD/data/manifests"
     fixed_manifest_dir="$PWD/data/manifests/fixed"
     fbank_dir="$PWD/fbank"
-    variant_suffix=""
+    variant_suffix="_raw"
     ;;
   nr)
     transcript_dir="transcripts_nr"
@@ -179,11 +190,53 @@ if [ "$model_size" = "base" ]; then
 else
   exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}_${model_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
 fi
+requested_exp_dir="$exp_dir"
+
+exp_dir_has_contents() {
+  local dir="$1"
+  [ -d "$dir" ] && [ -n "$(find "$dir" -mindepth 1 -maxdepth 1 -print -quit)" ]
+}
+
+make_unique_exp_dir() {
+  local base="$1"
+  local stamp
+  local candidate
+  local i
+
+  stamp="$(date +%Y%m%d_%H%M%S)"
+  candidate="${base}_${stamp}"
+  i=1
+  while [ -e "$candidate" ]; do
+    candidate="${base}_${stamp}_${i}"
+    i=$((i + 1))
+  done
+  printf "%s\n" "$candidate"
+}
+
+if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ] && exp_dir_has_contents "$exp_dir"; then
+  case "$exp_dir_policy" in
+    auto)
+      exp_dir="$(make_unique_exp_dir "$exp_dir")"
+      echo "WARNING: requested exp_dir already has files: $requested_exp_dir" >&2
+      echo "WARNING: using a new exp_dir to avoid overwrite: $exp_dir" >&2
+      ;;
+    fail)
+      echo "ERROR: requested exp_dir already has files: $requested_exp_dir" >&2
+      echo "Set --exp_dir_policy auto to create a new folder or --exp_dir_policy reuse to write into it." >&2
+      exit 1
+      ;;
+    reuse)
+      echo "WARNING: reusing non-empty exp_dir: $exp_dir" >&2
+      ;;
+  esac
+fi
 
 echo "corpus_root=$corpus_root"
 echo "vocab_size=$vocab_size"
 echo "bpe_dir=$bpe_dir"
 echo "exp_dir=$exp_dir"
+echo "requested_exp_dir=$requested_exp_dir"
+echo "exp_dir_policy=$exp_dir_policy"
 echo "data_variant=$data_variant"
 echo "enable_nr=$enable_nr"
 echo "transcript_dir=$transcript_dir"

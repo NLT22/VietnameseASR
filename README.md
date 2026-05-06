@@ -31,11 +31,14 @@ python prepare_vi_asr_corpus.py --auto --shuffle-before-split --overwrite
 # 2. Chuẩn bị data → fbank (stage 1–12)
 bash run.sh --vocab_size 100 --stage 1 --stop_stage 12
 
-# 3. Train
-bash run.sh --vocab_size 100 --model_size small --num_epochs 50 --stage 13 --stop_stage 13
+# 3. Train raw small model
+bash run.sh --data_variant raw --vocab_size 100 --model_size small \
+  --exp_suffix _scratch30 --num_epochs 30 --stage 13 --stop_stage 13
 
 # 4. Decode (chạy greedy + modified_beam + beam_search)
-bash run.sh --vocab_size 100 --model_size small --num_epochs 50 --stage 14 --stop_stage 14
+bash run.sh --data_variant raw --vocab_size 100 --model_size small \
+  --exp_suffix _scratch30 --num_epochs 30 --decode_method all \
+  --stage 14 --stop_stage 14
 ```
 
 ---
@@ -103,13 +106,18 @@ bash run.sh --vocab_size 100 --model_size small --num_epochs 50 --stage 14 --sto
 
 # Experiment dir suffix
 --exp_suffix _myexp
+--exp_dir_policy auto|reuse|fail
 ```
 
 ### Model size presets
 
-`--model_size base` → `exp_bpe100/` (config mặc định recipe)
+`--model_size base --data_variant raw` → `exp_bpe100_raw/`
 
-`--model_size small` → `exp_bpe100_small/`
+`--model_size base --data_variant nr` → `exp_bpe100_nr/`
+
+`--model_size small --data_variant raw` → `exp_bpe100_small_raw/`
+
+`--model_size small --data_variant nr` → `exp_bpe100_small_nr/`
 ```
 --num-encoder-layers 2,2,2,2,2,2   
 --feedforward-dim 512,768,768,768,768,768
@@ -120,7 +128,15 @@ bash run.sh --vocab_size 100 --model_size small --num_epochs 50 --stage 14 --sto
 --joiner-dim 512
 ```
 
-Hậu tố exp dir tự động: `_small`, `_nr`, `_finetune` (kết hợp được).
+Hậu tố exp dir tự động: `_raw` hoặc `_nr`, thêm `_streaming` nếu `--causal 1`, và thêm `--exp_suffix` nếu có. Ví dụ:
+
+| Lệnh chính | Exp dir mặc định |
+|---|---|
+| `--model_size small --data_variant raw --exp_suffix _scratch30` | `ASR/zipformer/exp_bpe100_small_raw_scratch30` |
+| `--model_size small --data_variant nr --exp_suffix _scratch30` | `ASR/zipformer/exp_bpe100_small_nr_scratch30` |
+| `--model_size base --data_variant raw --exp_suffix _scratch50` | `ASR/zipformer/exp_bpe100_raw_scratch50` |
+
+Mặc định `--exp_dir_policy auto`: nếu chạy stage train và `exp_dir` đã có file, `run.sh` tự chuyển sang folder mới dạng `exp_..._YYYYmmdd_HHMMSS` để tránh ghi đè checkpoint/log cũ. Nếu muốn hành vi cũ thì dùng `--exp_dir_policy reuse`; nếu muốn dừng ngay khi folder đã tồn tại thì dùng `--exp_dir_policy fail`.
 
 ---
 
@@ -189,8 +205,10 @@ bash run.sh \
 
 ```bash
 # NoiseReduce variant
-bash run.sh --enable_nr 1 --data_variant nr --model_size small \
-  --num_epochs 50 --stage 0 --stop_stage 14
+bash run.sh --enable_nr 1 --stage 0 --stop_stage 0
+
+bash run.sh --data_variant nr --model_size small \
+  --exp_suffix _scratch30 --num_epochs 30 --stage 1 --stop_stage 14
 
 # Offline MUSAN aug → train
 bash run.sh --offline_musan_aug 1 --musan_dir "$MUSAN_DIR" \
@@ -221,6 +239,9 @@ python3 ASR/zipformer/jit_pretrained.py \
   --nn-model-filename ASR/zipformer/exp_bpe100_small/jit_script.pt \
   --tokens data/lang_bpe_100/tokens.txt \
   /path/to/audio.wav
+
+# Microphone demo dùng JIT best hiện tại nếu file tồn tại
+python3 mic_streaming_asr.py --mode full --decode-method beam --beam 4
 ```
 
 ## Dọn checkpoint để tiết kiệm dung lượng
