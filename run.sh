@@ -9,6 +9,10 @@ stop_stage=100
 
 corpus_root="$script_dir"
 
+train_ratio=0.8
+dev_ratio=0.1
+test_ratio=0.1
+
 vocab_size=100
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
 manifest_dir="$PWD/data/manifests"
@@ -58,6 +62,7 @@ do_finetune=0
 finetune_ckpt=""
 init_modules="encoder"
 exp_suffix=""
+exp_dir_override=""
 exp_dir_policy="auto"  # auto: create unique exp dir for train if non-empty; reuse: old behavior; fail: stop if non-empty
 
 data_variant="raw"
@@ -76,6 +81,9 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --stage) stage="$2"; shift 2 ;;
     --stop_stage|--stop-stage|-stop_stage|-stop-stage) stop_stage="$2"; shift 2 ;;
+    --train_ratio|--train-ratio) train_ratio="$2"; shift 2 ;;
+    --dev_ratio|--dev-ratio) dev_ratio="$2"; shift 2 ;;
+    --test_ratio|--test-ratio) test_ratio="$2"; shift 2 ;;
     --vocab_size|--vocab-size) vocab_size="$2"; shift 2 ;;
     --num_epochs|--num-epochs) num_epochs="$2"; shift 2 ;;
     --world_size|--world-size) world_size="$2"; shift 2 ;;
@@ -110,6 +118,7 @@ while [[ $# -gt 0 ]]; do
     --finetune_ckpt|--finetune-ckpt) finetune_ckpt="$2"; shift 2 ;;
     --init_modules|--init-modules) init_modules="$2"; shift 2 ;;
     --exp_suffix|--exp-suffix) exp_suffix="$2"; shift 2 ;;
+    --exp_dir|--exp-dir) exp_dir_override="$2"; shift 2 ;;
     --exp_dir_policy|--exp-dir-policy) exp_dir_policy="$2"; shift 2 ;;
     --data_variant|--data-variant) data_variant="$2"; shift 2 ;;
     --enable_nr|--enable-nr) enable_nr="$2"; shift 2 ;;
@@ -123,7 +132,7 @@ while [[ $# -gt 0 ]]; do
     --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--train_ratio X] [--dev_ratio X] [--test_ratio X] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir DIR] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
       exit 1
       ;;
   esac
@@ -186,10 +195,19 @@ if [ "$do_finetune" = "1" ] && [ -z "$exp_suffix" ]; then
   exp_suffix="_finetune"
 fi
 if [ "$model_size" = "base" ]; then
-  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
+  exp_name="exp_bpe${vocab_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
 else
-  exp_dir="$PWD/ASR/zipformer/exp_bpe${vocab_size}_${model_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
+  exp_name="exp_bpe${vocab_size}_${model_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
 fi
+exp_parent_dir="$PWD/ASR/zipformer"
+if [ -n "$exp_dir_override" ]; then
+  if [[ "$exp_dir_override" = /* ]]; then
+    exp_parent_dir="$exp_dir_override"
+  else
+    exp_parent_dir="$PWD/$exp_dir_override"
+  fi
+fi
+exp_dir="$exp_parent_dir/$exp_name"
 requested_exp_dir="$exp_dir"
 
 exp_dir_has_contents() {
@@ -232,9 +250,15 @@ if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ] && exp_dir_has_contents "$exp
 fi
 
 echo "corpus_root=$corpus_root"
+echo "train_ratio=$train_ratio"
+echo "dev_ratio=$dev_ratio"
+echo "test_ratio=$test_ratio"
 echo "vocab_size=$vocab_size"
 echo "bpe_dir=$bpe_dir"
 echo "exp_dir=$exp_dir"
+echo "exp_parent_dir=$exp_parent_dir"
+echo "exp_name=$exp_name"
+echo "exp_dir_override=$exp_dir_override"
 echo "requested_exp_dir=$requested_exp_dir"
 echo "exp_dir_policy=$exp_dir_policy"
 echo "data_variant=$data_variant"
@@ -275,6 +299,17 @@ echo "encoder_dim=$encoder_dim"
 echo "encoder_unmasked_dim=$encoder_unmasked_dim"
 echo "decoder_dim=$decoder_dim"
 echo "joiner_dim=$joiner_dim"
+
+if [ "$stage" -le -1 ] && [ "$stop_stage" -ge -1 ]; then
+  echo "Stage -1: Prepare corpus from dataset/"
+  python3 prepare_vi_asr_corpus.py \
+    --auto \
+    --shuffle-before-split \
+    --train-ratio "${train_ratio}" \
+    --dev-ratio "${dev_ratio}" \
+    --test-ratio "${test_ratio}" \
+    --overwrite
+fi
 
 if [ "$stage" -le 0 ] && [ "$stop_stage" -ge 0 ]; then
   echo "Stage 0: NoiseReduce audio variant (optional)"

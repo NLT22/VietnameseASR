@@ -47,6 +47,7 @@ bash run.sh --data_variant raw --vocab_size 100 --model_size small \
 
 | Stage | Việc làm |
 |---|---|
+| -1 | Chuẩn bị `audio/` + `transcripts/` từ `dataset/` với split mặc định 80/10/10 |
 | 0 | Tạo NoiseReduce variant `nr` (cần `--enable_nr 1`) |
 | 1 | Audit dataset |
 | 2 | Offline MUSAN augmentation |
@@ -67,6 +68,9 @@ bash run.sh --data_variant raw --vocab_size 100 --model_size small \
 
 ```bash
 --vocab_size 100
+--train_ratio 0.8
+--dev_ratio 0.1
+--test_ratio 0.1
 --model_size base|small          # small = official Zipformer-small ~23.3M params
 --num_epochs 50
 --world_size 1
@@ -106,6 +110,7 @@ bash run.sh --data_variant raw --vocab_size 100 --model_size small \
 
 # Experiment dir suffix
 --exp_suffix _myexp
+--exp_dir runs                   # đổi thư mục cha lưu experiment
 --exp_dir_policy auto|reuse|fail
 ```
 
@@ -136,7 +141,15 @@ Hậu tố exp dir tự động: `_raw` hoặc `_nr`, thêm `_streaming` nếu `
 | `--model_size small --data_variant nr --exp_suffix _scratch30` | `ASR/zipformer/exp_bpe100_small_nr_scratch30` |
 | `--model_size base --data_variant raw --exp_suffix _scratch50` | `ASR/zipformer/exp_bpe100_raw_scratch50` |
 
-Mặc định `--exp_dir_policy auto`: nếu chạy stage train và `exp_dir` đã có file, `run.sh` tự chuyển sang folder mới dạng `exp_..._YYYYmmdd_HHMMSS` để tránh ghi đè checkpoint/log cũ. Nếu muốn hành vi cũ thì dùng `--exp_dir_policy reuse`; nếu muốn dừng ngay khi folder đã tồn tại thì dùng `--exp_dir_policy fail`.
+Nếu chỉ muốn đổi nơi lưu kết quả nhưng vẫn giữ tên experiment chứa đủ thông tin model/data/finetune, dùng `--exp_dir`. Tham số này là thư mục cha, nhận cả relative path và absolute path:
+
+```bash
+bash run.sh --model_size small --data_variant raw \
+  --exp_dir runs \
+  --stage 13 --stop_stage 14
+```
+
+Lệnh trên sẽ lưu vào `runs/exp_bpe100_small_raw/`, không mất các hậu tố `_small`, `_raw`, `_nr`, `_finetune`. Mặc định `--exp_dir_policy auto`: nếu chạy stage train và experiment dir đã có file, `run.sh` tự chuyển sang folder mới dạng `exp_..._YYYYmmdd_HHMMSS` để tránh ghi đè checkpoint/log cũ. Nếu muốn hành vi cũ thì dùng `--exp_dir_policy reuse`; nếu muốn dừng ngay khi folder đã tồn tại thì dùng `--exp_dir_policy fail`.
 
 ---
 
