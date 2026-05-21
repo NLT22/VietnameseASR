@@ -212,21 +212,55 @@ Loss thấp → model đang đúng nhiều → đang tiến bộ
 
 Project dùng **Pruned Transducer Loss** làm loss chính, với các loss phụ trợ tùy chọn:
 
-#### 1. Simple Loss (Transducer loss cơ bản)
+#### 1. Simple Loss
 
-Tính xác suất của toàn bộ chuỗi alignment có thể có giữa audio và text.
+Simple loss là loss dùng để học **alignment thô** giữa audio và text.
 
 ```
-P("hôm nay" | audio) = tổng tất cả các cách align "hôm nay" với các frame
+Audio frame nào tương ứng với token nào?
 ```
 
-Ưu điểm: tổng quát. Nhược điểm: chậm vì phải tính tất cả alignment có thể.
+Ở đầu training, model chưa biết chữ nào nằm ở đoạn âm thanh nào. Nếu bắt model tối ưu loss chính ngay trên không gian alignment quá lớn thì rất nhiễu. Simple loss tạo một bản đồ sơ bộ để model biết vùng nào có khả năng đúng.
 
-#### 2. Pruned Loss (loss chính được dùng)
+Hình dung:
 
-Phiên bản tối ưu của Simple Loss — chỉ tính loss trên một "vùng" giới hạn của alignment matrix, giảm tính toán đáng kể mà vẫn cho kết quả tốt.
+```
+simple_loss = bản đồ thô: "token này chắc nằm quanh đoạn này"
+```
 
-Trong training: Simple Loss dùng ở đầu (giúp model học nhanh), Pruned Loss tăng dần sau khi model đã ổn định.
+Trong code, trọng số của `simple_loss` lớn hơn ở đầu training, rồi giảm dần sau warmup.
+
+#### 2. Pruned Loss
+
+Pruned loss là loss RNNT chính sau khi đã dùng simple loss để khoanh vùng alignment hợp lý.
+
+Thay vì xét tất cả khả năng:
+
+```
+mọi frame × mọi token × mọi đường alignment
+```
+
+model chỉ xét một dải hẹp quanh vùng có khả năng đúng cao:
+
+```
+những alignment gần đường hợp lý nhất
+```
+
+Hình dung:
+
+```
+pruned_loss = chấm điểm kỹ trên vùng đã khoanh
+```
+
+Trong training: đầu tiên model dựa nhiều vào `simple_loss` để tìm đường đi, sau đó `pruned_loss` tăng dần vai trò và trở thành tín hiệu chính.
+
+Tóm tắt:
+
+| Loss | Vai trò | Quan trọng nhất khi nào |
+|---|---|---|
+| `simple_loss` | Học alignment thô | Đầu training |
+| `pruned_loss` | Tối ưu RNNT chính trên vùng đã prune | Giữa và cuối training |
+| `loss` | Tổng có trọng số của các loss đang bật | Theo dõi chung |
 
 #### 3. CTC Loss (tùy chọn)
 

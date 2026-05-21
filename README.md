@@ -26,7 +26,7 @@ vi_asr_corpus/
 cd /path/to/icefall/egs/vi_asr_corpus
 
 # 1. Tạo audio/ + transcripts/ từ raw data
-python prepare_vi_asr_corpus.py --auto --shuffle-before-split --overwrite
+bash run.sh --stage -1 --stop_stage -1
 
 # 2. Chuẩn bị data → fbank (stage 1–12)
 bash run.sh --vocab_size 100 --stage 1 --stop_stage 12
@@ -63,6 +63,8 @@ bash run.sh --data_variant raw --vocab_size 100 --model_size small \
 | 12 | Tokenize smoke test |
 | 13 | Train |
 | 14 | Decode |
+
+Stage `-1` dùng `prepare_vi_asr_corpus.py --auto --shuffle-before-split --overwrite` với tỉ lệ mặc định `80/10/10`. Script prepare có `--seed 42` mặc định, nên nếu nội dung `dataset/` không đổi thì split train/dev/test sẽ tái lập deterministic khi tạo lại từ đầu.
 
 ## run.sh — Tham số chính
 
@@ -296,6 +298,35 @@ pip install noisereduce
 ```
 
 Nếu thiếu, `local/noise_reduce_audio.py` sẽ báo lỗi rõ ràng.
+
+## NoiseReduce và VAD
+
+`noisereduce` chỉ dùng ở stage 0 để tạo biến thể dữ liệu offline `nr`. Script đọc `transcripts/{train,dev,test}.tsv`, load audio gốc, chạy:
+
+```python
+nr.reduce_noise(y=data, sr=rate)
+```
+
+rồi ghi audio mới vào `audio_nr/` và transcript mới vào `transcripts_nr/`. Khi chạy `--data_variant nr`, các stage sau dùng `transcripts_nr/`, `data/manifests_nr/`, `fbank_nr/` và exp dir có hậu tố `_nr`. Audio gốc trong `audio/` không bị ghi đè.
+
+VAD không dùng trong train/decode batch chuẩn. VAD chỉ dùng trong các script microphone như `mic_streaming_asr.py` và `local/mic_prompt_eval.py` để tự cắt utterance khi thu âm trực tiếp. Code dùng Silero VAD với chunk `512` samples ở 16 kHz, tức khoảng 32 ms; mặc định cần `6` chunk speech liên tiếp để bắt đầu câu và `25` chunk im lặng, khoảng 800 ms, để kết thúc câu.
+
+## TensorBoard loss
+
+Với cấu hình mặc định, training dùng Transducer objective nên TensorBoard thường có:
+
+| Tag | Ý nghĩa |
+|---|---|
+| `train/current_loss` | Tổng loss của batch hiện tại, dao động mạnh |
+| `train/tot_loss` | Loss train đã làm mượt, nên dùng để theo dõi hội tụ |
+| `train/valid_loss` | Loss trên dev set, quan trọng nhất để phát hiện overfit |
+| `*_simple_loss` | Loss phụ giúp model học alignment thô ở đầu training |
+| `*_pruned_loss` | Loss RNNT chính sau khi prune vùng alignment hợp lý |
+| `train/learning_rate` | Learning rate theo step |
+
+`simple_loss` có thể hiểu là bản đồ thô để tìm alignment giữa audio và transcript. `pruned_loss` là loss chính, tính kỹ hơn trên vùng alignment đã được khoanh lại. Đầu training code đặt trọng số `simple_loss` cao hơn; sau warmup, trọng tâm chuyển sang `pruned_loss`.
+
+Nếu bật thêm `--use_ctc 1`, TensorBoard sẽ có `ctc_loss`. Nếu bật `--use_cr_ctc 1`, sẽ có thêm `cr_loss`. Các loss này mặc định đang tắt trong `run.sh`.
 
 ## MUSAN manifests
 

@@ -236,9 +236,49 @@ def compute_loss(params, model, sp, batch, is_training, spec_augment):
 
 ### Pruned vs Simple transducer
 
-- **Simple**: tính trên toàn bộ (T × U) lattice — đúng nhưng tốn RAM
-- **Pruned**: chỉ tính trên dải hẹp quanh alignment tốt nhất — nhanh hơn ~4×
-- Warmup: `simple_loss_scale` bắt đầu = 0.5, sau `warm_step` batches giảm về 0
+- **Simple loss**: học alignment thô giữa frame âm thanh và token transcript. Nó giúp model biết vùng nào trong lattice có khả năng đúng, đặc biệt quan trọng ở đầu training.
+- **Pruned loss**: loss RNNT chính sau khi đã prune, tức chỉ giữ lại dải alignment hợp lý thay vì tính trên toàn bộ không gian rất lớn.
+- Warmup: `simple_loss_scale` bắt đầu cao hơn rồi giảm dần; `pruned_loss_scale` tăng từ `0.1` lên `1.0`. Nghĩa là đầu training ưu tiên tìm alignment, sau đó chuyển trọng tâm sang loss chính.
+
+Trong `train.py`, tổng loss mặc định là:
+
+```python
+loss = simple_loss_scale * simple_loss + pruned_loss_scale * pruned_loss
+```
+
+Nếu bật CTC hoặc attention decoder thì code cộng thêm các loss phụ:
+
+```python
+loss += ctc_loss_scale * ctc_loss
+loss += cr_loss_scale * cr_loss
+loss += attention_decoder_loss_scale * attention_decoder_loss
+```
+
+Mặc định trong `run.sh` hiện tại:
+
+```bash
+--use_ctc 0
+--use_cr_ctc 0
+--attention_decoder_loss_scale 0.0
+```
+
+nên TensorBoard chủ yếu có `loss`, `simple_loss`, `pruned_loss`.
+
+### TensorBoard loss tags
+
+| Tag | Ý nghĩa |
+|---|---|
+| `train/current_loss` | Tổng loss của batch hiện tại, thường nhiễu |
+| `train/current_simple_loss` | Simple loss của batch hiện tại |
+| `train/current_pruned_loss` | Pruned loss của batch hiện tại |
+| `train/tot_loss` | Loss train đã làm mượt theo nhiều batch |
+| `train/tot_simple_loss` | Simple loss đã làm mượt |
+| `train/tot_pruned_loss` | Pruned loss đã làm mượt |
+| `train/valid_loss` | Loss trên dev set |
+| `train/valid_simple_loss` | Simple loss trên dev set |
+| `train/valid_pruned_loss` | Pruned loss trên dev set |
+
+Khi debug overfit, ưu tiên nhìn `train/tot_loss` và `train/valid_loss`. Nếu train loss giảm nhưng valid loss tăng liên tục, model đang fit train nhưng không generalize tốt sang dev.
 
 ### Loss vs WER
 
