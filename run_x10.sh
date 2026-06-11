@@ -4,14 +4,10 @@ set -euo pipefail
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$script_dir"
 
-stage=0
+stage=-1
 stop_stage=100
 
 corpus_root="$script_dir"
-
-train_ratio=0.8
-dev_ratio=0.1
-test_ratio=0.1
 
 vocab_size=100
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
@@ -24,7 +20,7 @@ musan_manifest_dir="$PWD/data/manifests"
 
 num_epochs=30
 world_size=1
-max_duration=50
+max_duration=500
 base_lr=0.01
 use_fp16=0
 
@@ -33,11 +29,9 @@ enable_spec_aug=0
 bucketing_sampler=1
 num_buckets=4
 perturb_speed=0
-fbank_max_duration=20
-overwrite_fbank=0
 musan_dir="$PWD/musan"
 
-offline_musan_aug=0
+offline_musan_aug=1
 copies_per_utt=10
 snr_min=10
 snr_max=20
@@ -64,13 +58,13 @@ do_finetune=0
 finetune_ckpt=""
 init_modules="encoder"
 exp_suffix=""
-exp_dir_override=""
+exp_dir_override="/media/trung/253E-48F6/runs_x10"
 exp_dir_policy="auto"  # auto: create unique exp dir for train if non-empty; reuse: old behavior; fail: stop if non-empty
 
 data_variant="raw"
 enable_nr=0
 
-model_size="base"
+model_size="small"
 num_encoder_layers="2,2,3,4,3,2"
 feedforward_dim="512,768,1024,1536,1024,768"
 num_heads="4,4,4,8,4,4"
@@ -83,9 +77,6 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --stage) stage="$2"; shift 2 ;;
     --stop_stage|--stop-stage|-stop_stage|-stop-stage) stop_stage="$2"; shift 2 ;;
-    --train_ratio|--train-ratio) train_ratio="$2"; shift 2 ;;
-    --dev_ratio|--dev-ratio) dev_ratio="$2"; shift 2 ;;
-    --test_ratio|--test-ratio) test_ratio="$2"; shift 2 ;;
     --vocab_size|--vocab-size) vocab_size="$2"; shift 2 ;;
     --num_epochs|--num-epochs) num_epochs="$2"; shift 2 ;;
     --world_size|--world-size) world_size="$2"; shift 2 ;;
@@ -97,8 +88,6 @@ while [[ $# -gt 0 ]]; do
     --bucketing_sampler|--bucketing-sampler) bucketing_sampler="$2"; shift 2 ;;
     --num_buckets|--num-buckets) num_buckets="$2"; shift 2 ;;
     --perturb_speed|--perturb-speed) perturb_speed="$2"; shift 2 ;;
-    --fbank_max_duration|--fbank-max-duration) fbank_max_duration="$2"; shift 2 ;;
-    --overwrite_fbank|--overwrite-fbank) overwrite_fbank="$2"; shift 2 ;;
     --musan_dir|--musan-dir) musan_dir="$2"; shift 2 ;;
     --offline_musan_aug|--offline-musan-aug) offline_musan_aug="$2"; shift 2 ;;
     --copies_per_utt|--copies-per-utt) copies_per_utt="$2"; shift 2 ;;
@@ -136,7 +125,7 @@ while [[ $# -gt 0 ]]; do
     --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--train_ratio X] [--dev_ratio X] [--test_ratio X] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir DIR] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir DIR] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
       exit 1
       ;;
   esac
@@ -254,9 +243,6 @@ if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ] && exp_dir_has_contents "$exp
 fi
 
 echo "corpus_root=$corpus_root"
-echo "train_ratio=$train_ratio"
-echo "dev_ratio=$dev_ratio"
-echo "test_ratio=$test_ratio"
 echo "vocab_size=$vocab_size"
 echo "bpe_dir=$bpe_dir"
 echo "exp_dir=$exp_dir"
@@ -283,8 +269,6 @@ echo "enable_spec_aug=$enable_spec_aug"
 echo "bucketing_sampler=$bucketing_sampler"
 echo "num_buckets=$num_buckets"
 echo "perturb_speed=$perturb_speed"
-echo "fbank_max_duration=$fbank_max_duration"
-echo "overwrite_fbank=$overwrite_fbank"
 echo "musan_dir=$musan_dir"
 echo "offline_musan_aug=$offline_musan_aug"
 echo "copies_per_utt=$copies_per_utt"
@@ -307,13 +291,13 @@ echo "decoder_dim=$decoder_dim"
 echo "joiner_dim=$joiner_dim"
 
 if [ "$stage" -le -1 ] && [ "$stop_stage" -ge -1 ]; then
-  echo "Stage -1: Prepare corpus from dataset/"
+  echo "Stage -1: Prepare VietnameseASR corpus from dataset/"
   python3 prepare_vi_asr_corpus.py \
     --auto \
     --shuffle-before-split \
-    --train-ratio "${train_ratio}" \
-    --dev-ratio "${dev_ratio}" \
-    --test-ratio "${test_ratio}" \
+    --train-ratio 0.8 \
+    --dev-ratio 0.1 \
+    --test-ratio 0.1 \
     --overwrite
 fi
 
@@ -388,12 +372,9 @@ fi
 
 if [ "$stage" -le 8 ] && [ "$stop_stage" -ge 8 ]; then
   echo "Stage 8: Compute fbank / cuts"
-  cmd=(python3 local/compute_fbank.py --bpe-model "${bpe_dir}/bpe.model" --manifest-dir "${fixed_manifest_dir}" --output-dir "${fbank_dir}" --max-duration "${fbank_max_duration}")
+  cmd=(python3 local/compute_fbank.py --bpe-model "${bpe_dir}/bpe.model" --manifest-dir "${fixed_manifest_dir}" --output-dir "${fbank_dir}")
   if [ "$perturb_speed" = "1" ]; then
     cmd+=(--perturb-speed)
-  fi
-  if [ "$overwrite_fbank" = "1" ]; then
-    cmd+=(--overwrite)
   fi
   "${cmd[@]}"
 fi

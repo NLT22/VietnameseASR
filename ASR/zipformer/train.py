@@ -525,6 +525,20 @@ def get_parser():
     )
 
     parser.add_argument(
+        "--keep-epoch-checkpoints",
+        type=str2bool,
+        default=True,
+        help="Keep epoch-N.pt files after updating best checkpoint copies.",
+    )
+
+    parser.add_argument(
+        "--save-best-train-loss",
+        type=str2bool,
+        default=True,
+        help="Keep a best-train-loss.pt copy in addition to best-valid-loss.pt.",
+    )
+
+    parser.add_argument(
         "--average-period",
         type=int,
         default=200,
@@ -865,13 +879,16 @@ def save_checkpoint(
         rank=rank,
     )
 
-    if params.best_train_epoch == params.cur_epoch:
+    if params.save_best_train_loss and params.best_train_epoch == params.cur_epoch:
         best_train_filename = params.exp_dir / "best-train-loss.pt"
         copyfile(src=filename, dst=best_train_filename)
 
     if params.best_valid_epoch == params.cur_epoch:
         best_valid_filename = params.exp_dir / "best-valid-loss.pt"
         copyfile(src=filename, dst=best_valid_filename)
+
+    if not params.keep_epoch_checkpoints:
+        filename.unlink()
 
 
 def compute_loss(

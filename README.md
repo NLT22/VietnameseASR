@@ -26,19 +26,16 @@ vi_asr_corpus/
 cd /path/to/icefall/egs/vi_asr_corpus
 
 # 1. Tạo audio/ + transcripts/ từ raw data
-bash run.sh --stage -1 --stop_stage -1
+python prepare_vi_asr_corpus.py --auto --shuffle-before-split --overwrite
 
 # 2. Chuẩn bị data → fbank (stage 1–12)
 bash run.sh --vocab_size 100 --stage 1 --stop_stage 12
 
-# 3. Train raw small model
-bash run.sh --data_variant raw --vocab_size 100 --model_size small \
-  --exp_suffix _scratch30 --num_epochs 30 --stage 13 --stop_stage 13
+# 3. Train
+bash run.sh --vocab_size 100 --model_size small --num_epochs 50 --stage 13 --stop_stage 13
 
 # 4. Decode (chạy greedy + modified_beam + beam_search)
-bash run.sh --data_variant raw --vocab_size 100 --model_size small \
-  --exp_suffix _scratch30 --num_epochs 30 --decode_method all \
-  --stage 14 --stop_stage 14
+bash run.sh --vocab_size 100 --model_size small --num_epochs 50 --stage 14 --stop_stage 14
 ```
 
 ---
@@ -63,8 +60,6 @@ bash run.sh --data_variant raw --vocab_size 100 --model_size small \
 | 12 | Tokenize smoke test |
 | 13 | Train |
 | 14 | Decode |
-
-Stage `-1` dùng `prepare_vi_asr_corpus.py --auto --shuffle-before-split --overwrite` với tỉ lệ mặc định `80/10/10`. Script prepare có `--seed 42` mặc định, nên nếu nội dung `dataset/` không đổi thì split train/dev/test sẽ tái lập deterministic khi tạo lại từ đầu.
 
 ## run.sh — Tham số chính
 
@@ -118,40 +113,29 @@ Stage `-1` dùng `prepare_vi_asr_corpus.py --auto --shuffle-before-split --overw
 
 ### Model size presets
 
-`--model_size base --data_variant raw` → `exp_bpe100_raw/`
-
-`--model_size base --data_variant nr` → `exp_bpe100_nr/`
+`--model_size base --data_variant raw` → `exp_bpe100_raw/` (config mặc định recipe)
 
 `--model_size small --data_variant raw` → `exp_bpe100_small_raw/`
-
-`--model_size small --data_variant nr` → `exp_bpe100_small_nr/`
 ```
---num-encoder-layers 2,2,2,2,2,2   
---feedforward-dim 512,768,768,768,768,768
---num-heads 4,4,4,8,4,4            
---encoder-dim 192,256,256,256,256,256
+--num-encoder-layers 2,2,2,2,2,2   --feedforward-dim 512,768,768,768,768,768
+--num-heads 4,4,4,8,4,4            --encoder-dim 192,256,256,256,256,256
 --encoder-unmasked-dim 192,192,192,192,192,192
---decoder-dim 512  
---joiner-dim 512
+--decoder-dim 512  --joiner-dim 512
 ```
 
-Hậu tố exp dir tự động: `_raw` hoặc `_nr`, thêm `_streaming` nếu `--causal 1`, và thêm `--exp_suffix` nếu có. Ví dụ:
-
-| Lệnh chính | Exp dir mặc định |
-|---|---|
-| `--model_size small --data_variant raw --exp_suffix _scratch30` | `ASR/zipformer/exp_bpe100_small_raw_scratch30` |
-| `--model_size small --data_variant nr --exp_suffix _scratch30` | `ASR/zipformer/exp_bpe100_small_nr_scratch30` |
-| `--model_size base --data_variant raw --exp_suffix _scratch50` | `ASR/zipformer/exp_bpe100_raw_scratch50` |
+Hậu tố exp dir tự động: `_small`, `_raw`, `_nr`, `_streaming`, `_finetune` (kết hợp được). Các kết quả cũ như `exp_bpe100_small/` vẫn còn nguyên, nhưng lần chạy mới mặc định sẽ ghi sang folder có suffix variant để tránh nhầm raw/nr.
 
 Nếu chỉ muốn đổi nơi lưu kết quả nhưng vẫn giữ tên experiment chứa đủ thông tin model/data/finetune, dùng `--exp_dir`. Tham số này là thư mục cha, nhận cả relative path và absolute path:
 
 ```bash
-bash run.sh --model_size small --data_variant raw \
+bash run.sh \
+  --model_size small \
+  --data_variant raw \
   --exp_dir runs \
   --stage 13 --stop_stage 14
 ```
 
-Lệnh trên sẽ lưu vào `runs/exp_bpe100_small_raw/`, không mất các hậu tố `_small`, `_raw`, `_nr`, `_finetune`. Mặc định `--exp_dir_policy auto`: nếu chạy stage train và experiment dir đã có file, `run.sh` tự chuyển sang folder mới dạng `exp_..._YYYYmmdd_HHMMSS` để tránh ghi đè checkpoint/log cũ. Nếu muốn hành vi cũ thì dùng `--exp_dir_policy reuse`; nếu muốn dừng ngay khi folder đã tồn tại thì dùng `--exp_dir_policy fail`.
+Lệnh trên sẽ lưu vào `runs/exp_bpe100_small_raw/`, không mất các hậu tố `_small`, `_raw`, `_nr`, `_finetune`. Mặc định `--exp_dir_policy auto`: nếu chạy stage train và experiment dir đã có file, `run.sh` tự chuyển sang folder mới dạng `exp_..._YYYYmmdd_HHMMSS` để tránh ghi đè checkpoint/log cũ. Dùng `reuse` để ghi tiếp vào folder cũ, hoặc `fail` để dừng nếu folder đã có dữ liệu.
 
 ---
 
@@ -220,10 +204,8 @@ bash run.sh \
 
 ```bash
 # NoiseReduce variant
-bash run.sh --enable_nr 1 --stage 0 --stop_stage 0
-
-bash run.sh --data_variant nr --model_size small \
-  --exp_suffix _scratch30 --num_epochs 30 --stage 1 --stop_stage 14
+bash run.sh --enable_nr 1 --data_variant nr --model_size small \
+  --num_epochs 50 --stage 0 --stop_stage 14
 
 # Offline MUSAN aug → train
 bash run.sh --offline_musan_aug 1 --musan_dir "$MUSAN_DIR" \
@@ -240,7 +222,7 @@ bash run.sh --model_size small --use_ctc 1 --use_cr_ctc 1 \
 # Average checkpoint thủ công
 python3 ASR/zipformer/generate_averaged_model.py \
   --epoch 50 --avg 10 \
-  --exp-dir ASR/zipformer/exp_bpe100_small \
+  --exp-dir ASR/zipformer/exp_bpe100_small_raw \
   --tokens data/lang_bpe_100/tokens.txt
 
 # Lọc cuts trước train
@@ -251,12 +233,9 @@ python3 local/filter_cuts.py \
 
 # Inference nhanh từ JIT model (không cần lhotse)
 python3 ASR/zipformer/jit_pretrained.py \
-  --nn-model-filename ASR/zipformer/exp_bpe100_small/jit_script.pt \
+  --nn-model-filename ASR/zipformer/exp_bpe100_small_raw/jit_script.pt \
   --tokens data/lang_bpe_100/tokens.txt \
   /path/to/audio.wav
-
-# Microphone demo dùng JIT best hiện tại nếu file tồn tại
-python3 mic_streaming_asr.py --mode full --decode-method beam --beam 4
 ```
 
 ## Dọn checkpoint để tiết kiệm dung lượng
@@ -298,35 +277,6 @@ pip install noisereduce
 ```
 
 Nếu thiếu, `local/noise_reduce_audio.py` sẽ báo lỗi rõ ràng.
-
-## NoiseReduce và VAD
-
-`noisereduce` chỉ dùng ở stage 0 để tạo biến thể dữ liệu offline `nr`. Script đọc `transcripts/{train,dev,test}.tsv`, load audio gốc, chạy:
-
-```python
-nr.reduce_noise(y=data, sr=rate)
-```
-
-rồi ghi audio mới vào `audio_nr/` và transcript mới vào `transcripts_nr/`. Khi chạy `--data_variant nr`, các stage sau dùng `transcripts_nr/`, `data/manifests_nr/`, `fbank_nr/` và exp dir có hậu tố `_nr`. Audio gốc trong `audio/` không bị ghi đè.
-
-VAD không dùng trong train/decode batch chuẩn. VAD chỉ dùng trong các script microphone như `mic_streaming_asr.py` và `local/mic_prompt_eval.py` để tự cắt utterance khi thu âm trực tiếp. Code dùng Silero VAD với chunk `512` samples ở 16 kHz, tức khoảng 32 ms; mặc định cần `6` chunk speech liên tiếp để bắt đầu câu và `25` chunk im lặng, khoảng 800 ms, để kết thúc câu.
-
-## TensorBoard loss
-
-Với cấu hình mặc định, training dùng Transducer objective nên TensorBoard thường có:
-
-| Tag | Ý nghĩa |
-|---|---|
-| `train/current_loss` | Tổng loss của batch hiện tại, dao động mạnh |
-| `train/tot_loss` | Loss train đã làm mượt, nên dùng để theo dõi hội tụ |
-| `train/valid_loss` | Loss trên dev set, quan trọng nhất để phát hiện overfit |
-| `*_simple_loss` | Loss phụ giúp model học alignment thô ở đầu training |
-| `*_pruned_loss` | Loss RNNT chính sau khi prune vùng alignment hợp lý |
-| `train/learning_rate` | Learning rate theo step |
-
-`simple_loss` có thể hiểu là bản đồ thô để tìm alignment giữa audio và transcript. `pruned_loss` là loss chính, tính kỹ hơn trên vùng alignment đã được khoanh lại. Đầu training code đặt trọng số `simple_loss` cao hơn; sau warmup, trọng tâm chuyển sang `pruned_loss`.
-
-Nếu bật thêm `--use_ctc 1`, TensorBoard sẽ có `ctc_loss`. Nếu bật `--use_cr_ctc 1`, sẽ có thêm `cr_loss`. Các loss này mặc định đang tắt trong `run.sh`.
 
 ## MUSAN manifests
 

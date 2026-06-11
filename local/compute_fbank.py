@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import logging
 import os
+import shutil
 from pathlib import Path
 from typing import Optional
 
@@ -28,8 +29,20 @@ def get_args():
     parser.add_argument("--perturb-speed", action="store_true",
                         help="Apply 0.9x and 1.1x speed perturbation on train split")
     parser.add_argument("--num-mel-bins", type=int, default=80)
+    parser.add_argument("--sampling-rate", type=int, default=16000)
+    parser.add_argument(
+        "--num-jobs",
+        type=int,
+        default=2,
+        help="Parallel feature workers. Keep this low for HDD-backed audio.",
+    )
     parser.add_argument("--min-duration", type=float, default=0.3)
     parser.add_argument("--max-duration", type=float, default=20.0)
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Recompute features even when the output cut manifest already exists.",
+    )
     return parser.parse_args()
 
 
@@ -61,6 +74,9 @@ def compute_fbank_for_split(
     perturb_speed: bool,
     min_duration: float,
     max_duration: float,
+    overwrite: bool,
+    sampling_rate: int,
+    num_jobs: int,
 ):
     rec_path = manifest_dir / f"{split}_recordings.jsonl.gz"
     sup_path = manifest_dir / f"{split}_supervisions.jsonl.gz"
@@ -72,14 +88,23 @@ def compute_fbank_for_split(
 
     cuts_path = output_dir / f"{split}_cuts.jsonl.gz"
     if cuts_path.is_file():
-        logging.info(f"{cuts_path} already exists - skipping.")
-        return
+        if not overwrite:
+            logging.info(f"{cuts_path} already exists - skipping.")
+            return
+        logging.info(f"Removing existing features and cuts for split={split}")
+        cuts_path.unlink()
+        feature_dir = output_dir / split
+        if feature_dir.is_dir():
+            shutil.rmtree(feature_dir)
 
     recordings = RecordingSet.from_file(rec_path)
     supervisions = SupervisionSet.from_file(sup_path)
 
     logging.info(f"Building cuts for split={split}")
     cut_set = CutSet.from_manifests(recordings=recordings, supervisions=supervisions)
+    if any(r.sampling_rate != sampling_rate for r in recordings):
+        logging.info(f"Resampling split={split} recordings to {sampling_rate} Hz")
+        cut_set = cut_set.resample(sampling_rate)
 
     if sp is not None:
         logging.info(f"Filtering cuts for split={split}")
@@ -89,7 +114,7 @@ def compute_fbank_for_split(
         logging.info("Applying speed perturbation 0.9x and 1.1x to train split")
         cut_set = cut_set + cut_set.perturb_speed(0.9) + cut_set.perturb_speed(1.1)
 
-    num_jobs = min(15, os.cpu_count() or 1)
+    num_jobs = min(num_jobs, os.cpu_count() or 1)
 
     cut_set = cut_set.compute_and_store_features(
         extractor=extractor,
@@ -131,6 +156,9 @@ def main():
             perturb_speed=args.perturb_speed,
             min_duration=args.min_duration,
             max_duration=args.max_duration,
+            overwrite=args.overwrite,
+            sampling_rate=args.sampling_rate,
+            num_jobs=args.num_jobs,
         )
 
 

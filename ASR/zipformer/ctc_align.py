@@ -52,10 +52,200 @@ import torch
 import torch.nn as nn
 from asr_datamodule import ViAsrDataModule as AsrDataModule
 from lhotse import set_caching_enabled
-from torchaudio.functional import (
-    forced_align,
-    merge_tokens,
-)
+try:
+    from torchaudio.functional import (
+        forced_align,
+        merge_tokens,
+    )
+except ImportError:
+    from dataclasses import dataclass
+
+    @dataclass
+    class TokenSpan:
+        token: int
+        start: int
+        end: int
+        score: float
+
+    def forced_align(
+        log_probs: torch.Tensor,
+        targets: torch.Tensor,
+        input_lengths: torch.Tensor | None = None,
+        target_lengths: torch.Tensor | None = None,
+        blank: int = 0,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Fallback CTC Viterbi alignment for torchaudio versions without it."""
+        if log_probs.ndim != 3 or targets.ndim != 2:
+            raise ValueError("Expected log_probs (B, T, C) and targets (B, U)")
+
+        batch_size, max_frames, _ = log_probs.shape
+        if input_lengths is None:
+            input_lengths = torch.full(
+                (batch_size,),
+                max_frames,
+                dtype=torch.long,
+                device=log_probs.device,
+            )
+        if target_lengths is None:
+            target_lengths = torch.full(
+                (batch_size,),
+                targets.shape[1],
+                dtype=torch.long,
+                device=targets.device,
+            )
+
+        aligned_labels = torch.full(
+            (batch_size, max_frames),
+            blank,
+            dtype=torch.long,
+            device=log_probs.device,
+        )
+        aligned_scores = torch.full(
+            (batch_size, max_frames),
+            LOG_EPS,
+            dtype=log_probs.dtype,
+            device=log_probs.device,
+        )
+
+        neg_inf = torch.finfo(log_probs.dtype).min
+
+        for b in range(batch_size):
+            frames = int(input_lengths[b].item())
+            target_len = int(target_lengths[b].item())
+            target = targets[b, :target_len].to(log_probs.device, dtype=torch.long)
+
+            if target_len == 0:
+                frame_ids = torch.arange(frames, device=log_probs.device)
+                aligned_scores[b, :frames] = log_probs[b, :frames, blank]
+                aligned_labels[b, :frames] = blank
+                continue
+
+            ext_labels = torch.full(
+                (target_len * 2 + 1,),
+                blank,
+                dtype=torch.long,
+                device=log_probs.device,
+            )
+            ext_labels[1::2] = target
+            num_states = ext_labels.numel()
+
+            scores = torch.full(
+                (frames, num_states),
+                neg_inf,
+                dtype=log_probs.dtype,
+                device=log_probs.device,
+            )
+            backptr = torch.zeros(
+                (frames, num_states),
+                dtype=torch.long,
+                device=log_probs.device,
+            )
+
+            scores[0, 0] = log_probs[b, 0, ext_labels[0]]
+            if num_states > 1:
+                scores[0, 1] = log_probs[b, 0, ext_labels[1]]
+                backptr[0, 1] = 1
+
+            for t in range(1, frames):
+                prev = scores[t - 1]
+                for s in range(num_states):
+                    candidates = [prev[s]]
+                    sources = [s]
+                    if s > 0:
+                        candidates.append(prev[s - 1])
+                        sources.append(s - 1)
+                    if (
+                        s > 1
+                        and ext_labels[s] != blank
+                        and ext_labels[s] != ext_labels[s - 2]
+                    ):
+                        candidates.append(prev[s - 2])
+                        sources.append(s - 2)
+
+                    candidate_scores = torch.stack(candidates)
+                    best_idx = int(candidate_scores.argmax().item())
+                    best_source = sources[best_idx]
+                    backptr[t, s] = best_source
+                    scores[t, s] = (
+                        candidate_scores[best_idx]
+                        + log_probs[b, t, ext_labels[s]]
+                    )
+
+            end_states = [num_states - 1, num_states - 2]
+            end_scores = torch.stack([scores[frames - 1, s] for s in end_states])
+            best_end = end_states[int(end_scores.argmax().item())]
+            if torch.isinf(scores[frames - 1, best_end]):
+                raise ValueError("No valid CTC alignment path found")
+
+            state_path = [best_end]
+            for t in range(frames - 1, 0, -1):
+                state_path.append(int(backptr[t, state_path[-1]].item()))
+            state_path.reverse()
+
+            label_path = ext_labels[
+                torch.tensor(state_path, dtype=torch.long, device=log_probs.device)
+            ]
+            frame_ids = torch.arange(frames, device=log_probs.device)
+            aligned_labels[b, :frames] = label_path
+            aligned_scores[b, :frames] = log_probs[b, frame_ids, label_path]
+
+        return aligned_labels, aligned_scores
+
+    def merge_tokens(
+        tokens: torch.Tensor,
+        scores: torch.Tensor,
+        blank: int = 0,
+    ) -> List[TokenSpan]:
+        """Collapse frame-level CTC labels into token spans."""
+        spans = []
+        current_token = None
+        start = 0
+        current_scores = []
+
+        for idx, token_tensor in enumerate(tokens):
+            token = int(token_tensor.item())
+            score = float(scores[idx].item())
+            if token == blank:
+                if current_token is not None:
+                    spans.append(
+                        TokenSpan(
+                            current_token,
+                            start,
+                            idx,
+                            float(np.mean(current_scores)),
+                        )
+                    )
+                    current_token = None
+                    current_scores = []
+                continue
+
+            if current_token != token:
+                if current_token is not None:
+                    spans.append(
+                        TokenSpan(
+                            current_token,
+                            start,
+                            idx,
+                            float(np.mean(current_scores)),
+                        )
+                    )
+                current_token = token
+                start = idx
+                current_scores = [score]
+            else:
+                current_scores.append(score)
+
+        if current_token is not None:
+            spans.append(
+                TokenSpan(
+                    current_token,
+                    start,
+                    tokens.numel(),
+                    float(np.mean(current_scores)),
+                )
+            )
+
+        return spans
 from train import add_model_arguments, get_model, get_params
 
 from icefall.checkpoint import (
