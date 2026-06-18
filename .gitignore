@@ -31,6 +31,9 @@ ASR/zipformer/exp/
 ASR/zipformer/exp_*/
 exp/
 exp_*/
+deploy/jetson_nano/model_*/
+deploy/jetson_nano/perf_results/
+deploy/*.tar.gz
 
 # Lhotse / feature artifacts
 fbank/
