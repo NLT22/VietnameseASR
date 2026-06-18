@@ -275,6 +275,7 @@ def export_ctc_model_onnx(
         filename,
         verbose=False,
         opset_version=opset_version,
+        dynamo=False,
         input_names=["x", "x_lens"],
         output_names=["log_probs", "log_probs_len"],
         dynamic_axes={

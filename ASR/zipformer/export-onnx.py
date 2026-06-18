@@ -321,6 +321,7 @@ def export_encoder_model_onnx(
         encoder_filename,
         verbose=False,
         opset_version=opset_version,
+        dynamo=False,
         input_names=["x", "x_lens"],
         output_names=["encoder_out", "encoder_out_lens"],
         dynamic_axes={
@@ -376,6 +377,7 @@ def export_decoder_model_onnx(
         decoder_filename,
         verbose=False,
         opset_version=opset_version,
+        dynamo=False,
         input_names=["y"],
         output_names=["decoder_out"],
         dynamic_axes={
@@ -418,6 +420,7 @@ def export_joiner_model_onnx(
         joiner_filename,
         verbose=False,
         opset_version=opset_version,
+        dynamo=False,
         input_names=[
             "encoder_out",
             "decoder_out",

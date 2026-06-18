@@ -478,6 +478,7 @@ def export_streaming_ctc_model_onnx(
         encoder_filename,
         verbose=False,
         opset_version=opset_version,
+        dynamo=False,
         input_names=input_names,
         output_names=output_names,
         dynamic_axes={
