@@ -912,8 +912,26 @@ def main():
     logging.info(f"Device: {device}")
     logging.info(params)
 
-    lexicon = Lexicon(params.lang_dir)
-    max_token_id = max(lexicon.tokens)
+    bpe_only_methods = {
+        "ctc-greedy-search",
+        "ctc-prefix-beam-search",
+        "ctc-prefix-beam-search-attention-decoder-rescoring",
+        "ctc-prefix-beam-search-shallow-fussion",
+    }
+    if params.decoding_method in bpe_only_methods and not (
+        params.lang_dir / "L.pt"
+    ).is_file():
+        token_ids = []
+        with (params.lang_dir / "tokens.txt").open(encoding="utf-8") as f:
+            for line in f:
+                fields = line.strip().split()
+                if len(fields) >= 2:
+                    token_ids.append(int(fields[-1]))
+        max_token_id = max(token_ids)
+        lexicon = None
+    else:
+        lexicon = Lexicon(params.lang_dir)
+        max_token_id = max(lexicon.tokens)
     num_classes = max_token_id + 1  # +1 for the blank
 
     params.vocab_size = num_classes
@@ -1159,7 +1177,7 @@ def main():
             HLG=HLG,
             H=H,
             bpe_model=bpe_model,
-            word_table=lexicon.word_table,
+            word_table=lexicon.word_table if lexicon is not None else None,
             G=G,
             NNLM=NNLM,
             LODR_lm=LODR_lm,
