@@ -13,14 +13,18 @@ vocab_size=100
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
 manifest_dir="$PWD/data/manifests"
 fixed_manifest_dir="$PWD/data/manifests/fixed"
-transcript_dir="transcripts"
-audio_root="audio"
-fbank_dir="fbank"
+transcript_dir="transcripts_x10_matched"
+audio_root="audio_x10"
+fbank_dir="fbank_x10_matched"
 musan_manifest_dir="$PWD/data/manifests"
 
 num_epochs=30
+start_epoch=1
 world_size=1
 max_duration=500
+num_workers=2
+split_max_duration=20
+feature_max_duration=20
 base_lr=0.01
 use_fp16=0
 
@@ -57,9 +61,10 @@ attention_decoder_loss_scale=0.0
 do_finetune=0
 finetune_ckpt=""
 init_modules="encoder"
-exp_suffix=""
-exp_dir_override="/media/trung/253E-48F6/runs_x10"
+exp_suffix="_x10_matched"
+exp_dir_override=""
 exp_dir_policy="auto"  # auto: create unique exp dir for train if non-empty; reuse: old behavior; fail: stop if non-empty
+matched_splits=1
 
 data_variant="raw"
 enable_nr=0
@@ -79,8 +84,12 @@ while [[ $# -gt 0 ]]; do
     --stop_stage|--stop-stage|-stop_stage|-stop-stage) stop_stage="$2"; shift 2 ;;
     --vocab_size|--vocab-size) vocab_size="$2"; shift 2 ;;
     --num_epochs|--num-epochs) num_epochs="$2"; shift 2 ;;
+    --start_epoch|--start-epoch) start_epoch="$2"; shift 2 ;;
     --world_size|--world-size) world_size="$2"; shift 2 ;;
     --max_duration|--max-duration) max_duration="$2"; shift 2 ;;
+    --num_workers|--num-workers) num_workers="$2"; shift 2 ;;
+    --split_max_duration|--split-max-duration) split_max_duration="$2"; shift 2 ;;
+    --feature_max_duration|--feature-max-duration) feature_max_duration="$2"; shift 2 ;;
     --base_lr|--base-lr) base_lr="$2"; shift 2 ;;
     --use_fp16|--use-fp16) use_fp16="$2"; shift 2 ;;
     --enable_musan|--enable-musan) enable_musan="$2"; shift 2 ;;
@@ -113,6 +122,7 @@ while [[ $# -gt 0 ]]; do
     --exp_suffix|--exp-suffix) exp_suffix="$2"; shift 2 ;;
     --exp_dir|--exp-dir) exp_dir_override="$2"; shift 2 ;;
     --exp_dir_policy|--exp-dir-policy) exp_dir_policy="$2"; shift 2 ;;
+    --matched_splits|--matched-splits) matched_splits="$2"; shift 2 ;;
     --data_variant|--data-variant) data_variant="$2"; shift 2 ;;
     --enable_nr|--enable-nr) enable_nr="$2"; shift 2 ;;
     --model_size|--model-size) model_size="$2"; shift 2 ;;
@@ -125,7 +135,7 @@ while [[ $# -gt 0 ]]; do
     --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir DIR] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--split_max_duration N] [--feature_max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir DIR] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
       exit 1
       ;;
   esac
@@ -160,11 +170,19 @@ esac
 
 case "$data_variant" in
   raw)
-    transcript_dir="transcripts"
-    audio_root="audio"
-    manifest_dir="$PWD/data/manifests"
-    fixed_manifest_dir="$PWD/data/manifests/fixed"
-    fbank_dir="$PWD/fbank"
+    if [ "$matched_splits" = "1" ]; then
+      transcript_dir="transcripts_x10_matched"
+      audio_root="audio_x10"
+      manifest_dir="$PWD/data/manifests_x10_matched"
+      fixed_manifest_dir="$PWD/data/manifests_x10_matched/fixed"
+      fbank_dir="$PWD/fbank_x10_matched"
+    else
+      transcript_dir="transcripts"
+      audio_root="audio"
+      manifest_dir="$PWD/data/manifests"
+      fixed_manifest_dir="$PWD/data/manifests/fixed"
+      fbank_dir="$PWD/fbank"
+    fi
     variant_suffix="_raw"
     ;;
   nr)
@@ -251,6 +269,7 @@ echo "exp_name=$exp_name"
 echo "exp_dir_override=$exp_dir_override"
 echo "requested_exp_dir=$requested_exp_dir"
 echo "exp_dir_policy=$exp_dir_policy"
+echo "matched_splits=$matched_splits"
 echo "data_variant=$data_variant"
 echo "enable_nr=$enable_nr"
 echo "transcript_dir=$transcript_dir"
@@ -260,8 +279,12 @@ echo "fixed_manifest_dir=$fixed_manifest_dir"
 echo "fbank_dir=$fbank_dir"
 echo "musan_manifest_dir=$musan_manifest_dir"
 echo "num_epochs=$num_epochs"
+echo "start_epoch=$start_epoch"
 echo "world_size=$world_size"
 echo "max_duration=$max_duration"
+echo "num_workers=$num_workers"
+echo "split_max_duration=$split_max_duration"
+echo "feature_max_duration=$feature_max_duration"
 echo "base_lr=$base_lr"
 echo "use_fp16=$use_fp16"
 echo "enable_musan=$enable_musan"
@@ -292,13 +315,20 @@ echo "joiner_dim=$joiner_dim"
 
 if [ "$stage" -le -1 ] && [ "$stop_stage" -ge -1 ]; then
   echo "Stage -1: Prepare VietnameseASR corpus from dataset/"
-  python3 prepare_vi_asr_corpus.py \
-    --auto \
-    --shuffle-before-split \
-    --train-ratio 0.8 \
-    --dev-ratio 0.1 \
-    --test-ratio 0.1 \
-    --overwrite
+  if [ "$matched_splits" = "1" ]; then
+    python3 local/prepare_matched_splits.py \
+      --dataset-dir "$PWD/dataset" \
+      --output-dir "$PWD/${transcript_dir}" \
+      --max-duration "${split_max_duration}"
+  else
+    python3 prepare_vi_asr_corpus.py \
+      --auto \
+      --shuffle-before-split \
+      --train-ratio 0.8 \
+      --dev-ratio 0.1 \
+      --test-ratio 0.1 \
+      --overwrite
+  fi
 fi
 
 if [ "$stage" -le 0 ] && [ "$stop_stage" -ge 0 ]; then
@@ -357,12 +387,16 @@ fi
 
 if [ "$stage" -le 5 ] && [ "$stop_stage" -ge 5 ]; then
   echo "Stage 5: Export text corpus"
-  python3 local/export_text_corpus.py --transcript-dir "${transcript_dir}"
+  python3 local/export_text_corpus.py \
+    --transcript-dir "${transcript_dir}" \
+    --output-text "lang/transcript_words_x10_matched.txt"
 fi
 
 if [ "$stage" -le 6 ] && [ "$stop_stage" -ge 6 ]; then
   echo "Stage 6: Train BPE"
-  python3 local/train_bpe_model.py --vocab-size "$vocab_size"
+  python3 local/train_bpe_model.py \
+    --vocab-size "$vocab_size" \
+    --input-txt "lang/transcript_words_x10_matched.txt"
 fi
 
 if [ "$stage" -le 7 ] && [ "$stop_stage" -ge 7 ]; then
@@ -372,7 +406,14 @@ fi
 
 if [ "$stage" -le 8 ] && [ "$stop_stage" -ge 8 ]; then
   echo "Stage 8: Compute fbank / cuts"
-  cmd=(python3 local/compute_fbank.py --bpe-model "${bpe_dir}/bpe.model" --manifest-dir "${fixed_manifest_dir}" --output-dir "${fbank_dir}")
+  cmd=(
+    python3 local/compute_fbank.py
+    --bpe-model "${bpe_dir}/bpe.model"
+    --manifest-dir "${fixed_manifest_dir}"
+    --output-dir "${fbank_dir}"
+    --max-duration "${feature_max_duration}"
+    --overwrite
+  )
   if [ "$perturb_speed" = "1" ]; then
     cmd+=(--perturb-speed)
   fi
@@ -427,9 +468,10 @@ if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ]; then
   python3 "${train_script}" \
     --world-size "${world_size}" \
     --num-epochs "${num_epochs}" \
-    --start-epoch 1 \
+    --start-epoch "${start_epoch}" \
     --use-fp16 "${use_fp16}" \
     --manifest-dir "${fbank_dir}" \
+    --num-workers "${num_workers}" \
     --base-lr "${base_lr}" \
     --exp-dir "${exp_dir}" \
     --max-duration "${max_duration}" \

@@ -29,6 +29,7 @@ runs/
 tensorboard/
 ASR/zipformer/exp/
 ASR/zipformer/exp_*/
+ASR/zipformer/cross_eval_*/
 exp/
 exp_*/
 deploy/jetson_nano/model_*/
@@ -48,6 +49,9 @@ dataset/
 musan/
 musan_data/
 MUSAN/
+pretrained/
+mic_debug/
+mic_prompt_eval/
 musan_cuts.jsonl.gz
 
 # Generated metadata / language resources
@@ -64,8 +68,11 @@ lang/
 transcripts/
 transcripts_nr/
 README_PREPARED.txt
+presentation_info.md
 
 # OS / editor
 .DS_Store
 .vscode/
 .idea/
+
+theory_*.md
