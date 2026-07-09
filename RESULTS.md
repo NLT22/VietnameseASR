@@ -209,5 +209,5 @@ python3 eval_heldout_speaker.py \
   --model-dir deploy/jetson_nano/model_divmix_x8_epoch60_avg10
 ```
 
-Clone generation lives in the sibling `gwen-tts/` workspace
-(`build_crossspeaker.py`, `build_diverse_clones.py`, `make_heldout_speaker_eval.py`).
+Clone generation lives in `local/tts/` (see its README). It needs an external
+Gwen-TTS checkout for the model weights; point at it with `GWEN_TTS_DIR`.
