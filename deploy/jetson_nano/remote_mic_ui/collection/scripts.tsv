@@ -1,0 +1,31 @@
+script_id	text	word_count	source_utt_id
+Khoi_000010	bạn có thể hướng dẫn tôi cách cài đặt môi trường lập trình trên máy tính không vì tôi thử nhiều lần mà vẫn gặp lỗi nên chưa thể chạy được chương trình đơn giản	35	Khoi_000010
+Khoi_000015	tôi cần đặt lịch khám vào ngày mười lăm tháng tám lúc chín giờ sáng bạn có thể giúp tôi gọi điện đến phòng khám để xác nhận thời gian và chi phí không	34	Khoi_000015
+Khoi_000016	tối nay có trận bóng đá khá hấp dẫn tôi định rủ bạn bè qua nhà xem cùng vừa ăn nhẹ vừa trò chuyện cho vui sau một ngày làm việc căng thẳng	33	Khoi_000016
+Khoi_000017	tôi vừa nhận được tin nhắn từ ngân hàng thông báo tài khoản bị trừ hai trăm nghìn đồng nhưng tôi không nhớ đã thanh toán gì nên đang kiểm tra lại giao dịch	34	Khoi_000017
+Khoi_000018	bạn có thể chỉ tôi cách sử dụng phần mềm chỉnh sửa video không tôi muốn làm một đoạn clip ngắn nhưng chưa quen với các công cụ nên khá lúng túng	32	Khoi_000018
+Khoi_000019	hôm nay tôi dậy muộn nên không kịp ăn sáng đành phải mua tạm một ổ bánh mì trên đường đi làm hy vọng trưa nay sẽ có thời gian ăn uống đầy đủ hơn	35	Khoi_000019
+Khoi_000021	chiều nay tôi có buổi phỏng vấn xin việc lúc hai giờ ba mươi phút nên đang chuẩn bị lại hồ sơ và luyện tập trả lời một số câu hỏi thường gặp	33	Khoi_000021
+Khoi_000022	bạn nhớ giúp tôi kiểm tra lại danh sách công việc trong tuần này nhé vì tôi sợ bỏ sót nhiệm vụ quan trọng có thể ảnh hưởng đến tiến độ chung của cả nhóm	35	Khoi_000022
+Khoi_000023	tôi vừa thử một quán ăn mới gần công ty đồ ăn khá ngon và giá hợp lý khoảng tám mươi nghìn đồng một phần nên chắc sẽ quay lại thêm vài lần nữa	34	Khoi_000023
+Khoi_000024	sáng nay trời mát nên tôi tranh thủ chạy bộ khoảng ba mươi phút cảm thấy cơ thể khỏe hơn và tinh thần cũng thoải mái hơn rất nhiều so với mọi ngày	33	Khoi_000024
+Khoi_000025	tôi cần gửi một bưu kiện đến địa chỉ ở thành phố hồ chí minh bạn có thể giúp tôi kiểm tra phí vận chuyển và thời gian giao hàng dự kiến không	33	Khoi_000025
+Khoi_000026	tối qua tôi thức khá khuya để hoàn thành báo cáo nên sáng nay hơi mệt chắc phải uống thêm cà phê để tỉnh táo và làm việc hiệu quả hơn	31	Khoi_000026
+Khoi_000027	bạn có thể cho tôi mượn cuốn sách bạn vừa đọc không tôi nghe bạn nói nội dung khá hay nên cũng muốn tìm hiểu thêm về chủ đề đó	30	Khoi_000027
+Khoi_000028	tôi đang lên kế hoạch du lịch vào cuối tháng này dự định đi khoảng ba ngày hai đêm nhưng chưa quyết định được địa điểm phù hợp với ngân sách hiện tại	33	Khoi_000028
+Khoi_000029	hôm nay tôi phải nộp bài tập trước mười hai giờ trưa nên đang cố gắng hoàn thành phần cuối cùng để kịp thời gian và tránh bị trừ điểm không đáng có	33	Khoi_000029
+Khoi_000030	tôi vừa tham gia một khóa học trực tuyến về lập trình nội dung khá dễ hiểu và có nhiều ví dụ thực tế giúp tôi nắm vững kiến thức nhanh hơn	32	Khoi_000030
+Khoi_000031	bạn có thể giúp tôi đặt vé xem phim cho tối thứ bảy không khoảng bảy giờ ba mươi phút chọn chỗ ngồi ở giữa để có trải nghiệm tốt hơn	31	Khoi_000031
+Khoi_000032	tôi đang gặp vấn đề với máy tính mỗi lần mở lên là chạy rất chậm có thể do quá nhiều phần mềm chạy nền nên cần dọn dẹp lại hệ thống	32	Khoi_000032
+Khoi_000033	sáng mai tôi phải dậy sớm để đi tập thể dục khoảng năm giờ ba mươi phút hy vọng duy trì thói quen này để cải thiện sức khỏe lâu dài	31	Khoi_000033
+Khoi_000034	tôi muốn học thêm về trí tuệ nhân tạo đặc biệt là lĩnh vực xử lý ngôn ngữ tự nhiên vì thấy ứng dụng của nó ngày càng phổ biến trong đời sống	33	Khoi_000034
+Khoi_000035	bạn nhớ nhắc tôi thanh toán hóa đơn điện nước trước ngày hai mươi lăm hàng tháng nhé nếu không sẽ bị tính thêm phí khá phiền	27	Khoi_000035
+Khoi_000036	tôi vừa nhận được một cuộc gọi từ số lạ không biết có nên gọi lại không hay là bỏ qua để tránh các trường hợp lừa đảo không mong muốn	31	Khoi_000036
+Khoi_000037	hôm nay tôi định dọn dẹp lại phòng làm việc sắp xếp lại giấy tờ và loại bỏ những thứ không cần thiết để không gian gọn gàng hơn	29	Khoi_000037
+Khoi_000038	tôi cần mua một chiếc tai nghe mới để phục vụ công việc ưu tiên loại có khả năng chống ồn tốt và thời lượng pin dài để sử dụng cả ngày	32	Khoi_000038
+Khoi_000039	bạn có thể giải thích cho tôi cách hoạt động của mạng nơ ron không tôi đọc tài liệu nhưng vẫn chưa hiểu rõ các khái niệm cơ bản	29	Khoi_000039
+Khoi_000040	tối nay tôi sẽ thử nấu một món ăn mới theo công thức trên mạng hy vọng thành công để có thể nấu lại cho gia đình vào dịp cuối tuần	31	Khoi_000040
+Khoi_000041	tôi đang suy nghĩ về việc chuyển công việc sang một lĩnh vực khác dù có chút lo lắng nhưng cũng muốn thử thách bản thân với môi trường mới	30	Khoi_000041
+Khoi_000042	bạn có thể gửi lại cho tôi lịch họp của tuần sau không tôi cần sắp xếp thời gian để tránh trùng với các kế hoạch cá nhân đã đặt trước	31	Khoi_000042
+Khoi_000043	hôm qua tôi đi ngủ khá sớm nên sáng nay cảm thấy rất tỉnh táo có thể bắt đầu công việc với tinh thần tốt và hoàn thành nhiều nhiệm vụ hơn	32	Khoi_000043
+Khoi_000044	tôi cần đặt mua một cuốn sách trực tuyến giá khoảng một trăm hai mươi nghìn đồng bạn có biết trang web nào uy tín không	26	Khoi_000044

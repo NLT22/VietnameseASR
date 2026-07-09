@@ -1,9 +1,47 @@
-# vi_asr_corpus
+# VietnameseASR
+
+## Current matched ASR target
+
+This folder shares the same project structure as `egs/vi_asr_corpus`, but uses
+the VietnameseASR dataset. The active demo target is a real ASR model, not a
+template matcher:
+
+- BPE vocab size 100
+- small Zipformer transducer
+- non-streaming ONNX first
+- streaming ONNX/CUDA/TensorRT as the optimization path
+- matched train/dev/test splits for intentional "hoc vet" ASR evaluation
+
+Prepare matched manifests/features without starting GPU training:
+
+```bash
+bash run_matched_asr.sh --stage 0 --stop-stage 8
+```
+
+When the GPU is free, train/evaluate non-streaming:
+
+```bash
+bash run_matched_asr.sh --stage 13 --stop-stage 14 --streaming 0 --avg 5
+```
+
+Train/evaluate streaming for the TensorRT investigation path:
+
+```bash
+bash run_matched_asr.sh --stage 13 --stop-stage 14 --streaming 1 --avg 1
+```
+
+After choosing the best WER checkpoint, export a Jetson ONNX package:
+
+```bash
+bash local/export_for_jetson.sh --exp-dir ASR/zipformer/exp_bpe100_small_raw_matched --epoch 50 --avg 5 --streaming 0
+```
+
+See `PROJECT_NOTES.md` for old result interpretation and Jetson/TensorRT notes.
 
 ## Cấu trúc
 
 ```
-vi_asr_corpus/
+VietnameseASR/
 ├── ASR/zipformer/          # train.py, decode.py, export.py, finetune.py, ...
 ├── local/                  # scripts chuẩn bị data
 ├── audio/  audio_nr/
@@ -13,9 +51,9 @@ vi_asr_corpus/
 │   ├── manifests/fixed/
 │   ├── manifests_nr/fixed/
 │   └── lang_bpe_<vocab>/
-├── prepare_vi_asr_corpus.py
-├── augment_train_with_musan.py
-└── run.sh
+├── docs/                   # theory + presentation notes
+├── run.sh                  # single pipeline entry point (bash run.sh --help)
+└── run_x10.sh              # thin backward-compat wrapper around run.sh
 ```
 
 ---
@@ -26,7 +64,7 @@ vi_asr_corpus/
 cd /path/to/icefall/egs/vi_asr_corpus
 
 # 1. Tạo audio/ + transcripts/ từ raw data
-python prepare_vi_asr_corpus.py --auto --shuffle-before-split --overwrite
+python local/prepare_vi_asr_corpus.py --auto --shuffle-before-split --overwrite
 
 # 2. Chuẩn bị data → fbank (stage 1–12)
 bash run.sh --vocab_size 100 --stage 1 --stop_stage 12
@@ -167,7 +205,11 @@ bash run.sh \
 
 | File | Việc làm |
 |---|---|
+| `prepare_vi_asr_corpus.py` | Raw `dataset/` → `audio/` + `transcripts/` (stage -1) |
+| `audit_dataset.py` | Kiểm tra transcript/audio khớp nhau (stage 1) |
+| `augment_train_with_musan.py` | Offline MUSAN augmentation cho train split (stage 2) |
 | `prepare_manifests.py` | TSV → lhotse recordings/supervisions jsonl.gz |
+| `mic_streaming_asr.py` | Real-time mic ASR demo (streaming/full mode) |
 | `export_text_corpus.py` | Gom text train để train BPE |
 | `train_bpe_model.py --vocab-size N` | Train SentencePiece BPE |
 | `prepare_lang_bpe.py --lang-dir data/lang_bpe_N` | Tạo tokens.txt, words.txt |

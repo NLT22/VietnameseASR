@@ -1,0 +1,6 @@
+Experiment: ASR/zipformer/exp_bpe100_small_streaming_raw_x10_matched_u20_streaming_20260623_004646
+Epoch: 40
+Avg: 30
+Streaming: 1
+Runtime: sherpa-onnx ONNX
+TensorRT: validate on Jetson; non-streaming is known unsupported in current sherpa-onnx path

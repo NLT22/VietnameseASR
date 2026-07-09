@@ -21,6 +21,12 @@ def get_args():
         default=Path("transcripts"),
         help="Directory containing train/dev/test TSV transcripts.",
     )
+    parser.add_argument(
+        "--dataset",
+        type=str,
+        default="train dev test",
+        help='Space-separated splits to prepare. Default: "train dev test".',
+    )
     return parser.parse_args()
 
 
@@ -31,7 +37,7 @@ def prepare_split(split: str, transcript_dir: Path, output_dir: Path):
 
     with open(tsv_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
-        for row in reader:
+        for index, row in enumerate(reader, start=1):
             utt_id = row["utt_id"].strip()
             speaker = row["speaker"].strip()
             audio_path = (ROOT / row["audio_path"]).resolve()
@@ -50,6 +56,8 @@ def prepare_split(split: str, transcript_dir: Path, output_dir: Path):
                 language="vi",
             )
             supervisions.append(supervision)
+            if index % 50 == 0:
+                print(f"{split}: inspected {index} recordings", flush=True)
 
     recs = RecordingSet.from_recordings(recordings)
     sups = SupervisionSet.from_segments(supervisions)
@@ -59,11 +67,10 @@ def prepare_split(split: str, transcript_dir: Path, output_dir: Path):
 
     print(f"{split}: recordings={len(recs)}, supervisions={len(sups)}")
 
-
 if __name__ == "__main__":
     args = get_args()
     args.transcript_dir = args.transcript_dir if args.transcript_dir.is_absolute() else ROOT / args.transcript_dir
     args.output_dir = args.output_dir if args.output_dir.is_absolute() else ROOT / args.output_dir
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    for split in ["train", "dev", "test"]:
+    for split in args.dataset.split():
         prepare_split(split, args.transcript_dir, args.output_dir)

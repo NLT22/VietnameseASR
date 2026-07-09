@@ -1,30 +1,66 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# =============================================================================
+# run.sh — single entry point for the Vietnamese ASR recipe (data prep -> train
+# -> decode). One script, any dataset version.
+#
+#   Default          : x10 MUSAN-augmented matched-split pipeline.
+#   --data_tag NAME  : run ANY pre-built transcript version instead. Derives
+#                      transcripts_NAME/, data/manifests_NAME/, fbank_NAME/,
+#                      lang/transcript_words_NAME.txt and exp suffix _NAME, and
+#                      skips split-building (assumes the transcripts exist).
+#
+# STAGES  (--stage N --stop_stage M):
+#   -1 build train/dev/test splits from dataset/   0 optional noise-reduction
+#    1 audit dataset      2 offline MUSAN aug       3 build manifests
+#    4 lhotse fix         5 export text corpus      6 train BPE
+#    7 build lang dir     8 compute fbank/cuts      9 online-MUSAN fbank
+#   10 validate manifests 11 manifest stats        12 tokenize smoke test
+#   13 TRAIN             14 DECODE
+#
+# COMMON USAGE:
+#   # full x10 pipeline from scratch (streaming/causal, small model):
+#   bash run.sh --model_size small --causal 1 --num_epochs 60 \
+#       --stage -1 --stop_stage 14
+#
+#   # a pre-built version (transcript + audio already exist) — train+decode only.
+#   # NOTE: turn OFF all in-pipeline augmentation if it is already baked in:
+#   bash run.sh --data_tag xspk_x5 --exp_suffix "" --model_size small --causal 1 \
+#       --enable_musan 0 --perturb_speed 0 --offline_musan_aug 0 \
+#       --stage 3 --stop_stage 14
+#
+#   # plain (non-matched) auto-split pipeline, base model:
+#   bash run.sh --matched_splits 0 --model_size base --stage -1 --stop_stage 14
+#
+# Full flag list: bash run.sh --help  (or read the arg-parse block below).
+# run_x10.sh is a thin backward-compatible wrapper around this script.
+# =============================================================================
+
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$script_dir"
 
-stage=0
+stage=-1
 stop_stage=100
 
 corpus_root="$script_dir"
-
-train_ratio=0.8
-dev_ratio=0.1
-test_ratio=0.1
 
 vocab_size=100
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
 manifest_dir="$PWD/data/manifests"
 fixed_manifest_dir="$PWD/data/manifests/fixed"
-transcript_dir="transcripts"
-audio_root="audio"
-fbank_dir="fbank"
+transcript_dir="transcripts_matched_u20"
+audio_root="."
+fbank_dir="fbank_matched_u20"
 musan_manifest_dir="$PWD/data/manifests"
 
 num_epochs=30
+start_epoch=1
 world_size=1
-max_duration=50
+max_duration=500
+num_workers=2
+split_max_duration=20
+feature_max_duration=20
 base_lr=0.01
 use_fp16=0
 
@@ -33,11 +69,9 @@ enable_spec_aug=0
 bucketing_sampler=1
 num_buckets=4
 perturb_speed=0
-fbank_max_duration=20
-overwrite_fbank=0
 musan_dir="$PWD/musan"
 
-offline_musan_aug=0
+offline_musan_aug=1
 copies_per_utt=10
 snr_min=10
 snr_max=20
@@ -63,14 +97,19 @@ attention_decoder_loss_scale=0.0
 do_finetune=0
 finetune_ckpt=""
 init_modules="encoder"
-exp_suffix=""
+exp_suffix="_x10_matched"
 exp_dir_override=""
 exp_dir_policy="auto"  # auto: create unique exp dir for train if non-empty; reuse: old behavior; fail: stop if non-empty
+matched_splits=1
+# --data_tag NAME makes this script run ANY pre-built transcript version:
+# it derives transcript_dir=transcripts_<tag>, data/manifests_<tag>, fbank_<tag>,
+# lang/transcript_words_<tag>.txt and exp suffix _<tag>. Empty = default (x10).
+data_tag=""
 
 data_variant="raw"
 enable_nr=0
 
-model_size="base"
+model_size="small"
 num_encoder_layers="2,2,3,4,3,2"
 feedforward_dim="512,768,1024,1536,1024,768"
 num_heads="4,4,4,8,4,4"
@@ -81,15 +120,17 @@ joiner_dim=512
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    -h|--help) awk '/^# ={5,}/{c++} c==1{print} c==2{exit}' "$0"; exit 0 ;;
     --stage) stage="$2"; shift 2 ;;
     --stop_stage|--stop-stage|-stop_stage|-stop-stage) stop_stage="$2"; shift 2 ;;
-    --train_ratio|--train-ratio) train_ratio="$2"; shift 2 ;;
-    --dev_ratio|--dev-ratio) dev_ratio="$2"; shift 2 ;;
-    --test_ratio|--test-ratio) test_ratio="$2"; shift 2 ;;
     --vocab_size|--vocab-size) vocab_size="$2"; shift 2 ;;
     --num_epochs|--num-epochs) num_epochs="$2"; shift 2 ;;
+    --start_epoch|--start-epoch) start_epoch="$2"; shift 2 ;;
     --world_size|--world-size) world_size="$2"; shift 2 ;;
     --max_duration|--max-duration) max_duration="$2"; shift 2 ;;
+    --num_workers|--num-workers) num_workers="$2"; shift 2 ;;
+    --split_max_duration|--split-max-duration) split_max_duration="$2"; shift 2 ;;
+    --feature_max_duration|--feature-max-duration) feature_max_duration="$2"; shift 2 ;;
     --base_lr|--base-lr) base_lr="$2"; shift 2 ;;
     --use_fp16|--use-fp16) use_fp16="$2"; shift 2 ;;
     --enable_musan|--enable-musan) enable_musan="$2"; shift 2 ;;
@@ -97,8 +138,6 @@ while [[ $# -gt 0 ]]; do
     --bucketing_sampler|--bucketing-sampler) bucketing_sampler="$2"; shift 2 ;;
     --num_buckets|--num-buckets) num_buckets="$2"; shift 2 ;;
     --perturb_speed|--perturb-speed) perturb_speed="$2"; shift 2 ;;
-    --fbank_max_duration|--fbank-max-duration) fbank_max_duration="$2"; shift 2 ;;
-    --overwrite_fbank|--overwrite-fbank) overwrite_fbank="$2"; shift 2 ;;
     --musan_dir|--musan-dir) musan_dir="$2"; shift 2 ;;
     --offline_musan_aug|--offline-musan-aug) offline_musan_aug="$2"; shift 2 ;;
     --copies_per_utt|--copies-per-utt) copies_per_utt="$2"; shift 2 ;;
@@ -124,6 +163,8 @@ while [[ $# -gt 0 ]]; do
     --exp_suffix|--exp-suffix) exp_suffix="$2"; shift 2 ;;
     --exp_dir|--exp-dir) exp_dir_override="$2"; shift 2 ;;
     --exp_dir_policy|--exp-dir-policy) exp_dir_policy="$2"; shift 2 ;;
+    --matched_splits|--matched-splits) matched_splits="$2"; shift 2 ;;
+    --data_tag|--data-tag) data_tag="$2"; shift 2 ;;
     --data_variant|--data-variant) data_variant="$2"; shift 2 ;;
     --enable_nr|--enable-nr) enable_nr="$2"; shift 2 ;;
     --model_size|--model-size) model_size="$2"; shift 2 ;;
@@ -136,7 +177,7 @@ while [[ $# -gt 0 ]]; do
     --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--train_ratio X] [--dev_ratio X] [--test_ratio X] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir DIR] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--model_size base|small]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--split_max_duration N] [--feature_max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir DIR] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--data_tag NAME] [--model_size base|small]" >&2
       exit 1
       ;;
   esac
@@ -171,11 +212,21 @@ esac
 
 case "$data_variant" in
   raw)
-    transcript_dir="transcripts"
-    audio_root="audio"
-    manifest_dir="$PWD/data/manifests"
-    fixed_manifest_dir="$PWD/data/manifests/fixed"
-    fbank_dir="$PWD/fbank"
+    if [ "$matched_splits" = "1" ]; then
+      # Canonical corrected splits (800 real utts). The old x10-repeated dirs
+      # were built before the recorder_key() off-by-one fix and were removed.
+      transcript_dir="transcripts_matched_u20"
+      audio_root="."
+      manifest_dir="$PWD/data/manifests_matched_u20"
+      fixed_manifest_dir="$PWD/data/manifests_matched_u20/fixed"
+      fbank_dir="$PWD/fbank_matched_u20"
+    else
+      transcript_dir="transcripts"
+      audio_root="audio"
+      manifest_dir="$PWD/data/manifests"
+      fixed_manifest_dir="$PWD/data/manifests/fixed"
+      fbank_dir="$PWD/fbank"
+    fi
     variant_suffix="_raw"
     ;;
   nr)
@@ -191,6 +242,25 @@ case "$data_variant" in
     exit 1
     ;;
 esac
+
+# --data_tag overrides all data paths to run an arbitrary pre-built transcript
+# version (e.g. transcripts_xspk_x5). Splits are assumed already built, so
+# matched-split prep (stage -1) is disabled.
+if [ -n "$data_tag" ]; then
+  transcript_dir="transcripts_${data_tag}"
+  manifest_dir="$PWD/data/manifests_${data_tag}"
+  fixed_manifest_dir="$PWD/data/manifests_${data_tag}/fixed"
+  fbank_dir="$PWD/fbank_${data_tag}"
+  variant_suffix="_${data_tag}"
+  matched_splits=0
+fi
+
+# Lang text file is derived from transcript_dir so different versions never
+# clobber each other's BPE training corpus. transcripts_x10_matched ->
+# lang/transcript_words_x10_matched.txt (preserves prior behavior); transcripts
+# -> lang/transcript_words.txt.
+data_words_tag="${transcript_dir#transcripts}"
+lang_words_txt="lang/transcript_words${data_words_tag}.txt"
 
 bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
 streaming_suffix=""
@@ -254,9 +324,6 @@ if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ] && exp_dir_has_contents "$exp
 fi
 
 echo "corpus_root=$corpus_root"
-echo "train_ratio=$train_ratio"
-echo "dev_ratio=$dev_ratio"
-echo "test_ratio=$test_ratio"
 echo "vocab_size=$vocab_size"
 echo "bpe_dir=$bpe_dir"
 echo "exp_dir=$exp_dir"
@@ -265,6 +332,9 @@ echo "exp_name=$exp_name"
 echo "exp_dir_override=$exp_dir_override"
 echo "requested_exp_dir=$requested_exp_dir"
 echo "exp_dir_policy=$exp_dir_policy"
+echo "matched_splits=$matched_splits"
+echo "data_tag=$data_tag"
+echo "lang_words_txt=$lang_words_txt"
 echo "data_variant=$data_variant"
 echo "enable_nr=$enable_nr"
 echo "transcript_dir=$transcript_dir"
@@ -274,8 +344,12 @@ echo "fixed_manifest_dir=$fixed_manifest_dir"
 echo "fbank_dir=$fbank_dir"
 echo "musan_manifest_dir=$musan_manifest_dir"
 echo "num_epochs=$num_epochs"
+echo "start_epoch=$start_epoch"
 echo "world_size=$world_size"
 echo "max_duration=$max_duration"
+echo "num_workers=$num_workers"
+echo "split_max_duration=$split_max_duration"
+echo "feature_max_duration=$feature_max_duration"
 echo "base_lr=$base_lr"
 echo "use_fp16=$use_fp16"
 echo "enable_musan=$enable_musan"
@@ -283,8 +357,6 @@ echo "enable_spec_aug=$enable_spec_aug"
 echo "bucketing_sampler=$bucketing_sampler"
 echo "num_buckets=$num_buckets"
 echo "perturb_speed=$perturb_speed"
-echo "fbank_max_duration=$fbank_max_duration"
-echo "overwrite_fbank=$overwrite_fbank"
 echo "musan_dir=$musan_dir"
 echo "offline_musan_aug=$offline_musan_aug"
 echo "copies_per_utt=$copies_per_utt"
@@ -307,14 +379,21 @@ echo "decoder_dim=$decoder_dim"
 echo "joiner_dim=$joiner_dim"
 
 if [ "$stage" -le -1 ] && [ "$stop_stage" -ge -1 ]; then
-  echo "Stage -1: Prepare corpus from dataset/"
-  python3 prepare_vi_asr_corpus.py \
-    --auto \
-    --shuffle-before-split \
-    --train-ratio "${train_ratio}" \
-    --dev-ratio "${dev_ratio}" \
-    --test-ratio "${test_ratio}" \
-    --overwrite
+  echo "Stage -1: Prepare VietnameseASR corpus from dataset/"
+  if [ "$matched_splits" = "1" ]; then
+    python3 local/prepare_matched_splits.py \
+      --dataset-dir "$PWD/dataset" \
+      --output-dir "$PWD/${transcript_dir}" \
+      --max-duration "${split_max_duration}"
+  else
+    python3 local/prepare_vi_asr_corpus.py \
+      --auto \
+      --shuffle-before-split \
+      --train-ratio 0.8 \
+      --dev-ratio 0.1 \
+      --test-ratio 0.1 \
+      --overwrite
+  fi
 fi
 
 if [ "$stage" -le 0 ] && [ "$stop_stage" -ge 0 ]; then
@@ -332,7 +411,7 @@ fi
 
 if [ "$stage" -le 1 ] && [ "$stop_stage" -ge 1 ]; then
   echo "Stage 1: Audit dataset"
-  python3 audit_dataset.py --transcript-dir "${transcript_dir}"
+  python3 local/audit_dataset.py --transcript-dir "${transcript_dir}"
 fi
 
 if [ "$stage" -le 2 ] && [ "$stop_stage" -ge 2 ]; then
@@ -342,7 +421,7 @@ if [ "$stage" -le 2 ] && [ "$stop_stage" -ge 2 ]; then
       echo "ERROR: --offline_musan_aug 1 requires --musan_dir /path/to/musan" >&2
       exit 1
     fi
-    python3 augment_train_with_musan.py \
+    python3 local/augment_train_with_musan.py \
       --corpus-root . \
       --musan-dir "$musan_dir" \
       --transcript-dir "$transcript_dir" \
@@ -358,7 +437,7 @@ fi
 
 if [ "$stage" -le 3 ] && [ "$stop_stage" -ge 3 ]; then
   echo "Stage 3: Prepare manifests"
-  python3 prepare_manifests.py \
+  python3 local/prepare_manifests.py \
     --transcript-dir "${transcript_dir}" \
     --output-dir "${manifest_dir}"
 fi
@@ -373,12 +452,16 @@ fi
 
 if [ "$stage" -le 5 ] && [ "$stop_stage" -ge 5 ]; then
   echo "Stage 5: Export text corpus"
-  python3 local/export_text_corpus.py --transcript-dir "${transcript_dir}"
+  python3 local/export_text_corpus.py \
+    --transcript-dir "${transcript_dir}" \
+    --output-text "${lang_words_txt}"
 fi
 
 if [ "$stage" -le 6 ] && [ "$stop_stage" -ge 6 ]; then
   echo "Stage 6: Train BPE"
-  python3 local/train_bpe_model.py --vocab-size "$vocab_size"
+  python3 local/train_bpe_model.py \
+    --vocab-size "$vocab_size" \
+    --input-txt "${lang_words_txt}"
 fi
 
 if [ "$stage" -le 7 ] && [ "$stop_stage" -ge 7 ]; then
@@ -388,12 +471,16 @@ fi
 
 if [ "$stage" -le 8 ] && [ "$stop_stage" -ge 8 ]; then
   echo "Stage 8: Compute fbank / cuts"
-  cmd=(python3 local/compute_fbank.py --bpe-model "${bpe_dir}/bpe.model" --manifest-dir "${fixed_manifest_dir}" --output-dir "${fbank_dir}" --max-duration "${fbank_max_duration}")
+  cmd=(
+    python3 local/compute_fbank.py
+    --bpe-model "${bpe_dir}/bpe.model"
+    --manifest-dir "${fixed_manifest_dir}"
+    --output-dir "${fbank_dir}"
+    --max-duration "${feature_max_duration}"
+    --overwrite
+  )
   if [ "$perturb_speed" = "1" ]; then
     cmd+=(--perturb-speed)
-  fi
-  if [ "$overwrite_fbank" = "1" ]; then
-    cmd+=(--overwrite)
   fi
   "${cmd[@]}"
 fi
@@ -446,9 +533,10 @@ if [ "$stage" -le 13 ] && [ "$stop_stage" -ge 13 ]; then
   python3 "${train_script}" \
     --world-size "${world_size}" \
     --num-epochs "${num_epochs}" \
-    --start-epoch 1 \
+    --start-epoch "${start_epoch}" \
     --use-fp16 "${use_fp16}" \
     --manifest-dir "${fbank_dir}" \
+    --num-workers "${num_workers}" \
     --base-lr "${base_lr}" \
     --exp-dir "${exp_dir}" \
     --max-duration "${max_duration}" \

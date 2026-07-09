@@ -32,19 +32,32 @@ ASR/zipformer/exp_*/
 ASR/zipformer/cross_eval_*/
 exp/
 exp_*/
-deploy/jetson_nano/model_*/
+# Exported model packages: keep the metadata, drop the weights.
+# (Ignore the CONTENTS, not the dir, so the negations below can re-include.
+# These also override the root .gitignore's blanket `*.txt`.)
+deploy/jetson_nano/model_*/*
+!deploy/jetson_nano/model_*/MODEL_INFO.txt
+!deploy/jetson_nano/model_*/tokens.txt
 deploy/jetson_nano/perf_results/
+deploy/jetson_nano/remote_mic_ui/ui_uploads/
+deploy/jetson_nano/remote_mic_ui/collected/
 deploy/*.tar.gz
 
 # Lhotse / feature artifacts
 fbank/
+fbank_*/
 fbank_nr/
 manifests/
 manifests_fixed/
+data/manifests_*/
 
 # Raw / generated speech data
 audio/
+audio_*/
 audio_nr/
+datasets/
+dataset_backup_*/
+heldout_speaker_eval/
 dataset/
 musan/
 musan_data/
@@ -66,6 +79,13 @@ data/manifests/fixed/*
 !data/manifests/fixed/*.jsonl.gz
 lang/
 transcripts/
+# Generated transcript versions (rebuildable from dataset/ + the clone scripts).
+# transcripts_matched_u20/ is NOT ignored: it is the corrected ground-truth
+# alignment of every real recording, it is small, and it cannot be regenerated
+# without the raw audio (which is not in git).
+transcripts_divmix_*/
+transcripts_crossspk*/
+transcripts_nr/
 transcripts_nr/
 README_PREPARED.txt
 presentation_info.md

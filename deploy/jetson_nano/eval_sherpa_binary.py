@@ -32,6 +32,12 @@ def main():
     ap.add_argument("--bin", default="/home/thayhoang/sherpa-onnx-gpu-build/sherpa-onnx/build-gpu/bin/sherpa-onnx")
     ap.add_argument("--output-json", required=True)
     ap.add_argument("--output-md", required=True)
+    ap.add_argument(
+        "--chunk-size",
+        type=int,
+        default=0,
+        help="Run at most this many wavs per sherpa process. Useful on low-RAM Jetson Nano.",
+    )
     args = ap.parse_args()
 
     rows = []
@@ -50,23 +56,39 @@ def main():
     enc_name = "encoder" + suffix
     dec_name = "decoder" + suffix
     join_name = "joiner" + suffix
-    cmd = [
+    base_cmd = [
         args.bin,
         "--tokens=" + str(model / "tokens.txt"),
         "--encoder=" + str(model / enc_name),
         "--decoder=" + str(model / dec_name),
         "--joiner=" + str(model / join_name),
+        "--modeling-unit=bpe",
+        "--bpe-vocab=" + str(model / "bpe.vocab"),
         f"--provider={args.provider}",
         "--num-threads=2",
         "--decoding-method=modified_beam_search",
         "--max-active-paths=4",
         "--model-type=zipformer2",
-        *wavs,
     ]
     start = time.time()
-    p = subprocess.run(cmd, env=env, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    chunk_size = args.chunk_size if args.chunk_size and args.chunk_size > 0 else len(wavs)
+    outputs = []
+    returncodes = []
+    for i in range(0, len(wavs), chunk_size):
+        chunk_wavs = wavs[i : i + chunk_size]
+        p = subprocess.run(
+            [*base_cmd, *chunk_wavs],
+            env=env,
+            universal_newlines=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        returncodes.append(p.returncode)
+        outputs.append(p.stdout)
+        if p.returncode != 0:
+            break
     elapsed = time.time() - start
-    out = p.stdout
+    out = "\n".join(outputs)
     hyps = []
     for line in out.splitlines():
         line = line.strip()
@@ -76,7 +98,10 @@ def main():
             except Exception:
                 pass
     if len(hyps) != len(rows):
-        raise RuntimeError(f"Expected {len(rows)} JSON hypotheses, got {len(hyps)}. Return={p.returncode}\nLast output:\n" + "\n".join(out.splitlines()[-40:]))
+        raise RuntimeError(
+            f"Expected {len(rows)} JSON hypotheses, got {len(hyps)}. "
+            f"Returns={returncodes}\nLast output:\n" + "\n".join(out.splitlines()[-40:])
+        )
 
     total_words = total_err = 0
     details = []
@@ -98,7 +123,8 @@ def main():
         "wer": wer,
         "errors": total_err,
         "words": total_words,
-        "returncode": p.returncode,
+        "returncodes": returncodes,
+        "chunk_size": chunk_size,
         "details": details,
     }
     Path(args.output_json).parent.mkdir(parents=True, exist_ok=True)

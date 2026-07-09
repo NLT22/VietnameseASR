@@ -10,8 +10,9 @@ b="$(dirname "$a")/VietnameseASR"                       # egs/VietnameseASR
 
 # ponytail: explicit file list, not a glob walk — exp_*/data dirs legitimately differ.
 files=(
-  run.sh run_x10.sh run_matched_asr.sh run_robust.sh
-  prepare_manifests.py prepare_vi_asr_corpus.py augment_train_with_musan.py audit_dataset.py
+  run.sh run_x10.sh
+  local/prepare_manifests.py local/prepare_vi_asr_corpus.py
+  local/augment_train_with_musan.py local/audit_dataset.py
   local/prepare_matched_splits.py local/export_for_jetson.sh
   local/compute_fbank.py local/train_bpe_model.py local/prepare_lang_bpe.py
   ASR/zipformer/train.py ASR/zipformer/decode.py ASR/zipformer/ctc_decode.py

@@ -1,0 +1,24 @@
+{
+  "participants": [
+    {
+      "id": "trung",
+      "name": "Trung"
+    },
+    {
+      "id": "khoi",
+      "name": "Khoi"
+    },
+    {
+      "id": "dung",
+      "name": "Dung"
+    },
+    {
+      "id": "hieu",
+      "name": "Hieu"
+    },
+    {
+      "id": "quan",
+      "name": "Quan"
+    }
+  ]
+}
