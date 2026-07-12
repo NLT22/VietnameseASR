@@ -76,7 +76,8 @@ split_max_duration=20
 feature_max_duration=20
 base_lr=0.045   # icefall default; the LR x epoch experiment (2026-07-11) showed
                 # the old forced 0.01 was ~4.5x worse on held-out speakers
-                # (10.90% vs 2.08%). See results/lr_epoch_experiment.md.
+                # (10.90% vs 2.08%). See results/lr_epoch_experiment.md
+                # (local-only, not in git — ask the team if you need it).
 use_fp16=0
 
 enable_musan=0

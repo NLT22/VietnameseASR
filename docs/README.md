@@ -4,7 +4,7 @@ Narrative docs for VietnameseASR. (The `README.md` and `CLAUDE.md` at the recipe
 root stay there — `README.md` is the entry point, `CLAUDE.md` is auto-loaded by
 Claude Code. Component docs live next to their code: `deploy/jetson_nano/README.md`,
 `live_ui/README.md`, `local/tts/README.md`. Raw experiment output stays in
-`results/*.md`.)
+`results/*.md` (gitignored, local-only — not on GitHub).)
 
 ## Start here
 

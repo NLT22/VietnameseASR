@@ -1,8 +1,0 @@
-Hieu model (epoch 50) -- per-speaker WER on 1000 real recordings (GOAL #1)
-  Dung   2.75%  (79/2876)
-  Hieu   1.96%  (60/3055)
-  Khoi   3.13%  (204/6527)
-  Quan   2.19%  (189/8636)
-  Trung  4.25%  (117/2751)
-  ALL    2.72%  (649/23845)
-PERSPK_DONE

@@ -94,4 +94,7 @@ theory_*.md
 live_ui/models/speaker_embedding_campplus.onnx
 deploy/jetson_nano/sweep_*/
 
+# Local experiment logs, kept on disk for reference but not pushed.
+results/
+
 docs/
