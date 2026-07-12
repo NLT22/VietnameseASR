@@ -6,9 +6,9 @@ Real Vietnamese ASR with icefall (streaming Zipformer2 + Pruned Transducer).
 Single recipe. The former sibling clone `vi_asr_corpus` has been merged in; its
 data and models are archived under `datasets/vi_asr_corpus/`.
 
-- **Dataset**: 800 real utterances (4 male speakers × 200, 4–5 s), plus 6,400
-  Gwen-TTS clones across 5 more voices (3 female). Matched "học vẹt" splits
-  (train == dev == test recordings).
+- **Dataset**: 1000 real utterances (5 male speakers × 200: Dung, Hieu, Khoi,
+  Quan, Trung; 4–5 s), plus Gwen-TTS clones across more voices. Matched
+  "học vẹt" splits (train == dev == test recordings).
 - **Model**: medium (M) streaming/causal Zipformer, BPE vocab 100, chunk 32,
   left-context 256. (small variant kept as backup.)
 - **Current model**: `ASR/zipformer/exp_bpe100_medium_streaming_main_lr0045`,

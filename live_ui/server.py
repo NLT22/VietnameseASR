@@ -3,8 +3,7 @@
 Local real-time streaming ASR UI with Silero VAD endpointing.
 
 Words appear while you speak; each sentence is finalized on a pause and a fresh
-decoder session starts. Runs on this machine, independent of
-deploy/jetson_nano/remote_mic_ui (which buffers the whole clip and decodes once).
+decoder session starts.
 
   python3 live_ui/server.py [--model-dir DIR] [--host 0.0.0.0] [--port 8100]
 """

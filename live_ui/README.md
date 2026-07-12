@@ -10,7 +10,7 @@ $GWEN/.venv-gwen/bin/python live_ui/server.py
 # open http://localhost:8100
 ```
 
-Defaults to `deploy/jetson_nano/model_divmix_x8_epoch60_avg10` with classic
+Defaults to `deploy/jetson_nano/model_medium_epoch30_avg10` with classic
 `beam_search` (beam 4). Override with `--model-dir` / `--beam` / `--port`,
 `--min-silence-ms` (pause that ends a sentence), `--vad-threshold`, `--no-vad`.
 
@@ -27,16 +27,16 @@ cloudflared tunnel --url http://localhost:8100
 The page picks `wss://` automatically when served over HTTPS. Verified: audio
 streams and transcribes correctly through the tunnel.
 
-## How this differs from `deploy/jetson_nano/remote_mic_ui/`
+## How this differs from batch transcription (`transcribe_beam_wav.py`)
 
-|  | `remote_mic_ui` (untouched) | `live_ui` (this) |
+|  | batch (`transcribe_beam_wav.py`) | `live_ui` (this) |
 | --- | --- | --- |
-| when you see text | after you stop | while you speak |
-| audio path | whole wav → SSH → Jetson | mic → WebSocket → this machine |
+| when you see text | after the whole clip | while you speak |
+| audio path | wav file → decoder | mic → WebSocket → this machine |
 | decode | one batch pass | incremental, per encoder chunk |
 | latency | full clip × RTF, after the fact | ~0.64 s behind the microphone |
 
-They share the model and the decoder; nothing here modifies the Jetson package.
+They share the model and the decoder.
 
 ## Why it is exact, not an approximation
 

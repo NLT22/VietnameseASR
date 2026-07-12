@@ -5,7 +5,7 @@ RNN-T beam_search decoder (~2.4% WER) instead of sherpa-onnx's
 modified_beam_search (~9.2% floor).
 
 Same CLI contract as the sherpa scripts, and prints ONLY the transcript on the
-final stdout line -- remote_mic_ui/server.py reads stdout's last line.
+final stdout line -- callers should read stdout's last line.
 
 Accepts any wav (resamples to 16 kHz mono internally), unlike the strict
 jetson_asr.py, because the browser records at arbitrary rates.

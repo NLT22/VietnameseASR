@@ -176,18 +176,23 @@ Kaldi's native `[-32768, 32767]` convention shifts every filterbank bin by
 
 ## 6. Running it
 
-Copy this folder to the Nano, then:
+The model is tracked in git, so `git clone` + `run.sh` is self-contained —
+no scp/rsync from another machine needed:
 
 ```bash
-cd jetson_nano
-bash install_jetson.sh
-export OPENBLAS_CORETYPE=ARMV8        # or rely on ~/.bashrc
+git clone git@github.com:NLT22/VietnameseASR.git
+cd VietnameseASR/deploy/jetson_nano
+bash run.sh setup                          # one-time, installs onnxruntime/numpy
+bash run.sh transcribe /path/to/audio.wav
 ```
 
-Transcribe a wav (any rate/channels — it resamples):
+`run.sh setup` runs `install_jetson.sh` and `run.sh transcribe` handles
+`OPENBLAS_CORETYPE=ARMV8` and venv activation for you. To call the decoder
+directly instead:
 
 ```bash
-python3 transcribe_beam_wav.py --model-dir model_realdom_mix_epoch60_avg10 audio.wav
+export OPENBLAS_CORETYPE=ARMV8        # or rely on ~/.bashrc
+python3 transcribe_beam_wav.py --model-dir model_medium_epoch30_avg10 audio.wav
 ```
 
 The transcript is printed as the **last stdout line** (so callers can `tail -1`).
@@ -200,18 +205,10 @@ python3 transcribe_streaming_wav.py --model-dir model_streaming_u20_epoch55_avg1
 
 ### Live mic UI
 
-`remote_mic_ui/` serves a browser mic recorder with a **model selector**.
-`--asr-mode` picks the backend script:
-
-| `asrMode` | script | decoder |
-| --- | --- | --- |
-| `beam` | `transcribe_beam_wav.py` | our classic beam_search |
-| `streaming` | `transcribe_streaming_wav.py` | sherpa-onnx |
-| `nonstream` | `transcribe_wav.py` | sherpa-onnx offline |
-
-Default is `mix-beam`. Expose it with a **cloudflared quick tunnel** (static
-binary, no account) — `localhost.run` drops the server-side session while ssh
-stays alive, producing a confusing `no tunnel here :(`.
+The browser mic UI is `live_ui/` at the repo root (streaming + VAD), not part
+of this deploy package. See `live_ui/README` or `CLAUDE.md`. The older
+`remote_mic_ui/` record-then-send UI here has been removed — superseded by
+`live_ui`.
 
 ---
 
@@ -270,6 +267,5 @@ Held-out speakers, classic beam_search, same 50-clip eval set:
 | `transcribe_streaming_wav.py`, `transcribe_wav.py` | legacy sherpa-onnx runners |
 | `onnx_beam_search.py` | PC-side prototype (imports icefall's `OnnxModel`) |
 | `install_jetson.sh` | Nano-side installer |
-| `remote_mic_ui/` | browser mic demo + model selector |
 | `evaluate_*.py`, `run_performance_eval.sh` | WER/RTF benchmarks |
 | `model_*/` | exported ONNX packages (`MODEL_INFO.txt` in each) |

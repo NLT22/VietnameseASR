@@ -32,10 +32,11 @@ ASR/zipformer/exp_*/
 ASR/zipformer/cross_eval_*/
 exp/
 exp_*/
-# Exported model packages: keep the metadata, drop the weights.
-# (Ignore the CONTENTS, not the dir, so the negations below can re-include.
-# These also override the root .gitignore's blanket `*.txt`.)
+# Exported model packages: keep the deployed medium model in full (needed for
+# `git clone` + run.sh on a fresh Jetson to work with no other file transfer).
+# Other model_*/ dirs (backups, alternates) keep only metadata.
 deploy/jetson_nano/model_*/*
+!deploy/jetson_nano/model_medium_epoch30_avg10/**
 !deploy/jetson_nano/model_*/MODEL_INFO.txt
 !deploy/jetson_nano/model_*/tokens.txt
 deploy/jetson_nano/perf_results/
@@ -69,22 +70,13 @@ musan_cuts.jsonl.gz
 
 # Generated metadata / language resources
 data/
-!data/
-data/*
-!data/manifests/
-data/manifests/*
-!data/manifests/*.jsonl.gz
-!data/manifests/fixed/
-data/manifests/fixed/*
-!data/manifests/fixed/*.jsonl.gz
 lang/
 transcripts/
 # Generated transcript versions (rebuildable from dataset/ + the clone scripts).
-# Ignore every transcripts_* EXCEPT transcripts_matched_u20/: that one is the
-# corrected ground-truth alignment of every real recording, it is small, and it
-# cannot be regenerated without the raw audio (which is not in git).
+# transcripts_matched_u20/ (ground-truth labels for the real recordings) is
+# also ignored: dataset/ (the audio it points to) isn't tracked either, so
+# labels alone aren't useful without the wavs.
 transcripts_*/
-!transcripts_matched_u20/
 transcripts_nr/
 README_PREPARED.txt
 presentation_info.md
