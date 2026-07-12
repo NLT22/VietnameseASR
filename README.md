@@ -212,13 +212,11 @@ bash run.sh \
 | `audit_dataset.py` | Kiểm tra transcript/audio khớp nhau (stage 1) |
 | `augment_train_with_musan.py` | Offline MUSAN augmentation cho train split (stage 2) |
 | `prepare_manifests.py` | TSV → lhotse recordings/supervisions jsonl.gz |
-| `mic_streaming_asr.py` | Real-time mic ASR demo (streaming/full mode) |
 | `export_text_corpus.py` | Gom text train để train BPE |
 | `train_bpe_model.py --vocab-size N` | Train SentencePiece BPE |
 | `prepare_lang_bpe.py --lang-dir data/lang_bpe_N` | Tạo tokens.txt, words.txt |
 | `compute_fbank.py` | Tạo `*_cuts.jsonl.gz` + features trong `fbank/` |
 | `compute_fbank_musan.py` | Tạo `musan_cuts.jsonl.gz` cho online CutMix |
-| `filter_cuts.py` | Lọc cuts quá ngắn/dài hoặc T < S |
 | `validate_manifest.py --all` | Kiểm tra cut manifests |
 | `display_manifest_statistics.py --all` | In thống kê (duration, số câu,...) |
 | `tokenize_test.py --vocab-size N` | Smoke test tokenizer |
@@ -231,14 +229,11 @@ bash run.sh \
 | `train.py` | Train from scratch |
 | `finetune.py` | Finetune từ pretrained checkpoint |
 | `decode.py` | Decode (greedy / beam / modified_beam / fast_beam + LG) |
-| `export.py` | Export checkpoint → ONNX hoặc TorchScript (`--jit 1`) |
 | `export-onnx.py` | Export transducer → ONNX chi tiết hơn |
 | `export-onnx-streaming.py` | Export streaming transducer → ONNX |
 | `generate_averaged_model.py` | Average N checkpoint offline → file `.pt` duy nhất |
-| `jit_pretrained.py` | Inference từ TorchScript `.pt`, không cần lhotse |
 | `onnx_pretrained.py` | Inference từ ONNX transducer |
 | `onnx_pretrained-streaming.py` | Inference từ ONNX streaming |
-| `onnx_check.py` | Kiểm tra ONNX output khớp PyTorch |
 | `onnx_decode.py` | Decode tập test dùng ONNX |
 | `pretrained.py` | Inference từ `.pt` checkpoint thường |
 | `streaming_decode.py` | Decode streaming |
@@ -256,64 +251,13 @@ bash run.sh --enable_nr 1 --data_variant nr --model_size small \
 bash run.sh --offline_musan_aug 1 --musan_dir "$MUSAN_DIR" \
   --copies_per_utt 3 --enable_musan 0 --stage 2 --stop_stage 13
 
-# Train với CTC phụ trợ
-bash run.sh --model_size small --use_ctc 1 --ctc_loss_scale 0.2 \
-  --stage 13 --stop_stage 13
-
-# Train với CR-CTC (consistency regularization)
-bash run.sh --model_size small --use_ctc 1 --use_cr_ctc 1 \
-  --stage 13 --stop_stage 13
-
 # Average checkpoint thủ công
 python3 ASR/zipformer/generate_averaged_model.py \
   --epoch 50 --avg 10 \
   --exp-dir ASR/zipformer/exp_bpe100_small_raw \
   --tokens data/lang_bpe_100/tokens.txt
 
-# Lọc cuts trước train
-python3 local/filter_cuts.py \
-  --bpe-model data/lang_bpe_100/bpe.model \
-  --in-cuts fbank/train_cuts.jsonl.gz \
-  --out-cuts fbank/train_cuts_filtered.jsonl.gz
-
-# Inference nhanh từ JIT model (không cần lhotse)
-python3 ASR/zipformer/jit_pretrained.py \
-  --nn-model-filename ASR/zipformer/exp_bpe100_small_raw/jit_script.pt \
-  --tokens data/lang_bpe_100/tokens.txt \
-  /path/to/audio.wav
 ```
-
-## Dọn checkpoint để tiết kiệm dung lượng
-
-Mặc định `run_all_experiments.sh` và `local/run_experiment_suite.sh` sẽ dọn checkpoint sau mỗi experiment nếu `CLEAN_CHECKPOINTS=1`.
-
-Rule giữ lại:
-- `epoch-30.pt`
-- `epoch-50.pt`
-- `best-*.pt`
-- `pretrained.pt`, `averaged*.pt`, `jit_script.pt` nếu có
-
-Các `epoch-*.pt` khác và `checkpoint-*.pt` sẽ bị xóa.
-
-Chạy dry-run trước:
-
-```bash
-bash local/cleanup_checkpoints.sh --dry-run ASR/zipformer/exp_bpe100_scratch50
-```
-
-Xóa thật:
-
-```bash
-bash local/cleanup_checkpoints.sh ASR/zipformer/exp_bpe100_scratch50
-```
-
-Tắt auto-clean khi chạy experiment:
-
-```bash
-CLEAN_CHECKPOINTS=0 bash ../run_all_experiments.sh
-```
-
----
 
 ## NoiseReduce dependency (tùy chọn)
 

@@ -113,6 +113,7 @@ do_finetune=0
 finetune_ckpt=""
 init_modules="encoder"
 exp_suffix="_x10_matched"
+exp_suffix_user_set=0
 exp_dir_override=""
 exp_dir_policy="auto"  # auto: create unique exp dir for train if non-empty; reuse: old behavior; fail: stop if non-empty
 matched_splits=1
@@ -182,7 +183,7 @@ while [[ $# -gt 0 ]]; do
     --do_finetune|--do-finetune) do_finetune="$2"; shift 2 ;;
     --finetune_ckpt|--finetune-ckpt) finetune_ckpt="$2"; shift 2 ;;
     --init_modules|--init-modules) init_modules="$2"; shift 2 ;;
-    --exp_suffix|--exp-suffix) exp_suffix="$2"; shift 2 ;;
+    --exp_suffix|--exp-suffix) exp_suffix="$2"; exp_suffix_user_set=1; shift 2 ;;
     --exp_dir|--exp-dir) exp_dir_override="$2"; shift 2 ;;
     --exp_dir_policy|--exp-dir-policy) exp_dir_policy="$2"; shift 2 ;;
     --matched_splits|--matched-splits) matched_splits="$2"; shift 2 ;;
@@ -280,11 +281,14 @@ if [ -n "$data_tag" ]; then
   fbank_dir="$PWD/fbank_${data_tag}"
   variant_suffix="_${data_tag}"
   matched_splits=0
+  if [ "$exp_suffix_user_set" = "0" ]; then
+    exp_suffix=""
+  fi
 fi
 
 # Lang text file is derived from transcript_dir so different versions never
-# clobber each other's BPE training corpus. transcripts_x10_matched ->
-# lang/transcript_words_x10_matched.txt (preserves prior behavior); transcripts
+# clobber each other's BPE training corpus. transcripts_main ->
+# lang/transcript_words_main.txt; transcripts
 # -> lang/transcript_words.txt.
 data_words_tag="${transcript_dir#transcripts}"
 lang_words_txt="lang/transcript_words${data_words_tag}.txt"

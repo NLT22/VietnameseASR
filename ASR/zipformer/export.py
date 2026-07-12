@@ -41,7 +41,7 @@ dataset, you should change the argument values according to your dataset.
 It will generate a file `jit_script.pt` in the given `exp_dir`. You can later
 load it by `torch.jit.load("jit_script.pt")`.
 
-Check ./jit_pretrained.py for its usage.
+Load it with torch.jit.load("jit_script.pt") in custom tooling.
 
 Check https://github.com/k2-fsa/sherpa
 for how to use the exported models outside of icefall.
@@ -61,7 +61,7 @@ for how to use the exported models outside of icefall.
 It will generate a file `jit_script_chunk_16_left_128.pt` in the given `exp_dir`.
 You can later load it by `torch.jit.load("jit_script_chunk_16_left_128.pt")`.
 
-Check ./jit_pretrained_streaming.py for its usage.
+Load it with torch.jit.load("jit_script_chunk_16_left_128.pt") in custom tooling.
 
 Check https://github.com/k2-fsa/sherpa
 for how to use the exported models outside of icefall.
@@ -244,7 +244,7 @@ def get_parser():
         default=False,
         help="""True to save a model after applying torch.jit.script.
         It will generate a file named jit_script.pt.
-        Check ./jit_pretrained.py for how to use it.
+        Load it with torch.jit.load() in custom tooling.
         """,
     )
 

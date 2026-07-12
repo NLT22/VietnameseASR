@@ -48,7 +48,7 @@ that predicts whether the mic UI works for a real person.
   `_NAME`). `run_x10.sh` is a thin backward-compatible wrapper.
   **`run.sh` has no export stage** — use `local/export_for_jetson.sh`.
 - Data-prep scripts (`prepare_vi_asr_corpus.py`, `prepare_matched_splits.py`,
-  `prepare_manifests.py`, `audit_dataset.py`, `declip.py`) live under `local/`,
+  `prepare_manifests.py`, `audit_dataset.py`) live under `local/`,
   following the librispeech convention.
 - **After any dataset ingest, verify `corr(audio_duration, text_word_count)`
   per speaker.** Correct alignment is clearly positive; a shifted set collapses

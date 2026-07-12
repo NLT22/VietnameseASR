@@ -56,7 +56,7 @@ It will generate the following 3 files inside $repo/exp:
   - decoder-epoch-99-avg-1.onnx
   - joiner-epoch-99-avg-1.onnx
 
-See ./onnx_pretrained.py and ./onnx_check.py for how to
+See ./onnx_pretrained.py for how to
 use the exported ONNX models.
 """
 

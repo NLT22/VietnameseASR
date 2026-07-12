@@ -1,4 +1,4 @@
-# model_size=base on divmix_hieu (vs small: real 2.72%, held-out 2.28%)
+# model_size=medium on main (vs small: real 2.72%, held-out 2.28%)
 started Sun Jul 12 12:18:34 AM +07 2026, max_duration=500, LR 0.045, vocab 100
 00:18 training done
 
