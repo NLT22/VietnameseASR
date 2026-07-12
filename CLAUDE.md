@@ -9,13 +9,24 @@ data and models are archived under `datasets/vi_asr_corpus/`.
 - **Dataset**: 800 real utterances (4 male speakers × 200, 4–5 s), plus 6,400
   Gwen-TTS clones across 5 more voices (3 female). Matched "học vẹt" splits
   (train == dev == test recordings).
-- **Model**: small streaming/causal Zipformer, BPE vocab 100, chunk 32,
-  left-context 256.
-- **Current model**: `ASR/zipformer/exp_bpe100_small_streaming_divmix_x8`,
-  epoch 60, avg 10.
-- **Deploy**: `deploy/jetson_nano/model_divmix_x8_epoch60_avg10/` (int8 ONNX).
+- **Model**: medium (M) streaming/causal Zipformer, BPE vocab 100, chunk 32,
+  left-context 256. (small variant kept as backup.)
+- **Current model**: `ASR/zipformer/exp_bpe100_medium_streaming_main_lr0045`,
+  epoch 30, avg 10. Real 1.84% / held-out 1.80%; beats the small Hieu model
+  (2.72% / 2.28%).
+- **Deploy**: `deploy/jetson_nano/model_medium_epoch30_avg10/` (int8
+  ONNX). Live on Jetson (`~/vasr/model` -> `model_medium`) and both live UIs
+  (port 8000 public tunnel, 8100 speaker-id). Backup:
+  `model_small_epoch50_avg10` (small).
+- Only these two 5-speaker (`main`) experiments are kept; older ones were
+  archived + deleted 2026-07-12 (see `docs/ARCHIVED_EXPERIMENTS.md`).
+- `run.sh` embeds `--model_size` in the exp dir name (`exp_bpeNNN_medium_...` /
+  `_small_...`), and `export_for_jetson.sh` auto-detects the encoder dims from it
+  (`_medium_` / `_small_`). No symlink dance needed.
 
-**All numbers live in `RESULTS.md`.** Do not duplicate them here — a stale copy
+**All numbers live in `docs/RESULTS.md`.** `docs/TEACHING_NOTES.md` (EN) and
+`docs/TEACHING_NOTES_VI.md` (VI) explain how the model, pipeline, config parameters
+and deployment actually work, grounded in the code. Do not duplicate them here — a stale copy
 in this file outlived the model it described by two months.
 
 ## Read this before trusting any old result
@@ -23,7 +34,7 @@ in this file outlived the model it described by two months.
 Everything trained before 2026-07-09 used **corrupted transcripts**: an
 off-by-one bug paired every Trung/Dung recording with the previous sentence's
 text. Those experiments and their WERs were deleted, not archived. See
-`RESULTS.md` → "The off-by-one bug".
+`docs/RESULTS.md` → "The off-by-one bug".
 
 The memorization benchmark (train == test) **cannot detect this**, and cannot
 detect speaker generalization either. `eval_heldout_speaker.py` is the metric
@@ -45,7 +56,9 @@ that predicts whether the mic UI works for a real person.
 - Feature extraction uses **lhotse Fbank** (not `torchaudio.compliance.kaldi`)
   so training and inference features match. Inference must scale waveforms to
   `[-1, 1]`.
-- Select checkpoints by decode WER, not validation loss; keep `avg <= 10`.
+- Select checkpoints by decode WER, not validation loss (dev == train here).
+  `--avg` was swept: 1-15 are indistinguishable on unseen voices; heavier
+  averaging only fits the memorization set harder. Deployed at `avg=10`.
 - Streaming decode requires `--causal 1`.
 - Decode with `deploy/jetson_nano/transcribe_beam_wav.py` (classic
   `beam_search`, numpy + onnxruntime). sherpa-onnx implements only

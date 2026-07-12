@@ -1,7 +1,7 @@
 # TTS clone generation
 
 Scripts that build the synthetic half of the training set and the held-out
-speaker eval set. Every number in `RESULTS.md` depends on these.
+speaker eval set. Every number in `docs/RESULTS.md` depends on these.
 
 ## External dependency
 

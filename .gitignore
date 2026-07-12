@@ -80,12 +80,11 @@ data/manifests/fixed/*
 lang/
 transcripts/
 # Generated transcript versions (rebuildable from dataset/ + the clone scripts).
-# transcripts_matched_u20/ is NOT ignored: it is the corrected ground-truth
-# alignment of every real recording, it is small, and it cannot be regenerated
-# without the raw audio (which is not in git).
-transcripts_divmix_*/
-transcripts_crossspk*/
-transcripts_nr/
+# Ignore every transcripts_* EXCEPT transcripts_matched_u20/: that one is the
+# corrected ground-truth alignment of every real recording, it is small, and it
+# cannot be regenerated without the raw audio (which is not in git).
+transcripts_*/
+!transcripts_matched_u20/
 transcripts_nr/
 README_PREPARED.txt
 presentation_info.md
@@ -96,3 +95,11 @@ presentation_info.md
 .idea/
 
 theory_*.md
+
+# Speaker-ID embedding weight: 27 MB, downloadable from sherpa-onnx releases.
+# Kept out of git; see live_ui/README.md for the fetch command. The small
+# enrolled_speakers.json (derived vectors) and silero_vad.onnx stay tracked.
+live_ui/models/speaker_embedding_campplus.onnx
+deploy/jetson_nano/sweep_*/
+
+docs/

@@ -28,7 +28,7 @@ import numpy as np
 import torch
 
 VI = "/media/pc/c88ba509-53f0-4c97-9e44-e33483754b08/icefall/egs/VietnameseASR"
-DEFAULT_MODEL = f"{VI}/deploy/jetson_nano/model_streaming_u20_epoch55_avg10"
+DEFAULT_MODEL = f"{VI}/deploy/jetson_nano/model_medium_epoch30_avg10"
 DEFAULT_CUTS = f"{VI}/fbank_x10_matched/test_cuts.jsonl.gz"
 
 NEG_INF = float("-inf")

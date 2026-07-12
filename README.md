@@ -36,7 +36,7 @@ After choosing the best WER checkpoint, export a Jetson ONNX package:
 bash local/export_for_jetson.sh --exp-dir ASR/zipformer/exp_bpe100_small_raw_matched --epoch 50 --avg 5 --streaming 0
 ```
 
-See `PROJECT_NOTES.md` for old result interpretation and Jetson/TensorRT notes.
+See `docs/PROJECT_NOTES.md` for old result interpretation and Jetson/TensorRT notes.
 
 ## Cấu trúc
 
@@ -106,11 +106,11 @@ bash run.sh --vocab_size 100 --model_size small --num_epochs 50 --stage 14 --sto
 --train_ratio 0.8
 --dev_ratio 0.1
 --test_ratio 0.1
---model_size base|small          # small = official Zipformer-small ~23.3M params
---num_epochs 50
+--model_size medium|small        # small = Zipformer S ~23M; medium = Zipformer M
+--num_epochs 40
 --world_size 1
---max_duration 50
---base_lr 0.01
+--max_duration 500
+--base_lr 0.045
 --use_fp16 0|1
 
 # Augmentation
@@ -151,7 +151,7 @@ bash run.sh --vocab_size 100 --model_size small --num_epochs 50 --stage 14 --sto
 
 ### Model size presets
 
-`--model_size base --data_variant raw` → `exp_bpe100_raw/` (config mặc định recipe)
+`--model_size medium --data_variant raw` → `exp_bpe100_medium_raw/` (Zipformer M)
 
 `--model_size small --data_variant raw` → `exp_bpe100_small_raw/`
 ```
@@ -160,6 +160,9 @@ bash run.sh --vocab_size 100 --model_size small --num_epochs 50 --stage 14 --sto
 --encoder-unmasked-dim 192,192,192,192,192,192
 --decoder-dim 512  --joiner-dim 512
 ```
+
+> Giải thích chi tiết từng tham số + bảng scale **S / M / L** (small = S, base = M):
+> xem `docs/TEACHING_NOTES_VI_chi_tiet.md` mục "Kích thước model".
 
 Hậu tố exp dir tự động: `_small`, `_raw`, `_nr`, `_streaming`, `_finetune` (kết hợp được). Các kết quả cũ như `exp_bpe100_small/` vẫn còn nguyên, nhưng lần chạy mới mặc định sẽ ghi sang folder có suffix variant để tránh nhầm raw/nr.
 

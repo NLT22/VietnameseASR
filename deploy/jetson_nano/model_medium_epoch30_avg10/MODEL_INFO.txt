@@ -1,0 +1,9 @@
+Model: medium (M) Zipformer streaming, main (5 speakers incl Hieu)
+Arch: num-encoder-layers 2,2,3,4,3,2 | encoder-dim 192,256,384,512,384,256 | ff 512,768,1024,1536,1024,768
+Vocab: BPE 100 | causal 1 | chunk 32 | left-context 256 | avg 10 @ epoch 30
+Exp: ASR/zipformer/exp_bpe100_medium_streaming_main_lr0045 (medium dims; export_for_jetson.sh detects _medium_)
+Results (2026-07-12): real per-speaker WER 1.84% (Dung 1.98 Khoi 2.07 Quan 1.08 Trung 3.64 Hieu 1.73)
+                      held-out (13165w) 1.80%.  Beats deployed small (2.72% / 2.28%).
+Nano latency: RTF 0.31 (RTFx 3.2), ~175ms partial per 0.64s chunk -- real-time.
+Decode: classic beam_search (jetson_beam_decode.py, numpy+onnxruntime). NOT sherpa greedy.
+Backup: small model model_small_epoch50_avg10 (kept).

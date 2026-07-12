@@ -1,6 +1,0 @@
-Experiment: ASR/zipformer/exp_bpe100_small_streaming_realdom_v1
-Data: realdom mix (74% real x10 + 26% Gwen-TTS cross-speaker clones)
-Epoch: 60  Avg: 10  Streaming: 1 (chunk 32, left-context 256)
-icefall WER: modified_beam 8.08% | beam_search 0.94%
-NOTE: deployed model (100% real) beats this under beam_search (0.52%).
-Decode with deploy/jetson_nano/transcribe_beam_wav.py (classic beam_search).

@@ -1,0 +1,60 @@
+Speaker-embedding model — CAM++ (3D-Speaker)
+=============================================
+
+File (gitignored, 27 MB): speaker_embedding_campplus.onnx
+
+WHAT IT IS
+  CAM++ (Context-Aware Masking + D-TDNN) speaker verification / embedding model
+  from the 3D-Speaker toolkit (Alibaba DAMO / modelscope), repackaged as ONNX
+  for sherpa-onnx. Maps a variable-length utterance to a single fixed vector
+  that is close for same-speaker audio and far for different speakers.
+
+  Upstream:  iic/speech_campplus_sv_zh_en_16k-common_advanced
+             https://www.modelscope.cn/models/iic/speech_campplus_sv_zh_en_16k-common_advanced/summary
+  ONNX repack (sherpa-onnx speaker-recongition-models release):
+    3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx
+  Download:
+    curl -L -o speaker_embedding_campplus.onnx \
+      https://github.com/k2-fsa/sherpa-onnx/releases/download/speaker-recongition-models/3dspeaker_speech_campplus_sv_zh_en_16k-common_advanced.onnx
+
+SPECS (read from the ONNX metadata)
+  input            x [N, T, 80]   float32   (80-dim fbank, T frames)
+  output           embedding [N, 192]       (L2-normalize before cosine)
+  sample_rate      16000
+  normalize_samples 1
+  feature_normalize_type  global-mean   (subtract per-utterance mean over time)
+  language         Chinese-English (trained on code-switched zh+en)
+  framework        3d-speaker
+  size             27 MB
+
+FEATURE EXTRACTION (must match — see live_ui/speaker_id.py:fbank)
+  kaldi_native_fbank: samp_freq 16000, dither 0, snip_edges False,
+  window povey, 80 mel bins; then subtract the per-utterance mean over time
+  (the "global-mean" step). Because that mean subtraction removes any constant
+  offset, the [-1,1] vs int16 waveform-scaling question does NOT matter here
+  (unlike the ASR fbank). Verified empirically by --separation-check.
+
+WHY THIS ONE
+  - ONNX / onnxruntime only, no torch — matches the deploy stack.
+  - zh+en "advanced" variant = more diverse training than pure zh-cn, a better
+    transfer prior for Vietnamese. Confirmed: it separates our voices cleanly.
+  - 192-dim, 27 MB — small; loads and runs on the Jetson Nano's ort 1.10.0.
+
+MEASURED ON OUR DATA (4 project speakers)
+  same-speaker cosine   mean 0.80   (min 0.59)
+  diff-speaker  cosine   mean 0.22   (max 0.37)     -> no overlap
+  held-out identification (120 clips, not enrolled)  100%
+  unenrolled voice (yen_nhi) best cosine             0.25  (rejected at 0.5)
+  Jetson Nano (ort 1.10.0): loads 1.5s, 0.22s/segment, identification 10/10
+
+  NOTE on threshold: fresh speech matching recent enrollment scores ~0.8-0.9;
+  old recordings in different conditions dipped to 0.39-0.53. Default reject
+  threshold is 0.5; lower it (or enroll from more varied clips) if real speakers
+  in different conditions get marked "unknown".
+
+LICENSE
+  Check the modelscope model card / 3D-Speaker terms before commercial use.
+
+Alternatives in the same sherpa-onnx release (if this ever underperforms):
+  3dspeaker_speech_eres2net_base_sv_zh-cn_3dspeaker_16k.onnx   (40 MB, 512-dim)
+  3dspeaker_speech_campplus_sv_en_voxceleb_16k.onnx            (30 MB, English)

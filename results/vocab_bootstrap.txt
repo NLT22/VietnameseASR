@@ -1,0 +1,6 @@
+vocab100: 1.57%  vocab250: 1.41%
+diff: 22 words / 13165
+bootstrap (250-100) = -0.17 pts  95% CI [-0.48,+0.16]
+P(250 better) = 0.84
+significant: NO - 250 ~ 100 (tie)
+BOOT_DONE

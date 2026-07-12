@@ -12,15 +12,28 @@ set -euo pipefail
 #                      skips split-building (assumes the transcripts exist).
 #
 # STAGES  (--stage N --stop_stage M):
+#   -2 generate TTS clones + assemble training set   (opt, needs Gwen-TTS)
 #   -1 build train/dev/test splits from dataset/   0 optional noise-reduction
 #    1 audit dataset      2 offline MUSAN aug       3 build manifests
 #    4 lhotse fix         5 export text corpus      6 train BPE
 #    7 build lang dir     8 compute fbank/cuts      9 online-MUSAN fbank
 #   10 validate manifests 11 manifest stats        12 tokenize smoke test
-#   13 TRAIN             14 DECODE
+#   13 TRAIN             14 DECODE                 15 streaming decode
+#   16 export int8 ONNX for deployment
 #
 # COMMON USAGE:
-#   # full x10 pipeline from scratch (streaming/causal, small model):
+#   # FULL pipeline incl. clone generation + export (deployed medium model):
+#   GWEN_TTS_DIR=/path/to/gwen-tts bash run.sh --data_tag main --build_clones 1 \
+#       --model_size medium --causal 1 --base_lr 0.045 --num_epochs 40 --avg 10 \
+#       --use_averaged_model 1 --enable_musan 1 --enable_spec_aug 1 \
+#       --exp_suffix "_lr0045" --stage -2 --stop_stage 16
+#
+#   # train from an already-built clone set (skip clone gen), export at the end:
+#   bash run.sh --data_tag main --model_size medium --causal 1 --base_lr 0.045 \
+#       --num_epochs 40 --avg 10 --use_averaged_model 1 --enable_musan 1 \
+#       --enable_spec_aug 1 --exp_suffix "_lr0045" --stage 3 --stop_stage 16
+#
+#   # real-only (no clones) from scratch, small model:
 #   bash run.sh --model_size small --causal 1 --num_epochs 60 \
 #       --stage -1 --stop_stage 14
 #
@@ -30,8 +43,8 @@ set -euo pipefail
 #       --enable_musan 0 --perturb_speed 0 --offline_musan_aug 0 \
 #       --stage 3 --stop_stage 14
 #
-#   # plain (non-matched) auto-split pipeline, base model:
-#   bash run.sh --matched_splits 0 --model_size base --stage -1 --stop_stage 14
+#   #   plain (non-matched) auto-split pipeline, medium model:
+#   bash run.sh --matched_splits 0 --model_size medium --stage -1 --stop_stage 14
 #
 # Full flag list: bash run.sh --help  (or read the arg-parse block below).
 # run_x10.sh is a thin backward-compatible wrapper around this script.
@@ -61,7 +74,9 @@ max_duration=500
 num_workers=2
 split_max_duration=20
 feature_max_duration=20
-base_lr=0.01
+base_lr=0.045   # icefall default; the LR x epoch experiment (2026-07-11) showed
+                # the old forced 0.01 was ~4.5x worse on held-out speakers
+                # (10.90% vs 2.08%). See results/lr_epoch_experiment.md.
 use_fp16=0
 
 enable_musan=0
@@ -108,6 +123,13 @@ data_tag=""
 
 data_variant="raw"
 enable_nr=0
+
+# Clone generation (stage -2, optional) — needs an external Gwen-TTS checkout.
+build_clones=0
+gwen_python=""       # empty -> ${GWEN_TTS_DIR:-<icefall-sibling>/gwen-tts}/.venv-gwen/bin/python
+real_mult=8          # real recordings repeated x8 in the divmix training set
+# Export (stage 16) — int8 ONNX for Jetson / live-UI deployment.
+do_export=1
 
 model_size="small"
 num_encoder_layers="2,2,3,4,3,2"
@@ -167,6 +189,10 @@ while [[ $# -gt 0 ]]; do
     --data_tag|--data-tag) data_tag="$2"; shift 2 ;;
     --data_variant|--data-variant) data_variant="$2"; shift 2 ;;
     --enable_nr|--enable-nr) enable_nr="$2"; shift 2 ;;
+    --build_clones|--build-clones) build_clones="$2"; shift 2 ;;
+    --gwen_python|--gwen-python) gwen_python="$2"; shift 2 ;;
+    --real_mult|--real-mult) real_mult="$2"; shift 2 ;;
+    --do_export|--do-export) do_export="$2"; shift 2 ;;
     --model_size|--model-size) model_size="$2"; shift 2 ;;
     --num_encoder_layers|--num-encoder-layers) num_encoder_layers="$2"; shift 2 ;;
     --feedforward_dim|--feedforward-dim) feedforward_dim="$2"; shift 2 ;;
@@ -177,7 +203,7 @@ while [[ $# -gt 0 ]]; do
     --joiner_dim|--joiner-dim) joiner_dim="$2"; shift 2 ;;
     *)
       echo "Unknown option: $1" >&2
-      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--split_max_duration N] [--feature_max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir DIR] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--data_tag NAME] [--model_size base|small]" >&2
+      echo "Usage: $0 [--stage N] [--stop_stage N] [--vocab_size N] [--num_epochs N] [--world_size N] [--max_duration N] [--split_max_duration N] [--feature_max_duration N] [--base_lr X] [--use_fp16 0|1] [--enable_musan 0|1] [--enable_spec_aug 0|1] [--bucketing_sampler 0|1] [--num_buckets N] [--perturb_speed 0|1] [--musan_dir DIR] [--offline_musan_aug 0|1] [--copies_per_utt N] [--snr_min X] [--snr_max X] [--decode_method NAME|all] [--use_averaged_model 0|1] [--avg N] [--causal 0|1] [--chunk_size STR] [--left_context_frames STR] [--decode_chunk_size N] [--decode_left_context_frames N] [--streaming_decode_method NAME] [--use_ctc 0|1] [--use_cr_ctc 0|1] [--ctc_loss_scale X] [--cr_loss_scale X] [--attention_decoder_loss_scale X] [--do_finetune 0|1] [--finetune_ckpt PATH] [--init_modules encoder] [--exp_suffix TEXT] [--exp_dir DIR] [--exp_dir_policy auto|reuse|fail] [--data_variant raw|nr] [--enable_nr 0|1] [--data_tag NAME] [--build_clones 0|1] [--gwen_python PATH] [--real_mult N] [--do_export 0|1] [--model_size medium|small]" >&2
       exit 1
       ;;
   esac
@@ -193,7 +219,8 @@ case "$exp_dir_policy" in
 esac
 
 case "$model_size" in
-  base)
+  medium)
+    # medium (M) = Zipformer default dims already set above
     ;;
   small)
     num_encoder_layers="2,2,2,2,2,2"
@@ -205,7 +232,7 @@ case "$model_size" in
     joiner_dim=512
     ;;
   *)
-    echo "ERROR: --model_size must be one of: base, small" >&2
+    echo "ERROR: --model_size must be one of: medium, small" >&2
     exit 1
     ;;
 esac
@@ -268,11 +295,9 @@ if [ "$causal" = "1" ]; then streaming_suffix="_streaming"; fi
 if [ "$do_finetune" = "1" ] && [ -z "$exp_suffix" ]; then
   exp_suffix="_finetune"
 fi
-if [ "$model_size" = "base" ]; then
-  exp_name="exp_bpe${vocab_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
-else
-  exp_name="exp_bpe${vocab_size}_${model_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
-fi
+# The model size is always embedded in the exp dir name (exp_bpeNNN_medium_... /
+# _small_...) so export_for_jetson.sh can auto-detect the encoder dims from it.
+exp_name="exp_bpe${vocab_size}_${model_size}${streaming_suffix}${variant_suffix}${exp_suffix}"
 exp_parent_dir="$PWD/ASR/zipformer"
 if [ -n "$exp_dir_override" ]; then
   if [[ "$exp_dir_override" = /* ]]; then
@@ -377,6 +402,47 @@ echo "encoder_dim=$encoder_dim"
 echo "encoder_unmasked_dim=$encoder_unmasked_dim"
 echo "decoder_dim=$decoder_dim"
 echo "joiner_dim=$joiner_dim"
+echo "build_clones=$build_clones"
+echo "do_export=$do_export"
+
+if [ "$stage" -le -2 ] && [ "$stop_stage" -ge -2 ]; then
+  echo "Stage -2: Generate TTS voice clones + assemble training transcripts (optional)"
+  if [ "$build_clones" = "1" ]; then
+    if [ -z "$data_tag" ]; then
+      echo "ERROR: --build_clones 1 requires --data_tag NAME (e.g. --data_tag main)" >&2
+      exit 1
+    fi
+    gpy="$gwen_python"
+    [ -z "$gpy" ] && gpy="${GWEN_TTS_DIR:-$(cd ../../.. && pwd)/gwen-tts}/.venv-gwen/bin/python"
+    if [ ! -x "$gpy" ]; then
+      echo "ERROR: Gwen-TTS venv python not found: $gpy" >&2
+      echo "  Clone github.com/ggroup-ai-lab/gwen-tts and set --gwen_python or GWEN_TTS_DIR." >&2
+      echo "  See local/tts/README.md." >&2
+      exit 1
+    fi
+    # clone source is the real 5-speaker split; build it from dataset/ if missing
+    if [ ! -f "transcripts_matched_u20/train.tsv" ]; then
+      python3 local/prepare_matched_splits.py \
+        --dataset-dir "$PWD/dataset" --output-dir "$PWD/transcripts_matched_u20" \
+        --max-duration "${split_max_duration}"
+    fi
+    mkdir -p "${transcript_dir}"
+    # 1) cross-speaker clones (5 project voices) + the real originals
+    "$gpy" local/tts/build_crossspeaker.py --batch-size 8 --max-duration 20.0
+    # 2) diverse clones (female + 1 male)
+    "$gpy" local/tts/build_diverse_clones.py --batch-size 8 --max-duration 20.0
+    # 3) assemble divmix training set: real x${real_mult} + all clones
+    python3 local/hieu_pipeline.py build-divmix --mult "${real_mult}" \
+      --cross transcripts_crossspk/train.tsv \
+      --div   transcripts_crossspk_diverse/train.tsv \
+      --out   "${transcript_dir}/train.tsv"
+    # 4) dev/test = the clean real originals (memorization split)
+    cp transcripts_matched_u20/dev.tsv transcripts_matched_u20/test.tsv "${transcript_dir}/"
+    echo "Clone set assembled: ${transcript_dir}/{train,dev,test}.tsv"
+  else
+    echo "Skip clone generation because build_clones=0"
+  fi
+fi
 
 if [ "$stage" -le -1 ] && [ "$stop_stage" -ge -1 ]; then
   echo "Stage -1: Prepare VietnameseASR corpus from dataset/"
@@ -641,5 +707,23 @@ if [ "$stage" -le 15 ] && [ "$stop_stage" -ge 15 ]; then
       --encoder-unmasked-dim "${encoder_unmasked_dim}" \
       --decoder-dim "${decoder_dim}" \
       --joiner-dim "${joiner_dim}"
+  fi
+fi
+
+if [ "$stage" -le 16 ] && [ "$stop_stage" -ge 16 ]; then
+  echo "Stage 16: Export int8 ONNX for deployment (Jetson / live UI)"
+  if [ "$do_export" = "1" ]; then
+    export_streaming=0
+    [ "$causal" = "1" ] && export_streaming=1
+    bash local/export_for_jetson.sh \
+      --exp-dir "${exp_dir}" \
+      --epoch "${num_epochs}" \
+      --avg "${avg}" \
+      --streaming "${export_streaming}" \
+      --use-averaged-model "${use_averaged_model}"
+    echo "Exported to deploy/jetson_nano/model_$(basename "${exp_dir}")_epoch${num_epochs}_avg${avg}/"
+    echo "To push to the Jetson: JETSON_HOST=user@ip bash deploy/jetson_nano/run_on_jetson.sh"
+  else
+    echo "Skip export because do_export=0"
   fi
 fi

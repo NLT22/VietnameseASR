@@ -1,7 +1,0 @@
-Model: non-streaming Zipformer
-Experiment: ASR/zipformer/exp_bpe100_small_raw_matched_scratch50
-Training: 50 epochs from scratch, fp16 training, dataset/manifests unchanged
-Selected checkpoint: epoch 50 avg 5
-Icefall decode: beam_search beam-size 4
-Icefall test WER: 9.23% [67 / 726, 27 ins, 15 del, 25 sub]
-Export: fp32 ONNX + dynamic int8 ONNX

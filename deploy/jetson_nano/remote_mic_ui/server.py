@@ -33,44 +33,23 @@ COLLECTION_SCRIPT_COUNT = 30
 COLLECTION_MIN_WORDS = 25
 COLLECTION_MAX_WORDS = 35
 MODEL_CHOICES = {
-    # asrMode "beam" = custom onnxruntime classic beam_search.
-    # asrMode "streaming"/"nonstream" = sherpa-onnx modified_beam_search.
-    #
-    # Default. First model trained AFTER the off-by-one label fix -- every other
-    # model here learned the WRONG text for all Trung/Dung recordings -- and the
-    # first with female voices in training. Held-out speakers, classic beam_search:
-    #   divmix_x8   1.38% (M) / 16.96% (F) /  9.17% overall
-    #   mix        49.48%     / 92.04%     / 70.76%
-    #   deployed   82.70%     / 99.31%     / 91.00%
-    # Caveat: trained on 4-5s sentences; utterances >15s are out of distribution
-    # (12,800 cuts, only 72 >= 15s) and can decode to an empty string.
-    "divmix-x8-beam": {
-        "label": "divmix_x8 (corrected labels, 9 voices) + beam_search  [best]",
-        "modelDir": "model_divmix_x8_epoch60_avg10",
+    # asrMode "beam" = custom onnxruntime classic beam_search (what we use).
+    # Only the two 5-speaker (main) models are kept; older experiments
+    # were archived + deleted 2026-07-12 (see docs/ARCHIVED_EXPERIMENTS.md).
+    # Trained on 4-5s sentences; utterances >15s are out of distribution and can
+    # decode to an empty string.
+    "medium-beam": {
+        "label": "medium (M) 5-speaker + beam_search  [deployed: real 1.84% / held-out 1.80%]",
+        "modelDir": "model_medium_epoch30_avg10",
         "asrMode": "beam",
     },
-    "mix-beam": {
-        "label": "Mix (real+TTS clones) + beam_search  [pre-fix labels]",
-        "modelDir": "model_realdom_mix_epoch60_avg10",
+    "small-beam": {
+        "label": "small (S) 5-speaker + beam_search  [backup: real 2.72% / held-out 2.28%]",
+        "modelDir": "model_small_epoch50_avg10",
         "asrMode": "beam",
-    },
-    "deployed-beam": {
-        "label": "Deployed (real only) + beam_search  [pre-fix labels]",
-        "modelDir": "model_streaming_u20_epoch55_avg10",
-        "asrMode": "beam",
-    },
-    "streaming-u20": {
-        "label": "Deployed + sherpa-onnx modified_beam  [pre-fix labels]",
-        "modelDir": "model_streaming_u20_epoch55_avg10",
-        "asrMode": "streaming",
-    },
-    "nonstream-scratch50": {
-        "label": "Non-streaming scratch50 (old) + sherpa-onnx",
-        "modelDir": "model_nonstream_scratch50_best",
-        "asrMode": "nonstream",
     },
 }
-DEFAULT_MODEL_CHOICE = "divmix-x8-beam"
+DEFAULT_MODEL_CHOICE = "medium-beam"
 TINY_CORRECTOR = None
 
 
@@ -91,7 +70,7 @@ def get_args():
         "--remote-dir",
         default="/home/thayhoang/vietnamese_asr_eval/jetson_nano",
     )
-    parser.add_argument("--model-dir", default="model_streaming_u20_epoch55_avg10")
+    parser.add_argument("--model-dir", default="model_medium_epoch30_avg10")
     parser.add_argument(
         "--asr-mode",
         choices=["streaming", "nonstream", "beam"],

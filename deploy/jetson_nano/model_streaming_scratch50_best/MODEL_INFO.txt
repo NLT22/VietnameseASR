@@ -1,8 +1,0 @@
-Model: streaming Zipformer
-Experiment: ASR/zipformer/exp_bpe100_small_streaming_raw_matched_scratch50_fp16_trt
-Training: 50 epochs from scratch, fp16 training, dataset/manifests unchanged
-Selected checkpoint: epoch 50 avg 1
-Chunk/left context: chunk 32, left context 256
-Icefall decode: modified_beam_search num-active-paths 4
-Icefall test WER: 42.01% [305 / 726, 7 ins, 244 del, 54 sub]
-Export: fp32 ONNX + dynamic int8 ONNX

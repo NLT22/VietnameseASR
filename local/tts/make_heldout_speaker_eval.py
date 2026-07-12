@@ -28,10 +28,15 @@ VI = str(Path(__file__).resolve().parents[2])
 # Gwen-TTS checkout (ref_info.json + reference wavs). Override with GWEN_TTS_DIR.
 GT = os.environ.get("GWEN_TTS_DIR", str(Path(VI).parents[2] / "gwen-tts"))
 OUT = f"{VI}/heldout_speaker_eval"
-N_SENTS = 25
+# Expanded 2026-07-11: 25->100 sentences and 2->5 voices, so the held-out set has
+# ~5000 words (was 578). The old 578-word set could not resolve <2 WER points,
+# which made the vocab comparison pure noise. Bigger = usable statistical power.
+N_SENTS = 100
+SENT_SEED = 42   # representative random sample, not "shortest" (which biased easy)
 
-# Unseen voices: never used as a clone reference during training.
-VOICES = ["yen_nhi", "khanh_toan"]
+# Unseen voices: never used as a clone reference during training. 4 female + 1
+# male (female is the hard axis we care about; only khanh_toan is an unused male).
+VOICES = ["yen_nhi", "an_nhi", "nsnd_ha_phuong", "nsnd_kim_cuc", "khanh_toan"]
 
 GEN_CFG = dict(
     temperature=0.3, top_k=20, top_p=0.9, max_new_tokens=4096,
@@ -59,11 +64,13 @@ def main():
     ref_info = json.load(open(f"{GT}/data/ref_info.json"))
 
     rows = list(csv.DictReader(open(f"{VI}/transcripts_matched_u20/test.tsv"), delimiter="\t"))
-    # shortest sentences first: easiest, isolates speaker effect from length
-    rows.sort(key=lambda r: len(r["text"].split()))
+    # Representative random sample of the (known) training sentences, fixed seed.
+    import random
+    random.Random(SENT_SEED).shuffle(rows)
     picked = rows[:N_SENTS]
-    print(f"{len(picked)} sentences, {len(picked[0]['text'].split())}-"
-          f"{len(picked[-1]['text'].split())} words")
+    wl = [len(r["text"].split()) for r in picked]
+    print(f"{len(picked)} sentences x {len(VOICES)} voices, {min(wl)}-{max(wl)} words/sent, "
+          f"~{sum(wl)*len(VOICES)} total ref words")
 
     try:
         import flash_attn  # noqa: F401

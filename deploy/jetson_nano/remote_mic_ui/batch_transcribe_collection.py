@@ -17,7 +17,7 @@ def get_args():
     )
     parser.add_argument("--collection-root", default=str(DEFAULT_COLLECTION_ROOT))
     parser.add_argument("--remote-dir", default=str(ROOT.parent))
-    parser.add_argument("--model-dir", default="model_streaming_u20_epoch55_avg10")
+    parser.add_argument("--model-dir", default="model_medium_epoch30_avg10")
     parser.add_argument("--asr-mode", choices=["streaming", "nonstream"], default="streaming")
     parser.add_argument("--provider", choices=["cpu", "cuda"], default="cuda")
     parser.add_argument("--threads", type=int, default=2)

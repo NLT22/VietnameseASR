@@ -9,6 +9,7 @@ avg=1
 streaming=0
 out_dir=""
 use_averaged_model=0
+vocab=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -20,9 +21,22 @@ while [[ $# -gt 0 ]]; do
     --streaming) streaming="$2"; shift 2 ;;
     --out_dir|--out-dir) out_dir="$2"; shift 2 ;;
     --use_averaged_model|--use-averaged-model) use_averaged_model="$2"; shift 2 ;;
+    --vocab|--vocab-size) vocab="$2"; shift 2 ;;
     *) echo "Unknown option: $1" >&2; exit 1 ;;
   esac
 done
+
+# Vocab determines the tokens/lang dir, which sets the model's output dim. Loading
+# a checkpoint with the wrong vocab fails with a decoder/joiner size mismatch.
+# Auto-detect from the exp dir name (exp_bpeNNN_...) unless overridden.
+if [[ -z "$vocab" ]]; then
+  vocab="$(basename "$exp_dir" | sed -nE 's/^exp_bpe([0-9]+)_.*/\1/p')"
+  [[ -z "$vocab" ]] && vocab=100
+fi
+lang_dir="data/lang_bpe_${vocab}"
+if [[ ! -f "$lang_dir/tokens.txt" ]]; then
+  echo "ERROR: $lang_dir/tokens.txt not found (vocab=$vocab)" >&2; exit 1
+fi
 
 if [[ -z "$exp_dir" || -z "$epoch" ]]; then
   echo "Usage: $0 --exp-dir EXP --epoch N [--avg M] [--streaming 0|1] [--out-dir DIR]" >&2
@@ -39,17 +53,34 @@ fi
 
 mkdir -p "$out_dir"
 
+# Model dims must match how the checkpoint was trained, or loading fails with a
+# size mismatch. run.sh's --model_size {medium,small} encodes into the exp dir name
+# (exp_bpeNNN_medium_... / _small_...); auto-detect it. num-heads/decoder/joiner are
+# the same for both; only the layer/dim lists differ.
+case "$(basename "$exp_dir")" in
+  exp_bpe*_medium_*)
+    enc_layers="2,2,3,4,3,2"
+    ff_dim="512,768,1024,1536,1024,768"
+    enc_dim="192,256,384,512,384,256"
+    enc_unmasked="192,192,256,256,256,192" ;;
+  *)  # small (default)
+    enc_layers="2,2,2,2,2,2"
+    ff_dim="512,768,768,768,768,768"
+    enc_dim="192,256,256,256,256,256"
+    enc_unmasked="192,192,192,192,192,192" ;;
+esac
+
 common=(
   --epoch "$epoch"
   --avg "$avg"
   --use-averaged-model "$use_averaged_model"
   --exp-dir "$exp_dir"
-  --tokens data/lang_bpe_100/tokens.txt
-  --num-encoder-layers 2,2,2,2,2,2
-  --feedforward-dim 512,768,768,768,768,768
+  --tokens "$lang_dir/tokens.txt"
+  --num-encoder-layers "$enc_layers"
+  --feedforward-dim "$ff_dim"
   --num-heads 4,4,4,8,4,4
-  --encoder-dim 192,256,256,256,256,256
-  --encoder-unmasked-dim 192,192,192,192,192,192
+  --encoder-dim "$enc_dim"
+  --encoder-unmasked-dim "$enc_unmasked"
   --decoder-dim 512
   --joiner-dim 512
 )
@@ -80,7 +111,7 @@ if [[ "$stage" -le 1 && "$stop_stage" -ge 1 ]]; then
     cp "$exp_dir/decoder-${suffix}.int8.onnx" "$out_dir/decoder.int8.onnx"
     cp "$exp_dir/joiner-${suffix}.int8.onnx" "$out_dir/joiner.int8.onnx"
   fi
-  cp data/lang_bpe_100/tokens.txt data/lang_bpe_100/bpe.model data/lang_bpe_100/bpe.vocab "$out_dir"/
+  cp "$lang_dir/tokens.txt" "$lang_dir/bpe.model" "$lang_dir/bpe.vocab" "$out_dir"/
 fi
 
 if [[ "$stage" -le 2 && "$stop_stage" -ge 2 ]]; then
