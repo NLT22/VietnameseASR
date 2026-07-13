@@ -65,7 +65,7 @@ GEN_CFG = dict(
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--source-tsv", default=f"{VIET}/transcripts_matched_u20/train.tsv",
+    p.add_argument("--source-tsv", default=f"{VIET}/transcripts_matched/train.tsv",
                    help="Transcript to augment (utt_id\\tspeaker\\taudio_path\\ttext)")
     p.add_argument("--corpus-root", default=VIET,
                    help="Root that output audio_path is relative to")

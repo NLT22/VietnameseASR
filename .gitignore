@@ -73,7 +73,7 @@ data/
 lang/
 transcripts/
 # Generated transcript versions (rebuildable from dataset/ + the clone scripts).
-# transcripts_matched_u20/ (ground-truth labels for the real recordings) is
+# transcripts_matched/ (ground-truth labels for the real recordings) is
 # also ignored: dataset/ (the audio it points to) isn't tracked either, so
 # labels alone aren't useful without the wavs.
 transcripts_*/

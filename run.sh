@@ -7,7 +7,7 @@ set -euo pipefail
 #
 #   Default          : matches the deployed model — medium, causal/streaming,
 #                      MUSAN + SpecAugment, base_lr 0.045, epoch 40, avg 10 —
-#                      trained on transcripts_matched_u20/ (rebuilt fresh from
+#                      trained on transcripts_matched/ (rebuilt fresh from
 #                      dataset/ each run; no clone generation, no external repo).
 #   --data_tag NAME  : run ANY pre-built transcript version instead. Derives
 #                      transcripts_NAME/, data/manifests_NAME/, fbank_NAME/,
@@ -130,7 +130,7 @@ matched_splits=1
 # --data_tag NAME makes this script run ANY pre-built transcript version:
 # it derives transcript_dir=transcripts_<tag>, data/manifests_<tag>, fbank_<tag>,
 # lang/transcript_words_<tag>.txt and exp suffix _<tag>. Empty = default: build
-# transcripts_matched_u20/ fresh from dataset/ (matched_splits=1).
+# transcripts_matched/ fresh from dataset/ (matched_splits=1).
 data_tag=""
 
 data_variant="raw"
@@ -254,11 +254,11 @@ case "$data_variant" in
     if [ "$matched_splits" = "1" ]; then
       # Canonical corrected splits (800 real utts). The old x10-repeated dirs
       # were built before the recorder_key() off-by-one fix and were removed.
-      transcript_dir="transcripts_matched_u20"
+      transcript_dir="transcripts_matched"
       audio_root="."
-      manifest_dir="$PWD/data/manifests_matched_u20"
-      fixed_manifest_dir="$PWD/data/manifests_matched_u20/fixed"
-      fbank_dir="$PWD/fbank_matched_u20"
+      manifest_dir="$PWD/data/manifests_matched"
+      fixed_manifest_dir="$PWD/data/manifests_matched/fixed"
+      fbank_dir="$PWD/fbank_matched"
     else
       transcript_dir="transcripts"
       audio_root="audio"
@@ -436,9 +436,9 @@ if [ "$stage" -le -2 ] && [ "$stop_stage" -ge -2 ]; then
       exit 1
     fi
     # clone source is the real 5-speaker split; build it from dataset/ if missing
-    if [ ! -f "transcripts_matched_u20/train.tsv" ]; then
+    if [ ! -f "transcripts_matched/train.tsv" ]; then
       python3 local/prepare_matched_splits.py \
-        --dataset-dir "$PWD/dataset" --output-dir "$PWD/transcripts_matched_u20" \
+        --dataset-dir "$PWD/dataset" --output-dir "$PWD/transcripts_matched" \
         --max-duration "${split_max_duration}"
     fi
     mkdir -p "${transcript_dir}"
@@ -447,12 +447,12 @@ if [ "$stage" -le -2 ] && [ "$stop_stage" -ge -2 ]; then
     # 2) diverse clones (female + 1 male)
     "$gpy" local/tts/build_diverse_clones.py --batch-size 8 --max-duration 20.0
     # 3) assemble divmix training set: real x${real_mult} + all clones
-    python3 local/hieu_pipeline.py build-divmix --mult "${real_mult}" \
+    python3 local/build_divmix.py --mult "${real_mult}" \
       --cross transcripts_crossspk/train.tsv \
       --div   transcripts_crossspk_diverse/train.tsv \
       --out   "${transcript_dir}/train.tsv"
     # 4) dev/test = the clean real originals (memorization split)
-    cp transcripts_matched_u20/dev.tsv transcripts_matched_u20/test.tsv "${transcript_dir}/"
+    cp transcripts_matched/dev.tsv transcripts_matched/test.tsv "${transcript_dir}/"
     echo "Clone set assembled: ${transcript_dir}/{train,dev,test}.tsv"
   else
     echo "Skip clone generation because build_clones=0"
@@ -737,7 +737,7 @@ if [ "$stage" -le 16 ] && [ "$stop_stage" -ge 16 ]; then
       --streaming "${export_streaming}" \
       --use-averaged-model "${use_averaged_model}"
     echo "Exported to deploy/jetson_nano/model_$(basename "${exp_dir}")_epoch${num_epochs}_avg${avg}/"
-    echo "To push to the Jetson: JETSON_HOST=user@ip bash deploy/jetson_nano/run_on_jetson.sh"
+    echo "On the Jetson: git clone this repo, then bash deploy/jetson_nano/run.sh setup && bash deploy/jetson_nano/run.sh startui"
   else
     echo "Skip export because do_export=0"
   fi

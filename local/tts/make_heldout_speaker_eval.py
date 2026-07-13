@@ -63,7 +63,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     ref_info = json.load(open(f"{GT}/data/ref_info.json"))
 
-    rows = list(csv.DictReader(open(f"{VI}/transcripts_matched_u20/test.tsv"), delimiter="\t"))
+    rows = list(csv.DictReader(open(f"{VI}/transcripts_matched/test.tsv"), delimiter="\t"))
     # Representative random sample of the (known) training sentences, fixed seed.
     import random
     random.Random(SENT_SEED).shuffle(rows)

@@ -42,7 +42,7 @@ GEN_CFG = dict(
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--source-tsv", default=f"{VI}/transcripts_matched_u20/train.tsv")
+    p.add_argument("--source-tsv", default=f"{VI}/transcripts_matched/train.tsv")
     p.add_argument("--corpus-root", default=VI)
     p.add_argument("--out-audio-subdir", default="audio_crossspk_diverse")
     p.add_argument("--out-tsv", default=f"{VI}/transcripts_crossspk_diverse/train.tsv")

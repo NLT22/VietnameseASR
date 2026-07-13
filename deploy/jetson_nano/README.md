@@ -261,11 +261,11 @@ Held-out speakers, classic beam_search, same 50-clip eval set:
 
 | file | purpose |
 | --- | --- |
+| `run.sh` | single entry point: `setup` / `transcribe` / `live-ui` / `startui` |
 | `jetson_beam_decode.py` | numpy+onnxruntime transducer + classic beam_search |
 | `jetson_asr.py` | wav → fbank → text, lhotse-matching features |
 | `transcribe_beam_wav.py` | CLI, drop-in for the sherpa runner |
 | `transcribe_streaming_wav.py`, `transcribe_wav.py` | legacy sherpa-onnx runners |
 | `onnx_beam_search.py` | PC-side prototype (imports icefall's `OnnxModel`) |
 | `install_jetson.sh` | Nano-side installer |
-| `evaluate_*.py`, `run_performance_eval.sh` | WER/RTF benchmarks |
 | `model_*/` | exported ONNX packages (`MODEL_INFO.txt` in each) |

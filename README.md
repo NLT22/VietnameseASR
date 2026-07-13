@@ -24,7 +24,7 @@ VietnameseASR/
 ├── ASR/zipformer/                 # train.py, decode.py, export-onnx*.py, finetune.py, ...
 ├── local/                         # scripts chuẩn bị data + local/tts/ (Gwen-TTS clone gen)
 ├── dataset/                       # raw recordings (per-speaker wav + transcript)
-├── transcripts_matched_u20/       # real 1000-utt matched splits (5 spk, all clips <20s)
+├── transcripts_matched/       # real 1000-utt matched splits (5 spk, all clips <20s)
 ├── transcripts_main/  fbank_main/ # deployed clone-mixed set (--data_tag main)
 ├── data/manifests_main/  data/lang_bpe_100/
 ├── lang/                          # BPE training corpus (transcript_words_<tag>.txt)
@@ -200,7 +200,7 @@ bash run.sh \
 | `display_manifest_statistics.py --all` | In thống kê (duration, số câu,...) |
 | `tokenize_test.py --vocab-size N` | Smoke test tokenizer |
 | `noise_reduce_audio.py` | Tạo `audio_nr/` + `transcripts_nr/` bằng noisereduce |
-| `hieu_pipeline.py` | Gom real + clones thành divmix training set (stage -2) |
+| `build_divmix.py` | Gom real + clones thành divmix training set (stage -2) |
 | `export_for_jetson.sh` | Export + đóng gói int8 ONNX cho Jetson (stage 16) |
 | `tts/build_crossspeaker.py`, `tts/build_diverse_clones.py` | Sinh voice clones (Gwen-TTS) |
 
