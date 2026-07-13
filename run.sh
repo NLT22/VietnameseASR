@@ -5,11 +5,19 @@ set -euo pipefail
 # run.sh — single entry point for the Vietnamese ASR recipe (data prep -> train
 # -> decode). One script, any dataset version.
 #
-#   Default          : x10 MUSAN-augmented matched-split pipeline.
+#   Default          : matches the deployed model — medium, causal/streaming,
+#                      MUSAN + SpecAugment, base_lr 0.045, epoch 40, avg 10 —
+#                      trained on transcripts_matched_u20/ (rebuilt fresh from
+#                      dataset/ each run; no clone generation, no external repo).
 #   --data_tag NAME  : run ANY pre-built transcript version instead. Derives
 #                      transcripts_NAME/, data/manifests_NAME/, fbank_NAME/,
 #                      lang/transcript_words_NAME.txt and exp suffix _NAME, and
 #                      skips split-building (assumes the transcripts exist).
+#
+# PREREQUISITES (not in git, must exist locally before running):
+#   dataset/   raw per-speaker recordings + transcripts (stage -1 needs this).
+#   musan/     MUSAN noise corpus, only if --enable_musan 1 (the default) —
+#              pass --enable_musan 0 --offline_musan_aug 0 to skip it entirely.
 #
 # STAGES  (--stage N --stop_stage M):
 #   -2 generate TTS clones + assemble training set   (opt, needs Gwen-TTS)
@@ -22,32 +30,31 @@ set -euo pipefail
 #   16 export int8 ONNX for deployment
 #
 # COMMON USAGE:
-#   # FULL pipeline incl. clone generation + export (deployed medium model):
+#   # Default: deployed model's recipe, real data only (needs dataset/ + musan/):
+#   bash run.sh --stage -1 --stop_stage 16
+#
+#   # same, but skip MUSAN if you don't have the corpus set up locally:
+#   bash run.sh --enable_musan 0 --offline_musan_aug 0 --stage -1 --stop_stage 16
+#
+#   # FULL pipeline incl. TTS clone generation (needs an external Gwen-TTS checkout):
 #   GWEN_TTS_DIR=/path/to/gwen-tts bash run.sh --data_tag main --build_clones 1 \
-#       --model_size medium --causal 1 --base_lr 0.045 --num_epochs 40 --avg 10 \
-#       --use_averaged_model 1 --enable_musan 1 --enable_spec_aug 1 \
-#       --exp_suffix "_lr0045" --stage -2 --stop_stage 16
+#       --stage -2 --stop_stage 16
 #
 #   # train from an already-built clone set (skip clone gen), export at the end:
-#   bash run.sh --data_tag main --model_size medium --causal 1 --base_lr 0.045 \
-#       --num_epochs 40 --avg 10 --use_averaged_model 1 --enable_musan 1 \
-#       --enable_spec_aug 1 --exp_suffix "_lr0045" --stage 3 --stop_stage 16
+#   bash run.sh --data_tag main --stage 3 --stop_stage 16
 #
-#   # real-only (no clones) from scratch, small model:
-#   bash run.sh --model_size small --causal 1 --num_epochs 60 \
-#       --stage -1 --stop_stage 14
+#   # small model instead of medium, from scratch:
+#   bash run.sh --model_size small --num_epochs 60 --stage -1 --stop_stage 14
 #
 #   # a pre-built version (transcript + audio already exist) — train+decode only.
 #   # NOTE: turn OFF all in-pipeline augmentation if it is already baked in:
-#   bash run.sh --data_tag xspk_x5 --exp_suffix "" --model_size small --causal 1 \
-#       --enable_musan 0 --perturb_speed 0 --offline_musan_aug 0 \
-#       --stage 3 --stop_stage 14
+#   bash run.sh --data_tag xspk_x5 --exp_suffix "" --enable_musan 0 \
+#       --perturb_speed 0 --offline_musan_aug 0 --stage 3 --stop_stage 14
 #
-#   #   plain (non-matched) auto-split pipeline, medium model:
-#   bash run.sh --matched_splits 0 --model_size medium --stage -1 --stop_stage 14
+#   #   plain (non-matched) auto-split pipeline:
+#   bash run.sh --matched_splits 0 --stage -1 --stop_stage 14
 #
 # Full flag list: bash run.sh --help  (or read the arg-parse block below).
-# run_x10.sh is a thin backward-compatible wrapper around this script.
 # =============================================================================
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -59,19 +66,19 @@ stop_stage=100
 corpus_root="$script_dir"
 
 vocab_size=100
-bpe_dir="$PWD/data/lang_bpe_${vocab_size}"
-manifest_dir="$PWD/data/manifests"
-fixed_manifest_dir="$PWD/data/manifests/fixed"
-transcript_dir="transcripts_matched_u20"
-audio_root="."
-fbank_dir="fbank_matched_u20"
+# musan_manifest_dir is intentionally separate from the transcript/fbank dirs
+# below: MUSAN noise manifests always live in the plain data/manifests dir,
+# regardless of --data_tag/--data_variant. (transcript_dir/audio_root/
+# fbank_dir/manifest_dir/fixed_manifest_dir/bpe_dir are NOT initialized here —
+# the case "$data_variant" block and the --data_tag override further down
+# always set them unconditionally, so pre-assigning them here was dead code.)
 musan_manifest_dir="$PWD/data/manifests"
 
-num_epochs=30
+num_epochs=40
 start_epoch=1
 world_size=1
 max_duration=500
-num_workers=2
+num_workers=8
 split_max_duration=20
 feature_max_duration=20
 base_lr=0.045   # icefall default; the LR x epoch experiment (2026-07-11) showed
@@ -80,8 +87,10 @@ base_lr=0.045   # icefall default; the LR x epoch experiment (2026-07-11) showed
                 # (local-only, not in git — ask the team if you need it).
 use_fp16=0
 
-enable_musan=0
-enable_spec_aug=0
+# Defaults below match the deployed model (exp_bpe100_medium_streaming_main_lr0045):
+# medium, causal/streaming, MUSAN + SpecAugment on, avg 10 over the averaged model.
+enable_musan=1
+enable_spec_aug=1
 bucketing_sampler=1
 num_buckets=4
 perturb_speed=0
@@ -93,11 +102,11 @@ snr_min=10
 snr_max=20
 
 decode_method="all"
-use_averaged_model=0
-avg=1
+use_averaged_model=1
+avg=10
 
 # Streaming (causal) — train với --causal 1 rồi decode bằng streaming_decode.py
-causal=0
+causal=1
 chunk_size="16,32,64,-1"          # dùng khi train (list)
 left_context_frames="64,128,256,-1" # dùng khi train (list)
 decode_chunk_size=32               # dùng khi streaming decode (single value)
@@ -113,14 +122,15 @@ attention_decoder_loss_scale=0.0
 do_finetune=0
 finetune_ckpt=""
 init_modules="encoder"
-exp_suffix="_x10_matched"
+exp_suffix="_lr0045"
 exp_suffix_user_set=0
 exp_dir_override=""
 exp_dir_policy="auto"  # auto: create unique exp dir for train if non-empty; reuse: old behavior; fail: stop if non-empty
 matched_splits=1
 # --data_tag NAME makes this script run ANY pre-built transcript version:
 # it derives transcript_dir=transcripts_<tag>, data/manifests_<tag>, fbank_<tag>,
-# lang/transcript_words_<tag>.txt and exp suffix _<tag>. Empty = default (x10).
+# lang/transcript_words_<tag>.txt and exp suffix _<tag>. Empty = default: build
+# transcripts_matched_u20/ fresh from dataset/ (matched_splits=1).
 data_tag=""
 
 data_variant="raw"
@@ -133,7 +143,7 @@ real_mult=8          # real recordings repeated x8 in the divmix training set
 # Export (stage 16) — int8 ONNX for Jetson / live-UI deployment.
 do_export=1
 
-model_size="small"
+model_size="medium"
 num_encoder_layers="2,2,3,4,3,2"
 feedforward_dim="512,768,1024,1536,1024,768"
 num_heads="4,4,4,8,4,4"

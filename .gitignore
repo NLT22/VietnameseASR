@@ -94,3 +94,6 @@ deploy/jetson_nano/sweep_*/
 results/
 
 docs/
+
+# Internal working notes, local-only — not on GitHub.
+CLAUDE.md

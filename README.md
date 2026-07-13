@@ -12,7 +12,8 @@ speaker metric.
 
 Deployed model: `ASR/zipformer/exp_bpe100_medium_streaming_main_lr0045`
 (epoch 30, avg 10). Numbers live in `docs/RESULTS.md`; how it works in
-`docs/TEACHING_NOTES.md` (EN) / `docs/TEACHING_NOTES_VI.md` (VI).
+`docs/TEACHING_NOTES.md` (EN) / `docs/TEACHING_NOTES_VI.md` (VI). (`docs/` is
+gitignored, local-only — not on GitHub.)
 
 ---
 
