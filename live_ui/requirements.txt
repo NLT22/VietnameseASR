@@ -3,5 +3,4 @@ uvicorn
 websockets
 onnxruntime
 numpy
-soundfile
 kaldi_native_fbank
