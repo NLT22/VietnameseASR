@@ -13,6 +13,7 @@ jetson_asr.py, because the browser records at arbitrary rates.
 import argparse
 import os
 import sys
+import time
 
 import numpy as np
 
@@ -47,6 +48,7 @@ def main():
     p.add_argument("--provider", default="cpu")
     p.add_argument("--max-active-paths", type=int, default=4)
     p.add_argument("--fp32", action="store_true")
+    p.add_argument("--rtf", action="store_true", help="print timing / real-time factor to stderr")
     p.add_argument("wav")
     a = p.parse_args()
 
@@ -57,13 +59,23 @@ def main():
     m = OnnxTransducer(model_dir)
     id2tok = load_tokens(os.path.join(model_dir, "tokens.txt"))
 
+    t0 = time.time()
     samples = load_wav_any(a.wav)
+    audio_dur = len(samples) / 16000.0
     feats = compute_fbank(samples)
     enc = m.encode(feats)
     ids = beam_search(m, enc, a.beam) if a.method == "beam_search" else greedy(m, enc)
+    elapsed = time.time() - t0
 
     # server.py takes the LAST stdout line as the transcript
     print(detok(ids, id2tok))
+
+    if a.rtf:
+        rtf = elapsed / audio_dur if audio_dur > 0 else float("inf")
+        print(
+            f"[timing] audio={audio_dur:.2f}s process={elapsed:.2f}s RTF={rtf:.3f}",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":

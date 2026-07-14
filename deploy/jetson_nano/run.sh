@@ -54,7 +54,7 @@ do_transcribe() {
   [ -z "$wav" ] && { echo "ERROR: transcribe needs a wav path" >&2; exit 1; }
   [ -d ".venv" ] || { echo "ERROR: run 'bash run.sh setup' first" >&2; exit 1; }
   activate_venv
-  python3 transcribe_beam_wav.py --model-dir "$model_dir" "$wav"
+  python3 transcribe_beam_wav.py --model-dir "$model_dir" --rtf "$wav"
 }
 
 ensure_live_ui_deps() {
