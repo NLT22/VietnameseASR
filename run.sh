@@ -74,7 +74,7 @@ vocab_size=100
 # always set them unconditionally, so pre-assigning them here was dead code.)
 musan_manifest_dir="$PWD/data/manifests"
 
-num_epochs=40
+num_epochs=60
 start_epoch=1
 world_size=1
 max_duration=500

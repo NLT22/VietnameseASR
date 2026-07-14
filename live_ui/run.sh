@@ -38,8 +38,18 @@ ensure_deps() {
 
 ensure_cloudflared() {
   if ! command -v cloudflared >/dev/null 2>&1; then
-    echo "ERROR: cloudflared not found. Install it: https://github.com/cloudflare/cloudflared/releases" >&2
-    exit 1
+    echo "==> Installing cloudflared (one-time)"
+    local arch; arch="$(uname -m)"
+    case "$arch" in
+      x86_64) arch="amd64" ;;
+      aarch64|arm64) arch="arm64" ;;
+      *) echo "ERROR: no cloudflared auto-install for arch '$arch'. Install manually: https://github.com/cloudflare/cloudflared/releases" >&2; exit 1 ;;
+    esac
+    mkdir -p "$HOME/.local/bin"
+    curl -fL -o "$HOME/.local/bin/cloudflared" \
+      "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${arch}"
+    chmod +x "$HOME/.local/bin/cloudflared"
+    export PATH="$HOME/.local/bin:$PATH"
   fi
 }
 
